@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:DoubleField label="Double Field" value="42,2" style="justify-content: flex-end; align-items: flex-start; flex-direction: row-reverse;" />
+    <ui:Toggle label="Toggle" style="align-self: center; align-items: flex-start; position: absolute; top: 330px; left: 350px;" />
+</ui:UXML>
