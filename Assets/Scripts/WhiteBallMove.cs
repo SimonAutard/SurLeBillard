@@ -1,16 +1,17 @@
 using UnityEngine;
 
-
+// La bille hérite de BallRoll qui est la classé générale pour les billes, gérant toute la partie collisions
 public class WhiteBallMove : BallRoll
 {
-
     void OnEnable()
     {
+        // Abonnement à l'evenement de clic de la souris
         Controller.OnMouseClicked += HandleMouseClick;
     }
 
     void OnDisable()
     {
+        //désabonnement de l'venement clic de souris, pour éviter les memory leaks
         Controller.OnMouseClicked -= HandleMouseClick;
     }
 
