@@ -3,6 +3,7 @@ using UnityEngine;
 // La bille hérite de BallRoll qui est la classé générale pour les billes, gérant toute la partie collisions
 public class WhiteBallMove : BallRoll
 {
+    public float hitForce = 1;// Coef de force du coup de queue
     void OnEnable()
     {
         // Abonnement à l'evenement de clic de la souris
@@ -22,7 +23,7 @@ public class WhiteBallMove : BallRoll
 
         // Calcule la direction et la vitesse
         direction = (transform.position - clickPosition).normalized;
-        speed = Vector3.Distance(transform.position, clickPosition);
+        speed = hitForce * Vector3.Distance(transform.position, clickPosition);
     }
 
 }

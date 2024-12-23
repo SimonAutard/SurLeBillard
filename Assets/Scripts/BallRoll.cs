@@ -6,13 +6,17 @@ public class BallRoll : MonoBehaviour
     //Variables générales
     [SerializeField] protected float mass = 1.0f;
     public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille
+    public string ballSymbol; //thème de la bille
 
     // Variables de déplacement
     [SerializeField]    protected float speed = 0; // vitesse de la bille à chaque instant
     protected Vector3 direction; // direction de la bille à chaque instant. Normalisé.
-    private float drag = 0.5f; // Coef des frottements du tapis sur la bille
+    [SerializeField] private float drag = 0.5f; // Coef des frottements du tapis sur la bille
     [SerializeField] private float bandSpeedReductionFactor = 0.8f; //coef d'atténuation de la vitesse par les bandes
 
+    //Evenements
+    public static event Action<string,string> TwoBallsCollision; // evenement de la collision de deux billes
+    public static event Action<string> BallPocketed; // evenement de destruction de la bille
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -30,9 +34,13 @@ public class BallRoll : MonoBehaviour
         }
         // Si la vitesse est trop faible, on arrête la bille. Cela donne un critère pour terminer la phase de collisions.
         else { speed = 0; }
+
+        // Verification de la position de la bille au dessus des poches
+        CheckPocketing();
     }
-    //une fois que toutes les update du jeu ont été exécutées, lateupdate s'exécute
-    private void LateUpdate()
+
+    //Une fois que toutes les update du jeu ont été exécutées, lateupdate s'exécute
+    protected void LateUpdate()
     {
         canYetCollide = true; //maintenant que l'autre bille percutée a résolue sa collision, on peut reouvrir la bille locale aux collisions
     }
@@ -42,12 +50,11 @@ public class BallRoll : MonoBehaviour
         
         if (collider.tag == "Bandes")
         {
-            Debug.Log(this.name + " percute " + collider.gameObject.name);
+            Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
             BounceOnBand(collider);
         }
         if (collider.tag == "Bille")
         {
-            Debug.Log(this.name+ " percute "+collider.gameObject.name);
             BounceOnBall(collider);
         }
     }
@@ -87,6 +94,8 @@ public class BallRoll : MonoBehaviour
             collider.GetComponent<BallRoll>().direction = v2f.normalized;
 
             canYetCollide = false;
+
+            TwoBallsCollision?.Invoke(ballSymbol, collider.GetComponent<BallRoll>().ballSymbol);
         }
     }
 
@@ -96,14 +105,9 @@ public class BallRoll : MonoBehaviour
     /// <param name="collider"></param>
     protected void BounceOnBand(Collider collider)
     {
-        float xBand = collider.transform.position.x;
-        float zBand = collider.transform.position.z;
-        Debug.Log(xBand + " " + zBand);
-
         // Etape 1 = On calcule la normale du rebond, qui dépend de la bande
-        Vector3 normalVector; // Vecteur normal de la bande de rebond
-        CalculateBandNormalVector(xBand, zBand, out normalVector);
-
+        Vector3 normalVector = collider.GetComponent<BandBehavior>().normalVector.normalized; // Vecteur normal de la bande de rebond
+        Debug.Log("normal vector of band is "+normalVector);
         //Etape 2 = On calcule la nouvelle direction de la bille post rebond 
         if (normalVector != Vector3.zero)
         {
@@ -113,29 +117,19 @@ public class BallRoll : MonoBehaviour
         
     }
     /// <summary>
-    /// Calcule la normale d'une bande dont les coordonnées X et Z sont en paramètres
+    /// Verifie si la bille a ete empochee
     /// </summary>
-    /// <param name="xBand"></param>
-    /// <param name="zBand"></param>
-    /// <param name="normalVector"></param>
-    protected void CalculateBandNormalVector(float xBand, float zBand, out Vector3 normalVector)
+    protected virtual void CheckPocketing()
     {
-        if (Math.Abs(xBand) < 1)
-        {  // Cas où la bande est décalée selon l'axe z, et non pas x (donc coordonnée X est petite)
-            normalVector = (zBand * Vector3.back).normalized;
-            Debug.Log("normal is " + normalVector);
-        }
-        else if (Math.Abs(zBand) < 1)
-        { // Cas où la bande est décalée selon l'axe x, et non pas z (donc coordonnée Z est petite)
-            normalVector = (xBand * Vector3.left).normalized;
-
-            Debug.Log("normal is " + normalVector);
-        }
-        else
+        // Raycats du centre de la bille vers le bas
+        RaycastHit hit;
+        Physics.Raycast(transform.position, Vector3.down, out hit);
+        //Verification qu'un collider a ete touche et quil sagissait dune poche
+        if(hit.collider != null && hit.collider.gameObject.tag == "Poche")
         {
-            normalVector = Vector3.zero;
-            Debug.Log("Coordonées de la bande incorrectes");
+            Debug.Log("bille "+gameObject.GetComponent<Renderer>().material.name+" empochée");
+            BallPocketed?.Invoke(ballSymbol);
+            Destroy(this.gameObject);
         }
-
     }
 }
