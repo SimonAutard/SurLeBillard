@@ -44,9 +44,6 @@ public class NarrationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //initialisation simple pour test
-        Prophecy prophecy = new Prophecy(0);
-        prophecyMasterTable[0,0] = prophecy;
     }
 
     // Update is called once per frame
@@ -66,7 +63,7 @@ public class NarrationManager : MonoBehaviour
         int index1 = random.Next(0, themesArray.Length);
         int index2 = random.Next(0, themesArray.Length);
         if (index1 == index2) { index2--; }
-        string fullProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy().sentence;
+        string fullProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy().Sentence;
         Debug.Log(fullProphecy);
     }
 

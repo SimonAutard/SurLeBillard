@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 
-public class NarrationManager : MonoBehaviour
+public class NarrationManagerLouis : MonoBehaviour
 {
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
     //Liste des thèmes de billes
@@ -26,9 +26,9 @@ public class NarrationManager : MonoBehaviour
     List<StoryItem> allStoryItems = new List<StoryItem>();
     
     // Design pattern du singleton
-    private static NarrationManager instance; // instance statique du narration manager
+    private static NarrationManagerLouis instance; // instance statique du narration manager
   
-    public static NarrationManager Instance
+    public static NarrationManagerLouis Instance
     {
         get
         {

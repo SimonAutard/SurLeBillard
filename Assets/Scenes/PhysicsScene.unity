@@ -2966,7 +2966,7 @@ GameObject:
   - component: {fileID: 1484232762}
   - component: {fileID: 1484232761}
   m_Layer: 0
-  m_Name: Narrator
+  m_Name: NarratorLouis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
