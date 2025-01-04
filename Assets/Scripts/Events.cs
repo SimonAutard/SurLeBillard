@@ -10,7 +10,7 @@ using UnityEngine;
 // Each event is a class in this file and only contains the list of members and a constructor assigning to them the parameters provided when the event is published
 // To create a new event :
 //  - add a class to this file following the example of other events
-//  - start the class name with "Event" (it'll be cleaner for auto completion)
+//  - start the class name with "Event" (it'll be cleaner for auto completion), and end it with "Request" or "Delivery" when it makes sense (it'll be easier to identify what event does what)
 //  - try to keep this file clean by puting the event in the right part of the file (ie: don't put UI events with physics events)
 //  - just list the parameters you want to the event to carry
 //  - be sure to assign the event parameters in the constructor to the class members
@@ -19,6 +19,20 @@ using UnityEngine;
 
 
 
+//**********************************
+//*** GameManager related events ***
+//**********************************
+
+/// <summary>
+/// Signals that a chain of event is at its end and that the gameloop can proceed with its next step
+/// </summary>
+public class EventGameloopNextStepRequest
+{
+    public EventGameloopNextStepRequest()
+    {
+
+    }
+}
 
 
 //***************************************
@@ -109,20 +123,76 @@ public class EventLoreDelivery
 /// <summary>
 /// Requests the setup of the game in terms of rules
 /// </summary>
-public class EventGameStateSetup
+public class EventNewGameSetupRequest
 {
-    public EventGameStateSetup()
+    public EventNewGameSetupRequest()
     {
 
     }
 }
 
-//*************************************
-//*** PhysicsManager related events ***
-//*************************************
+//***********************************
+//*** SceneManager related events ***
+//***********************************
 
+/// <summary>
+/// Requests the initial setup of the scene based on game data
+/// </summary>
+public class EventSceneInitialSetupRequest
+{
+    // TODO : Placeholder for now, should be changed depending on what data we need to send to the SceneManager
+    public string _gameData { get; }
 
+    public EventSceneInitialSetupRequest(string gameData)
+    {
+        _gameData = gameData;
+    }
+}
+
+/// <summary>
+/// Requests the initial break to be done
+/// </summary>
+public class EventInitialBreakRequest
+{
+    public EventInitialBreakRequest()
+    {
+
+    }
+}
 
 //********************************
 //*** UIManager related events ***
 //********************************
+
+/// <summary>
+/// Requests the initialization of a new game
+/// </summary>
+public class EventNewGameRequest
+{
+    public EventNewGameRequest()
+    {
+
+    }
+}
+
+/// <summary>
+/// Requests the display of the general UI that'll be shown throughout the game, and to activate/place the camera at the scene
+/// </summary>
+public class EventDisplayGameUIRequest
+{
+    public EventDisplayGameUIRequest()
+    {
+
+    }
+}
+
+/// <summary>
+/// Requests the display of the UI elements allowing the player to act on his turn
+/// </summary>
+public class EventDisplayPlayerInputUIRequest
+{
+    public EventDisplayPlayerInputUIRequest()
+    {
+
+    }
+}

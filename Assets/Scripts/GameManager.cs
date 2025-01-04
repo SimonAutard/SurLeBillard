@@ -5,8 +5,10 @@ public class GameManager : MonoBehaviour
 {
     private GameStateManager _gameStateManager;
     private NarrationManager _narrationManager;
-    private PhysicsManager _physicsManager;
+    private SceneManager _physicsManager;
     private UIManager _UIManager;
+    private Coroutine _gameplayLoop = null;
+    private bool _waitForNextStep = false;
     
 
     private void Awake()
@@ -14,12 +16,14 @@ public class GameManager : MonoBehaviour
         // initialize all specialized managers
         _narrationManager = gameObject.AddComponent<NarrationManager>();
         _gameStateManager = gameObject.AddComponent<GameStateManager>();
-        _physicsManager = gameObject.AddComponent<PhysicsManager>();
+        _physicsManager = gameObject.AddComponent<SceneManager>();
         _UIManager = gameObject.AddComponent<UIManager>();
 
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventStoryBitGenerationDelivery>(HandleStoryBitDelivery);
         EventBus.Subscribe<EventLoreDelivery>(HandleLoreDelivery);
+        EventBus.Subscribe<EventNewGameRequest>(HandleNewGameRequest);
+        EventBus.Subscribe<EventGameloopNextStepRequest>(HandleGameloopNextStepRequest);
 
     }
 
@@ -28,6 +32,8 @@ public class GameManager : MonoBehaviour
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
         EventBus.Unsubscribe<EventStoryBitGenerationDelivery>(HandleStoryBitDelivery);
         EventBus.Unsubscribe<EventLoreDelivery>(HandleLoreDelivery);
+        EventBus.Unsubscribe<EventNewGameRequest>(HandleNewGameRequest);
+        EventBus.Unsubscribe<EventGameloopNextStepRequest>(HandleGameloopNextStepRequest);
     }
 
     private void Start()
@@ -38,7 +44,11 @@ public class GameManager : MonoBehaviour
         RequestStoryBitGeneration("Finances", "Friendship", false);
     }
 
-    public void GameplayLoop()
+    /// <summary>
+    /// The gameplay loop. Async for now, not sure if it's best.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator GameplayLoop()
     {
         // 1. Setup game state
         // 2. Setup scene state
@@ -64,9 +74,26 @@ public class GameManager : MonoBehaviour
         // 13.
 
 
+        EventBus.Publish(new EventNewGameSetupRequest());
+        _waitForNextStep = true;
+        yield return 0;
+        while (_waitForNextStep)
+        {
 
+        }
+        EventBus.Publish(new EventInitialBreakRequest());
+        _waitForNextStep = true;
+        yield return 0;
+        while (_waitForNextStep)
+        {
 
+        }
 
+    }
+
+    private void HandleGameloopNextStepRequest(EventGameloopNextStepRequest requestEvent)
+    {
+        _waitForNextStep = false;
     }
 
 
@@ -80,7 +107,7 @@ public class GameManager : MonoBehaviour
     /// <param name="wordA">The first theme the story bit is based on</param>
     /// <param name="wordB">The second theme the story bit is based on</param>
     /// <param name="positive">States if the story bit should be positive or not</param>
-    public void RequestStoryBitGeneration(string wordA, string wordB, bool positive)
+    private void RequestStoryBitGeneration(string wordA, string wordB, bool positive)
     {
         string pos = (positive) ? "positive" : "negative";
         Debug.Log($"GameManager: Requesting a {pos} story bit generation with '{wordA}' and '{wordB}'");
@@ -135,13 +162,26 @@ public class GameManager : MonoBehaviour
 
 
 
-    //**************************************
-    //*** PhysicsManager related methods ***
-    //**************************************
+    //************************************
+    //*** SceneManager related methods ***
+    //************************************
 
 
 
     //*********************************
     //*** UIManager related methods ***
     //*********************************
+
+    /// <summary>
+    /// Starts the gameplay loop
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void HandleNewGameRequest(EventNewGameRequest requestEvent)
+    {
+        if (_gameplayLoop != null)
+        {
+            StopCoroutine(_gameplayLoop);
+        }
+        StartCoroutine(GameplayLoop());
+    }
 }
