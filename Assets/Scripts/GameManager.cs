@@ -12,10 +12,10 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         // initialize all specialized managers
-        _narrationManager = new NarrationManager(this);
-        _gameStateManager = new GameStateManager(this);
-        _physicsManager = new PhysicsManager(this);
-        _UIManager = new UIManager(this);
+        _narrationManager = gameObject.AddComponent<NarrationManager>();
+        _gameStateManager = gameObject.AddComponent<GameStateManager>();
+        _physicsManager = gameObject.AddComponent<PhysicsManager>();
+        _UIManager = gameObject.AddComponent<UIManager>();
 
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventStoryBitGenerationDelivery>(HandleStoryBitDelivery);
@@ -36,6 +36,37 @@ public class GameManager : MonoBehaviour
         RequestStoryUpdate();
         RequestLoreData();
         RequestStoryBitGeneration("Finances", "Friendship", false);
+    }
+
+    public void GameplayLoop()
+    {
+        // 1. Setup game state
+        // 2. Setup scene state
+        // 3. Display game UI and scene
+        // 4. Display initial dialogs
+        // 5. Input initial break (TODO : decide if it's done by clotho or atropos. And if done by clotho, is it automated or is it player input)
+        // 6. Apply physics
+        // 7. Update game state
+        // 8. Display dialogs
+        // 9. Display input ui
+        // 9. Wait for player input
+        // 9a1. Update game state with player predictions
+        // 10. Request AI to use cheats
+        // 11. Wait for AI to use cheats
+
+
+        // 9b1. Update game state with player cheat
+        // 9b2. Apply physics
+        // 9b3. Update game state
+        // 10. Handle player input
+        // 11. Apply physics
+        // 12. Update game state
+        // 13.
+
+
+
+
+
     }
 
 
@@ -91,10 +122,10 @@ public class GameManager : MonoBehaviour
     /// For now it only passes the data without adding anything but if we need to do something to the data between the publishing from the NarrativeManager
     /// and the reception from the UIManager, we should do it here
     /// </summary>
-    /// <param name="responseEvent">The event containing the published lore</param>
-    public void HandleLoreDelivery(EventLoreDelivery responseEvent)
+    /// <param name="deliveryEvent">The event containing the published lore</param>
+    public void HandleLoreDelivery(EventLoreDelivery deliveryEvent)
     {
-        Debug.Log($"GameManager: Received lore: {responseEvent._lore}");
+        Debug.Log($"GameManager: Received lore: {deliveryEvent._lore}");
         // publish event containing the lore (UIManager would be listening to that one)
     }
 

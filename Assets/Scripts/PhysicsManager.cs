@@ -1,21 +1,15 @@
 using UnityEngine;
 
-public class PhysicsManager
+public class PhysicsManager : MonoBehaviour
 {
     private GameManager _gameManager;
 
-    public PhysicsManager(GameManager gameManager)
-    {
-        _gameManager = gameManager;
-        Initialize();
-    }
-
-    private void Initialize()
+    private void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
     }
 
-    ~PhysicsManager()
+    private void OnDisable()
     {
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
     }

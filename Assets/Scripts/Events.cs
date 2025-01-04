@@ -10,6 +10,7 @@ using UnityEngine;
 // Each event is a class in this file and only contains the list of members and a constructor assigning to them the parameters provided when the event is published
 // To create a new event :
 //  - add a class to this file following the example of other events
+//  - start the class name with "Event" (it'll be cleaner for auto completion)
 //  - try to keep this file clean by puting the event in the right part of the file (ie: don't put UI events with physics events)
 //  - just list the parameters you want to the event to carry
 //  - be sure to assign the event parameters in the constructor to the class members
@@ -105,7 +106,16 @@ public class EventLoreDelivery
 //*** GameStateManager related events ***
 //***************************************
 
+/// <summary>
+/// Requests the setup of the game in terms of rules
+/// </summary>
+public class EventGameStateSetup
+{
+    public EventGameStateSetup()
+    {
 
+    }
+}
 
 //*************************************
 //*** PhysicsManager related events ***

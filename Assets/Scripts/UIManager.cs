@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UIManager
+public class UIManager : MonoBehaviour
 {
     private GameManager _gameManager;
 
@@ -13,18 +13,12 @@ public class UIManager
     private TextMeshProUGUI _displayText;
     private List<string> _log = new List<string>();
 
-    public UIManager(GameManager gameManager)
-    {
-        _gameManager = gameManager;
-        Initialize();
-    }
-
-    private void Initialize()
+    private void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
     }
 
-    ~UIManager()
+    private void OnDisable()
     {
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
     }

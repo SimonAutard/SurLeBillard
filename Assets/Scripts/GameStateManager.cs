@@ -1,23 +1,28 @@
 using UnityEngine;
 
-public class GameStateManager
+public class GameStateManager : MonoBehaviour
 {
     private GameManager _gameManager;
 
-    public GameStateManager(GameManager gameManager)
-    {
-        _gameManager = gameManager;
-        Initialize();
-    }
-
-    private void Initialize()
+    private void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
-        // setup the game before it starts (balls, cheats, etc)
+        EventBus.Subscribe<EventGameStateSetup>(InitializeGame);
     }
 
-    ~GameStateManager()
+    private void OnDisable()
     {
-        // Unsubscribe from all events before getting destroyed to avoid memory leaks
+        // Unsubscribe from all events to avoid memory leaks
+        EventBus.Unsubscribe<EventGameStateSetup>(InitializeGame);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void InitializeGame(EventGameStateSetup requestEvent)
+    {
+
+    }
+    
 }

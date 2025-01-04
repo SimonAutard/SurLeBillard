@@ -10,11 +10,6 @@ public class NarrationManager : MonoBehaviour
     //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles
     [SerializeField] Prophecy[,] prophecyMasterTable = new Prophecy[1,1]; //initilaisé à 1,1 pour les tests
 
-    public NarrationManager(GameManager gameManager)
-    {
-        _gameManager = gameManager;
-    }
-
     System.Random random = new System.Random();
     void OnEnable()
     {
@@ -41,6 +36,7 @@ public class NarrationManager : MonoBehaviour
         //désabonnement de l'venement clic de souris, pour éviter les memory leaks
         Controller.OnMouseClicked -= CreateRandomStory;
     }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
