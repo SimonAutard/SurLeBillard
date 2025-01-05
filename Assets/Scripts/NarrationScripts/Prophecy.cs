@@ -2,18 +2,6 @@ using UnityEngine;
 using System;
 using NUnit.Framework;
 using System.Collections.Generic;
-//LegoProphecy est une struct-conteneur, dont le seul but est de rassembler en un seul objet la phrase à afficher au joueur complétée et les storyEntities qui devront être affectées par la prophétie 
-public struct LegoProphecy
-{
-    public string Sentence;
-    public StoryEntity[] StoryEntities ;
-
-    public LegoProphecy(string sentence, StoryEntity[] storyEntities)
-    {
-        Sentence = sentence;
-        StoryEntities = storyEntities;
-    }
-}
 
 //Prophecy est la classe instantiée pour chaque prophétie en kit
 public class Prophecy
@@ -66,13 +54,16 @@ public class Prophecy
         return new LegoProphecy(fullProchecy, ProphecyStoryEntities.ToArray());  
     }
 
+}
+//LegoProphecy est une struct-conteneur, dont le seul but est de rassembler en un seul objet la phrase à afficher au joueur complétée et les storyEntities qui devront être affectées par la prophétie 
+public struct LegoProphecy
+{
+    public string Sentence;
+    public StoryEntity[] StoryEntities;
 
-    /// <summary>
-    /// Change létat des story entities du jeu en fonction du résultat de la prophétie
-    /// </summary>
-    /// <param name="gameEntityList"></param>
-    public void ChangeGameWorld(StoryEntity[] gameEntityList)
+    public LegoProphecy(string sentence, StoryEntity[] storyEntities)
     {
-        //Contient des refs aux entités utilisées, des refs à leurs attributs 
+        Sentence = sentence;
+        StoryEntities = storyEntities;
     }
 }

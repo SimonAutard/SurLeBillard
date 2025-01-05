@@ -6,6 +6,8 @@ public class StoryEntity
     //Attributs
     public string Name { get; protected set; }
     public float MainCharacterBond { get; protected set; }
+    private float MinBond = 0;
+    private float MaxBond = 100;
 
     // Constructeur
     public StoryEntity(string name="generic name", float mainCharacterBond = 50)
@@ -20,7 +22,14 @@ public class StoryEntity
 
     //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
     public void NewName(string name) {  Name = name; }
-    public void BondPlus(float bondPlus) { MainCharacterBond += bondPlus; }
+    public void BondPlus(float bondPlus) { MainCharacterBond = ValuePlus( MainCharacterBond, bondPlus,MinBond,MaxBond); }
+
+    protected float ValuePlus( float baseValue, float valuePlus, float minValue, float maxValue)
+    {
+        if (baseValue + valuePlus > maxValue)        { return  maxValue;    }
+        else if (baseValue + valuePlus < minValue) { return minValue;    }
+        else { return baseValue + valuePlus; }
+    }
 }
 /*
 public class StoryEntityValidator

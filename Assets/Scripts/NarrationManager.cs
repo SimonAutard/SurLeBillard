@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using static UnityEngine.EventSystems.EventTrigger;
 
 
 public class NarrationManager : MonoBehaviour
@@ -104,10 +105,13 @@ public class NarrationManager : MonoBehaviour
         string sentence = "connor va manger avec {0} près de {1}";
         Type[] types = new Type[] { typeof(Character), typeof(Place) };
         (string, object)[] valchar = new (string, object)[] { ("BondMin", 30), ("HealthMin", 30) };
-        (string, object)[] valplace = new (string, object)[] { ("BondMin", 100), ("PlaceTypeIs", "City") };
-        List<(string, object)[]> listval = new List<(string, object)[]>() { null, valplace };
-        (string, object)[] upd = new (string, object)[] { ("BondPlus", 1) };
-        List<(string, object)[]> listupd = new List<(string, object)[]>() { upd, null };
+        (string, object)[] valplace = new (string, object)[] { ("BondMin", 30), ("PlaceTypeIs", "City") };
+        List<(string, object)[]> listval = new List<(string, object)[]>() { valchar, valplace };
+        (string, object)[] updChar = new (string, object)[] { ("BondPlus", 1),("HealthPlus",1) };
+        (string, object)[] updPlace = new (string, object)[] { ("BondPlus", -100),("StatePlus",100) };
+
+
+        List<(string, object)[]> listupd = new List<(string, object)[]>() { updChar, updPlace };
         Prophecy prophecy = new Prophecy(sentence, types, listval, listupd);
         prophecyMasterTable[0, 0] = prophecy;
         CreateRandomStory(Vector3.zero);
@@ -127,6 +131,11 @@ public class NarrationManager : MonoBehaviour
         if (index1 == index2) { index2--; }
         LegoProphecy legoProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy();
         Debug.Log(legoProphecy.Sentence);
+        Debug.Log("etat initial de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = "+ ((Character)legoProphecy.StoryEntities[0]).Health);
+        Debug.Log("etat initial de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = "+ ((Place)legoProphecy.StoryEntities[1]).State);
+        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[0, 0].ProphecyUpdators);
+        Debug.Log("etat final de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = " + ((Character)legoProphecy.StoryEntities[0]).Health);
+        Debug.Log("etat final de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = " + ((Place)legoProphecy.StoryEntities[1]).State);
     }
 
     /// <summary>
@@ -237,5 +246,32 @@ public class NarrationManager : MonoBehaviour
         if (viableEntities.Count == 0) { viableEntities.Add(new StoryEntity("fake entity", 50)); }
         // On renvoie une entite aleatoire parmi les viables
         return viableEntities[random.Next(0, viableEntities.Count)];
+    }
+
+
+    /// <summary>
+    /// Change létat des story entities du jeu en fonction du résultat de la prophétie
+    /// </summary>
+    /// <param name="gameEntityList"></param>
+    public void UpdateStoryEntitiesFromProphecy(StoryEntity[] gameEntityList, List<(string, object)[]> updators)
+    {
+        for(int i = 0; i < gameEntityList.Length; i++)
+        {
+            foreach((string, object) updator in updators[i])
+            {
+                string methodName = updator.Item1; //nom de la fonction de'update de lentite
+                object methodValue = updator.Item2; // valeur associee
+
+                // Trouver la méthode par son nom
+                MethodInfo method = gameEntityList[i].GetType().GetMethod(methodName);
+                //Verification de l'existence de la méthode demandée
+                if (method != null)
+                {
+                    // Appeler la méthode en passant les paramètres
+                    method.Invoke(gameEntityList[i], new object[1] { methodValue });
+                }
+                else { throw new Exception("Méthode introuvable : " + methodName); }
+            }
+        }
     }
 }
