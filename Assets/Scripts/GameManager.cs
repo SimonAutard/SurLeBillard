@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         // initialize all specialized managers
-        _narrationManager = new NarrationManager(this);
+        //_narrationManager = new NarrationManager(this);
         _gameStateManager = new GameStateManager(this);
         _physicsManager = new PhysicsManager(this);
         _UIManager = new UIManager(this);

@@ -48,7 +48,7 @@ public class Prophecy
 
         Debug.Log("nombre d'entités à trouver pour cette prophétie = "+ProphecyStoryEntityTypes.Length);
         for (int i=0; i< ProphecyStoryEntityTypes.Length; i++) {
-            currentStoryEntity = NarrationManagerLouis.Instance.GetFittingEntity(ProphecyStoryEntityTypes[i], ProphecyValidators[i]);
+            currentStoryEntity = NarrationManager.Instance.GetFittingEntity(ProphecyStoryEntityTypes[i], ProphecyValidators[i]);
             Debug.Log("entite trouvee pour le critere n°"+i+" est "+currentStoryEntity.Name);
             if (currentStoryEntity == null)
             {
