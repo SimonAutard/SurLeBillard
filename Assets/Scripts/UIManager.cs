@@ -8,6 +8,16 @@ public class UIManager : MonoBehaviour
 {
     private GameManager _gameManager;
 
+    // Design pattern du singleton
+    private static UIManager _instance; // instance statique du ui manager
+
+    public static UIManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
 
     // used for debug/testing
     private TextMeshProUGUI _displayText;

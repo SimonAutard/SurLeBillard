@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
 {
     private GameStateManager _gameStateManager;
     private NarrationManager _narrationManager;
-    private SceneManager _physicsManager;
+    private PhysicsManager _physicsManager;
     private UIManager _UIManager;
     private Coroutine _gameplayLoop = null;
     private bool _waitForNextStep = false;
@@ -13,12 +13,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // initialize all specialized managers
-        _narrationManager = gameObject.AddComponent<NarrationManager>();
-        _gameStateManager = gameObject.AddComponent<GameStateManager>();
-        _physicsManager = gameObject.AddComponent<SceneManager>();
-        _UIManager = gameObject.AddComponent<UIManager>();
-
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventStoryBitGenerationDelivery>(HandleStoryBitDelivery);
         EventBus.Subscribe<EventLoreDelivery>(HandleLoreDelivery);

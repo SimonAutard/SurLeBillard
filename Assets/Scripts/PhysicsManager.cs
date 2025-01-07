@@ -1,8 +1,19 @@
 using UnityEngine;
 
-public class SceneManager : MonoBehaviour
+public class PhysicsManager : MonoBehaviour
 {
     private GameManager _gameManager;
+
+    // Design pattern du singleton
+    private static PhysicsManager _instance; // instance statique du game state manager
+
+    public static PhysicsManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
 
     private void OnEnable()
     {

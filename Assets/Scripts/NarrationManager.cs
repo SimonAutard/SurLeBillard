@@ -11,6 +11,18 @@ public class NarrationManager : MonoBehaviour
     [SerializeField] Prophecy[,] prophecyMasterTable = new Prophecy[1,1]; //initilaisé à 1,1 pour les tests
 
     System.Random random = new System.Random();
+
+    // Design pattern du singleton
+    private static NarrationManager instance; // instance statique du narration manager
+
+    public static NarrationManager Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
     void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time

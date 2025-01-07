@@ -4,6 +4,17 @@ public class GameStateManager : MonoBehaviour
 {
     private GameManager _gameManager;
 
+    // Design pattern du singleton
+    private static GameStateManager _instance; // instance statique du game state manager
+
+    public static GameStateManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
     private void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
