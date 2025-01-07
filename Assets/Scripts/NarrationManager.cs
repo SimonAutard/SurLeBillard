@@ -1,16 +1,33 @@
 using UnityEngine;
 using System;
+using System.Reflection;
+using Unity.VisualScripting;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+
 
 public class NarrationManager : MonoBehaviour
 {
     private GameManager _gameManager;
 
-    //Liste des thèmes de billes
-    private string[] themesArray = new string[] {"Finances","Santé","Carrière","Nature","Amitié","Amour","Spiritualité"};
-    //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles
-    [SerializeField] Prophecy[,] prophecyMasterTable = new Prophecy[1,1]; //initilaisé à 1,1 pour les tests
+    System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
 
-    System.Random random = new System.Random();
+    //Liste des thï¿½mes de billes
+    private string[] themesArray = new string[] { "Finances", "Santï¿½", "Carriï¿½re", "Nature", "Amitiï¿½", "Amour", "Spiritualitï¿½" };
+
+    //PROPHETIES
+    //Tableau gï¿½nï¿½ral des correspondances entre deux thï¿½mes et leurs prophï¿½ties possibles
+    [SerializeField] Prophecy[,] prophecyMasterTable = new Prophecy[1, 1]; //initilaisï¿½ ï¿½ 1,1 pour les tests
+
+    //STORY ENTITIES
+    //Perso principal
+    MainCharacter MainCharacter;
+    //Listes des types d'entitï¿½s
+    List<Character> allCharacters = new List<Character>();
+    List<Place> allPlaces = new List<Place>();
+    List<StoryActivity> allStoryActivities = new List<StoryActivity>();
+    List<StoryItem> allStoryItems = new List<StoryItem>();
 
     // Design pattern du singleton
     private static NarrationManager instance; // instance statique du narration manager
@@ -22,6 +39,23 @@ public class NarrationManager : MonoBehaviour
             return instance;
         }
     }
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    /*
+    public NarrationManager(GameManager gameManager)
+    {
+        _gameManager = gameManager;
+    }*/
 
     void OnEnable()
     {
@@ -30,9 +64,9 @@ public class NarrationManager : MonoBehaviour
         EventBus.Subscribe<EventStoryUpdateRequest>(HandleStoryUpdateRequest);
         EventBus.Subscribe<EventLoreRequest>(HandleLoreRequest);
 
-        // abonnement à l'evenement collisoin de billes
+        // abonnement ï¿½ l'evenement collisoin de billes
         BallRoll.TwoBallsCollision += TwoBallsCollisionNarration;
-        // Abonnement à l'evenement de clic de la souris
+        // Abonnement ï¿½ l'evenement de clic de la souris
         Controller.OnMouseClicked += CreateRandomStory;
     }
 
@@ -43,25 +77,43 @@ public class NarrationManager : MonoBehaviour
         EventBus.Unsubscribe<EventStoryUpdateRequest>(HandleStoryUpdateRequest);
         EventBus.Unsubscribe<EventLoreRequest>(HandleLoreRequest);
 
-        // désbonnement à l'evenement collisoin de billes
+        // dï¿½sbonnement ï¿½ l'evenement collisoin de billes
         BallRoll.TwoBallsCollision -= TwoBallsCollisionNarration;
-        //désabonnement de l'venement clic de souris, pour éviter les memory leaks
+        //dï¿½sabonnement de l'venement clic de souris, pour ï¿½viter les memory leaks
         Controller.OnMouseClicked -= CreateRandomStory;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
-    {
-        //initialisation simple pour test
-        Prophecy prophecy = new Prophecy(0);
-        prophecyMasterTable[0,0] = prophecy;
+    {       
+        //initialisation entity simple pour test
+        Character charTest = new Character(name: "sarah", mainCharacterBond: 60, health: 10);
+        allCharacters.Add(charTest);
+        charTest = new Character(name: "william", mainCharacterBond: 60, health: 10);
+        allCharacters.Add(charTest);
+        charTest = new Character(name: "henry", mainCharacterBond: 60, health: 60);
+        allCharacters.Add(charTest);
+
+        Place placeTest = new Place(name: "dublin", mainCharacterBond: 10, placeType: "City");
+        allPlaces.Add(placeTest);
+        placeTest = new Place(name: "Moher", mainCharacterBond: 60, placeType: "Nature");
+        allPlaces.Add(placeTest);
+        placeTest = new Place(name: "Galway", mainCharacterBond: 60, placeType: "City");
+        allPlaces.Add(placeTest);
+
+        //initialisation prï¿½phï¿½tie simple pour test
+        string sentence = "connor va manger avec {0} prï¿½s de {1}";
+        Type[] types = new Type[] { typeof(Character), typeof(Place) };
+        (string, object)[] valchar = new (string, object)[] { ("BondMin", 30), ("HealthMin", 30) };
+        (string, object)[] valplace = new (string, object)[] { ("BondMin", 100), ("PlaceTypeIs", "City") };
+        List<(string, object)[]> listval = new List<(string, object)[]>() { null, valplace };
+        (string, object)[] upd = new (string, object)[] { ("BondPlus", 1) };
+        List<(string, object)[]> listupd = new List<(string, object)[]>() { upd, null };
+        Prophecy prophecy = new Prophecy(sentence, types, listval, listupd);
+        prophecyMasterTable[0, 0] = prophecy;
+        CreateRandomStory(Vector3.zero);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     
     private void TwoBallsCollisionNarration(string ball1Theme, string ball2Theme)
     {
@@ -74,8 +126,8 @@ public class NarrationManager : MonoBehaviour
         int index1 = random.Next(0, themesArray.Length);
         int index2 = random.Next(0, themesArray.Length);
         if (index1 == index2) { index2--; }
-        string fullProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy().sentence;
-        Debug.Log(fullProphecy);
+        LegoProphecy legoProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy();
+        Debug.Log(legoProphecy.Sentence);
     }
 
     /// <summary>
@@ -138,5 +190,53 @@ public class NarrationManager : MonoBehaviour
         // TODO assemble a string or whatever format we decide, containing all the lore info requested.
         string lore = "Placeholder lore";
         return lore;
+    }
+
+    /// <summary>
+    /// Va chercher une  entitï¿½ qui correspond aux propriï¿½tï¿½s  fournies en argument 
+    /// </summary>
+    public StoryEntity GetFittingEntity(Type requiredType, (string, object)[] validators)
+    {
+        //Liste des entitï¿½s du type demandï¿½ en argument renseignï¿½ sous type gï¿½nï¿½rique
+        List<StoryEntity> possibleEntities = new List<StoryEntity>();
+        //Selection de la liste de story entities correspodnant au type demandï¿½
+        if (requiredType == typeof(Character)) { possibleEntities = allCharacters.Cast<StoryEntity>().ToList(); }
+        if (requiredType == typeof(Place)) { possibleEntities = allPlaces.Cast<StoryEntity>().ToList(); }
+        if (requiredType == typeof(StoryActivity)) { possibleEntities = allStoryActivities.Cast<StoryEntity>().ToList(); }
+        if (requiredType == typeof(StoryItem)) { possibleEntities = allStoryItems.Cast<StoryEntity>().ToList(); }
+
+        //Liste des entitï¿½s rï¿½pondant ï¿½ tous les critï¿½res demandï¿½s
+        List<StoryEntity> viableEntities = new List<StoryEntity>(); //Initialisï¿½e vide et remplie au fur et ï¿½ mesure
+        if (validators != null)
+        {
+            foreach (StoryEntity entity in possibleEntities) // Check de chaque entite viable
+            {
+                bool isCandidate = true; // booleen de la candidature de cette entite pour la prophetie
+                foreach ((string, object) validator in validators)
+                {
+                    string methodName = validator.Item1; //nom de la fonction de check de lentite
+                    object methodValue = validator.Item2; // valeur associee
+                                                          // Trouver la mï¿½thode par son nom
+                    MethodInfo method = requiredType.GetMethod(methodName);
+                    //Verification de l'existence de la mï¿½thode demandï¿½e
+                    if (method != null)
+                    {
+                        // Appeler la mï¿½thode en passant les paramï¿½tres
+                        isCandidate = (bool)method.Invoke(entity, new object[1] { methodValue });
+                    }
+                    else { throw new Exception("Mï¿½thode introuvable : " + methodName); }
+                    // On sort de la boucle des quun critere nest pas verifie pour passer a lentite suivante parmi les candidates
+                    if (!isCandidate) { break; }
+                }
+                // Si la candidature est validï¿½e, on ajoute cette entite a la liste des entities viables
+                if (isCandidate) { viableEntities.Add(entity); }
+            }
+        }
+        // si aucun validator n'a ete renseignï¿½ pour cette entite, alors on prend n'importe quelle entitï¿½
+        else { viableEntities = possibleEntities; }
+        // si aucune entite ne remplissait les critï¿½res, alors on en cree une 
+        if (viableEntities.Count == 0) { viableEntities.Add(new StoryEntity("fake entity", 50)); }
+        // On renvoie une entite aleatoire parmi les viables
+        return viableEntities[random.Next(0, viableEntities.Count)];
     }
 }
