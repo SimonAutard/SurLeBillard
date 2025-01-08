@@ -39,6 +39,7 @@ public class NarrationManager : MonoBehaviour
             return instance;
         }
     }
+
     private void Awake()
     {
         if (instance == null)
@@ -51,6 +52,7 @@ public class NarrationManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     /*
     public NarrationManager(GameManager gameManager)
     {

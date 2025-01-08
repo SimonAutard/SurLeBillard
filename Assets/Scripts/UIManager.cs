@@ -19,6 +19,19 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     // used for debug/testing
     private TextMeshProUGUI _displayText;
     private List<string> _log = new List<string>();

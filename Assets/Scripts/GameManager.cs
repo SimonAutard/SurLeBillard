@@ -3,16 +3,30 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private GameStateManager _gameStateManager;
-    private NarrationManager _narrationManager;
-    private PhysicsManager _physicsManager;
-    private UIManager _UIManager;
+    private static GameManager _instance; // instance statique du game manager
     private Coroutine _gameplayLoop = null;
     private bool _waitForNextStep = false;
-    
+
+    public static GameManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
 
     private void Awake()
     {
+        if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventStoryBitGenerationDelivery>(HandleStoryBitDelivery);
         EventBus.Subscribe<EventLoreDelivery>(HandleLoreDelivery);
