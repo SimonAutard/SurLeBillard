@@ -13,6 +13,8 @@ public class UIManager
     private TextMeshProUGUI _displayText;
     private List<string> _log = new List<string>();
 
+    
+
     public UIManager(GameManager gameManager)
     {
         _gameManager = gameManager;
