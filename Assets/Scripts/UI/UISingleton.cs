@@ -7,6 +7,8 @@ public class UISingleton : MonoBehaviour
     public ClickState currentState = ClickState.FirstAction;
     public bool isReady = false;
     public bool isCollided = false;
+    public float force;
+    public bool isClothoTurn = false;
     private void Awake()
     {
         if (Instance != null && Instance != this)

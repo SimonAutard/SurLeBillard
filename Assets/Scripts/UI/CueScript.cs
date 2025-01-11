@@ -1,12 +1,12 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
+//using UnityEngine.UIElements;
 using System.Collections;
 using static UnityEngine.GraphicsBuffer;
 using UnityEngine.Rendering;
 using static UISingleton;
-
+using UnityEngine.UI;
 
 public class CueScript : MonoBehaviour
 {
@@ -16,10 +16,14 @@ public class CueScript : MonoBehaviour
     float distance = 0.1f;
     public float radius = 0.1f;
     [SerializeField] Vector3 offset;
-    [SerializeField] GameObject powerSlider;
+    [SerializeField] Slider slider;
     public float downAngle;
     Vector3 pos;
     float horizontalInput;
+    int minForce = 5;
+    int maxForce = 8;
+
+    
 
     private Transform pivot;
     public float maxPower = 10f; // La distance maximale de recul de la queue
@@ -40,8 +44,8 @@ public class CueScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
-       
+
+        this.gameObject.SetActive(false);
         isValidate = false;
         isCollision = false;
 
@@ -72,18 +76,18 @@ public class CueScript : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, -90, 0) * transform.rotation;
 
             //gestion puissance
-            if (radius >= 5 && radius <= 8)
+            if (radius >= minForce && radius <= maxForce)
             {
                  radius += Input.GetAxis("Mouse ScrollWheel");
-                //powerSlider.gameObject.transform.GetComponent<Slider>().value = radius;
+                 slider.gameObject.transform.GetComponent<Slider>().value = radius;
                 
-                if (radius < 5)
+                if (radius < minForce)
                 {
-                    radius = 5;
+                    radius = minForce;
                 }
-                if (radius > 8)
+                if (radius > maxForce)
                 {
-                    radius = 8;
+                    radius = maxForce;
                 }
             }
 
@@ -104,11 +108,19 @@ public class CueScript : MonoBehaviour
         if(isValidate == true && !isCollision)
         {
             //Debug.Log(radius);
+            CalculateForce(radius);
             transform.position = Vector3.MoveTowards(transform.position, orb.position, Time.deltaTime*radius * radius);
         }
 
     }
 
+    void CalculateForce(float radius)
+    {
+        UISingleton.Instance.force = (radius - minForce)/(maxForce - minForce);
+        //Debug.Log("radius" + radius);
+        //Debug.Log("force" + UISingleton.Instance.force);
+            
+        }
   
     void OnCollisionEnter(Collision collision)
     {

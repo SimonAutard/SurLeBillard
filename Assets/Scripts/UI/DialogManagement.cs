@@ -15,6 +15,7 @@ public class DialogManagement : MonoBehaviour
     bool _isBegining;
     bool _isRound;
     GameObject goddess;
+    [SerializeField] GameObject Cue;
 
 
     Dictionary<string, string> textDialog = new Dictionary<string, string>()
@@ -32,9 +33,9 @@ public class DialogManagement : MonoBehaviour
         /*this.gameObject.transform.GetChild(0).gameObject.SetActive(false);
         this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
         _childNumber = 0;*/
-        
+
         //Debug.Log(textDialog.Count);
-        _isBegining = true;
+        UISingleton.Instance.isClothoTurn = true;
         _isRound = false;
         this.gameObject.transform.GetChild(0).gameObject.SetActive(false);
         this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
@@ -45,20 +46,20 @@ public class DialogManagement : MonoBehaviour
     void Update()
     {
         
-        if (_isBegining == true)
+        if (UISingleton.Instance.isClothoTurn == true)
         {
             ShowFirstDialog();
         }
 
-        if (_isBegining == false && Input.GetMouseButtonDown(0) && _isRound)
+        if (UISingleton.Instance.isClothoTurn == false && Input.GetMouseButtonDown(0) && _isRound)
         {
-            this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
-            //Debug.Log("début tour");
-            _isRound = false;
-            //StartCoroutine(timer());
-            UISingleton.Instance.isReady = true;
-            //UISingleton.Instance.currentState = ClickState.SecondAction;
+            CloseFirstDialog();
 
+        }
+
+        if(UISingleton.Instance.isReady == true)
+        {
+            Cue.SetActive(true);
         }
         /*if (Input.GetMouseButtonDown(0))
         {
@@ -86,14 +87,14 @@ public class DialogManagement : MonoBehaviour
         
         void ShowFirstDialog()
         {
-            _isBegining = false;
+            UISingleton.Instance.isClothoTurn = false;
             //Debug.Log(textDialog.Count);
             this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
             goddess = this.gameObject.transform.GetChild(1).gameObject;
             goddess.GetComponentInChildren<TextMeshProUGUI>().text = textDialog["begining"];
             _isRound = true;
 
-    }
+         }
 
         void ShowDialog()
         {
@@ -121,11 +122,21 @@ public class DialogManagement : MonoBehaviour
         
         }
 
+    void CloseFirstDialog()
+    {
+        this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
+        //Debug.Log("début tour");
+        _isRound = false;
+        StartCoroutine(timer());
+        UISingleton.Instance.isReady = true;
+        //UISingleton.Instance.currentState = ClickState.SecondAction;
+    }
+
     IEnumerator timer()
     {
        
         //Wait for 4 seconds
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
     }
 }

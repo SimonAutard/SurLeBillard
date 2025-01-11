@@ -22,6 +22,11 @@ public class StoryManagement : MonoBehaviour
     // Update is called once per frame
     public void ShowStory()
     {
+
+        /*foreach(Transform child in GameObject.transform)
+         {
+               child.gameObject.setActive(true);
+        }*/
         this.gameObject.transform.GetChild(0).gameObject.SetActive(true);
         this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
         this.gameObject.transform.GetChild(2).gameObject.SetActive(true);

@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+
 public class UIManager : MonoBehaviour
 {
     // Design pattern du singleton
     private static UIManager _instance; // instance statique du ui manager
 
+    //[SerializeField] GameObject cue;
     public static UIManager Instance
     {
         get
@@ -112,6 +114,9 @@ public class UIManager : MonoBehaviour
             // - Dialogues and other needed UI elements
             // - Cue input handling
             // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
+
+            //UISingleton.Instance.isClothoTurn = true;
+
         }
         else
         {
@@ -121,6 +126,8 @@ public class UIManager : MonoBehaviour
             // - Fetch (directly, no event) AI behaviour to know where to place the cue
             // - Automated play animation (non player)
             // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
+
+            //UISingleton.Instance.isClothoTurn = false;
         }
         // placeholder values
         float angle = 0.0f;
