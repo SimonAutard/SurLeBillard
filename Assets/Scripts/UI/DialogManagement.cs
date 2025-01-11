@@ -4,6 +4,8 @@ using TMPro;
 using System;
 using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.InputSystem;
+using System.Collections;
+using static UISingleton;
 
 public class DialogManagement : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class DialogManagement : MonoBehaviour
     bool _isRound;
     GameObject goddess;
 
+
     Dictionary<string, string> textDialog = new Dictionary<string, string>()
         {
             {"begining", "A toi de jouer !"},
@@ -22,6 +25,8 @@ public class DialogManagement : MonoBehaviour
             {"defeat", "Dommage pour toi, son destin est scellé"}
         };
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+
     void Start()
     {
         /*this.gameObject.transform.GetChild(0).gameObject.SetActive(false);
@@ -48,9 +53,11 @@ public class DialogManagement : MonoBehaviour
         if (_isBegining == false && Input.GetMouseButtonDown(0) && _isRound)
         {
             this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
-            Debug.Log("début tour");
+            //Debug.Log("début tour");
             _isRound = false;
+            //StartCoroutine(timer());
             UISingleton.Instance.isReady = true;
+            //UISingleton.Instance.currentState = ClickState.SecondAction;
 
         }
         /*if (Input.GetMouseButtonDown(0))
@@ -84,7 +91,7 @@ public class DialogManagement : MonoBehaviour
             this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
             goddess = this.gameObject.transform.GetChild(1).gameObject;
             goddess.GetComponentInChildren<TextMeshProUGUI>().text = textDialog["begining"];
-        _isRound = true;
+            _isRound = true;
 
     }
 
@@ -112,5 +119,13 @@ public class DialogManagement : MonoBehaviour
             }
 
         
+        }
+
+    IEnumerator timer()
+    {
+       
+        //Wait for 4 seconds
+        yield return new WaitForSeconds(1f);
+
     }
 }

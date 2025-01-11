@@ -3,8 +3,10 @@ using UnityEngine;
 public class UISingleton : MonoBehaviour
 {
     public static UISingleton Instance { get; private set; }
-
+    public enum ClickState { FirstAction, SecondAction }
+    public ClickState currentState = ClickState.FirstAction;
     public bool isReady = false;
+    public bool isCollided = false;
     private void Awake()
     {
         if (Instance != null && Instance != this)

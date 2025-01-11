@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 using System.Collections;
 using static UnityEngine.GraphicsBuffer;
 using UnityEngine.Rendering;
+using static UISingleton;
 
 
 public class CueScript : MonoBehaviour
@@ -15,6 +16,7 @@ public class CueScript : MonoBehaviour
     float distance = 0.1f;
     public float radius = 0.1f;
     [SerializeField] Vector3 offset;
+    [SerializeField] GameObject powerSlider;
     public float downAngle;
     Vector3 pos;
     float horizontalInput;
@@ -28,6 +30,7 @@ public class CueScript : MonoBehaviour
     Vector3 orbVector;
     bool isValidate;
     Vector3 queuePosition;
+    bool isCollision;
 
     private void Awake()
     {
@@ -37,139 +40,82 @@ public class CueScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
-        //pivot = orb;
-        //transform.parent = pivot;
-        //transform.localPosition = Vector3.zero;
-        //transform.position += Vector3.up * radius;
-        //transform.position = Vector3.up + offset;
-        //initialCuePosition = transform.position;
-        //initialPosition = transform.position - orb.position; // Calcul du décalage initial
+        
+       
         isValidate = false;
+        isCollision = false;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*float scrollInput = Input.GetAxis("Mouse X");
-        Vector3 newPosition = transform.position + Vector3.up * scrollInput * maxPower;
-        // Adjust the object's position
-        transform.position = newPosition;*/
-        //transform.LookAt(orb.position);
-        //horizontalInput = Input.GetAxis("Mouse X") * speed * Time.deltaTime;
-        //transform.RotateAround(orb.position, Vector3.up, 0);
-
-        // this.transform.Rotate((Input.GetAxis("Mouse X") * speed * Time.deltaTime), (Input.GetAxis("Mouse Y") * speed * Time.deltaTime), 0, Space.World);
-
+       
+        //oriente la queue tant que l'utilisateur n'a pas clique
         if(isValidate == false /*&&  UISingleton.Instance.isReady == true*/)
         {
-            
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+            //gestion rotation
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
-        if (groundPlane.Raycast(ray, out float distance))
-        {
-            clickPosition = ray.GetPoint(distance);
-            clickPosition.y = 0f;
-        }
-
-        queuePosition = (clickPosition - orb.position).normalized * radius;
-        transform.position = queuePosition + orb.position;
-        orbVector = orb.position - transform.position;
-        Quaternion rotation = Quaternion.LookRotation(orbVector, Vector3.up);
-        transform.rotation = rotation;
-        transform.rotation = Quaternion.Euler(0, -90, 0) * transform.rotation;
-
-        if (radius >= 5 && radius <= 8)
-        {
-            radius += Input.GetAxis("Mouse ScrollWheel");
-            if (radius < 5)
+            if (groundPlane.Raycast(ray, out float distance))
             {
-                radius = 5;
+                clickPosition = ray.GetPoint(distance);
+                clickPosition.y = 0f;
             }
-            if (radius > 8)
+
+            queuePosition = (clickPosition - orb.position).normalized * radius;
+            transform.position = queuePosition + orb.position;
+            orbVector = orb.position - transform.position;
+            Quaternion rotation = Quaternion.LookRotation(orbVector, Vector3.up);
+            transform.rotation = rotation;
+            transform.rotation = Quaternion.Euler(0, -90, 0) * transform.rotation;
+
+            //gestion puissance
+            if (radius >= 5 && radius <= 8)
             {
-                radius = 8;
+                 radius += Input.GetAxis("Mouse ScrollWheel");
+                //powerSlider.gameObject.transform.GetComponent<Slider>().value = radius;
+                
+                if (radius < 5)
+                {
+                    radius = 5;
+                }
+                if (radius > 8)
+                {
+                    radius = 8;
+                }
             }
-        }
 
         }
-        if (Input.GetMouseButtonDown(0) /*&& UISingleton.Instance.isReady == true*/)
+
+   
+        if (Input.GetMouseButtonDown(0) && UISingleton.Instance.isReady == true)
         {
             isValidate = true;
 
             //HitBall(radius, queuePosition);
-            Debug.Log(Vector3.up);
+            //Debug.Log(UISingleton.Instance.isReady);
+            //Debug.Log(Vector3.up);
            
         }
-        if(isValidate == true)
-        {
 
-            //queuePosition = (clickPosition - orb.position).normalized * radius;
-            //transform.Translate(queuePosition * Time.deltaTime);
-            //transform.position = queuePosition + orb.position;
-            //orbVector = orb.position - transform.position;
-            Debug.Log(radius);
-            transform.position = Vector3.MoveTowards(transform.position, orb.position, Time.deltaTime*radius);
-                
-            
-            
+        //l'utilisateur a clique et la queue va vers la bille
+        if(isValidate == true && !isCollision)
+        {
+            //Debug.Log(radius);
+            transform.position = Vector3.MoveTowards(transform.position, orb.position, Time.deltaTime*radius * radius);
         }
 
-
-
-        //this.transform.Translate(queuePosition * Input.GetAxis("Mouse ScrollWheel"));
-
-
-        //Vector3 normalizedDirection = (this.transform.position - orb.transform.position).normalized;
-        //this.transform.Translate(normalizedDirection * Input.GetAxis("Mouse ScrollWheel"));
-        //this.transform.Translate(this.transform.position * Input.GetAxis("Mouse ScrollWheel"));
-        //transform.LookAt(orb);
-
-        /*float scrollInput = Input.GetAxis("Mouse ScrollWheel");  // Entrée de la molette
-        if (scrollInput != 0)
-        {
-            currentPower = Mathf.Clamp(currentPower + scrollInput * powerStep, 0f, maxPower);
-            AdjustCuePosition();
-        }*/
-
-
-        //float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        //Vector3 newPosition = transform.position + Vector3.up * scrollInput * maxPower;
-        // Adjust the object's position
-        //transform.position = newPosition;
-
-
-
-        /* // Position de la souris en coordonnées mondiales
-         Vector3 mousePosition = Input.mousePosition;
-         mousePosition.z = Mathf.Abs(Camera.main.transform.position.z);  // Profondeur de la caméra pour conversion correcte
-         Vector3 worldMousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-         worldMousePosition.z = 0;  // Bloquer le Z pour 2D
-
-         // Calcul de la direction et de l'angle
-         Vector3 direction = worldMousePosition - orb.position;
-         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-         // Appliquer la rotation à la queue autour du pivot
-         transform.position = orb.position;  // La queue suit la bille
-         transform.rotation = Quaternion.Euler(0, 0, angle);*/
     }
 
-    /* void turn()
-     {
-         transform.position = orb.position + offset;
-         transform.LookAt(orb.position);
-         transform.localEulerAngles = new Vector3(downAngle, transform.localEulerAngles.y, 0);
-     }*/
-
-
-    /*void HitBall(float radius, Vector3 queuePosition)
+  
+    void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("OK");
-        //this.transform.Translate(queuePosition * Input.GetAxis("Mouse ScrollWheel"));
-       Debug.Log(Vectp)
-        transform.Translate(Vector3.up * Time.deltaTime);
-    }*/
+        if (collision.gameObject.tag == "BilleBlanche")
+        {
+            isCollision = true;
+        }
+    }
+
 }
