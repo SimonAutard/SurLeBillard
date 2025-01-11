@@ -1,0 +1,17 @@
+using UnityEngine;
+
+public class UIFeedback : GameLoopStep
+{
+    public UIFeedback(int index, int nextStep) : base (index, nextStep)
+    {
+
+    }
+
+    public override bool Execute()
+    {
+        base.Execute();
+        Debug.Log("GameManager: Requesting end turn feedback.");
+        EventBus.Publish(new EventFeedbackRequest());
+        return true;
+    }
+}

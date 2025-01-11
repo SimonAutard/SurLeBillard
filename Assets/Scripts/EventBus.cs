@@ -8,9 +8,9 @@ public static class EventBus
 
     /// <summary>
     /// Subscribing to an event will trigger the specified method when the event is broadcasted
-    /// Example of use: EventBus.Subscribe<EventStoryBitGenerationDelivery>(HandleStoryBitDelivery);
+    /// Example of use: EventBus.Subscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
     /// EventBus can be called anywhere since it's static.
-    /// In this example we subscribe the method HandleStoryBitDelivery to the event EventStoryBitGenerationDelivery.
+    /// In this example we subscribe the method HandleForceApplicationToWhiteRequest to the event EventApplyForceToWhiteRequest.
     /// To see how the events work and to create more, see the READ ME section at the top of the Events.cs file
     /// </summary>
     /// <typeparam name="T">The type of the event you're subscribing to that will trigger the specified method</typeparam>
@@ -47,10 +47,10 @@ public static class EventBus
 
     /// <summary>
     /// Publishing an event broadcasts it, meaning that all methods subscribed to it will trigger.
-    /// Example of use: EventBus.Publish(new EventStoryBitGenerationRequest(wordA, wordB, positive));
+    /// Example of use: EventBus.Publish(new EventApplyForceToWhiteRequest(angle, force));
     /// EventBus can be called anywhere since it's static.
     /// The parameter of the Publish method is the constructor of the event with all the necessary parameters.
-    /// In this example we publish EventStoryBitGenerationRequest with 3 parameters (wordA, wordB and positive).
+    /// In this example we publish EventApplyForceToWhiteRequest with 2 parameters (angle and force).
     /// Every method previously subscribed to this event will trigger and be able to extract the parameters from the event to use them as they see fit
     /// To see how the events work and to create more, see the READ ME section at the top of the Events.cs file
     /// </summary>

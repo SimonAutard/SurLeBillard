@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    private GameManager _gameManager;
-
     // Design pattern du singleton
     private static UIManager _instance; // instance statique du ui manager
 
@@ -39,17 +37,21 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
-        EventBus.Subscribe<EventDisplayGameUIRequest>(HandleDisplayGameUIRequest);
+        EventBus.Subscribe<EventInitialBreakRequest>(HandleInitialBreakRequest);
+        EventBus.Subscribe<EventFeedbackRequest>(HandleFeedbackRequest);
+        EventBus.Subscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
     }
 
     private void OnDisable()
     {
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
-        EventBus.Unsubscribe<EventDisplayGameUIRequest>(HandleDisplayGameUIRequest);
+        EventBus.Unsubscribe<EventInitialBreakRequest>(HandleInitialBreakRequest);
+        EventBus.Unsubscribe<EventFeedbackRequest>(HandleFeedbackRequest);
+        EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
     }
 
     /// <summary>
-    /// Called by UI when the player actually starts the game
+    /// Called by UI when the player actually starts the game (basically: the button "new game" has been clicked)
     /// </summary>
     private void StartNewGame()
     {
@@ -58,15 +60,72 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Displays/sets up all UI elements that'll be used throughout the game (camera is also setup here).
-    /// Anything that needs to be done before the initial break should be done here too.
+    /// Displays any needed dialogue between characters during the initial break and play the animation for it
     /// </summary>
     /// <param name="requestEvent"></param>
-    private void HandleDisplayGameUIRequest(EventDisplayGameUIRequest requestEvent)
+    private void HandleInitialBreakRequest(EventInitialBreakRequest requestEvent)
     {
-        // TODO display UI elements
-        // Setup camera
-        // Display some dialogue if needed
+        Debug.Log("UIManager: Displaying everything needed for the initial break.");
+        // TODO:
+        // - Dialogues and other needed UI elements
+        // - Fetch (directly, no event) AI behaviour to know where to place the cue
+        // - Automated play animation (non player)
+        // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
+        
+        // placeholder values
+        float angle = 0.0f;
+        float force = 1.0f;
+        Debug.Log("UIManager: Requesting force application.");
+        EventBus.Publish(new EventApplyForceToWhiteRequest(angle, force));
+
+    }
+
+    /// <summary>
+    /// Display dialogs and updates the UI based on what happenned during the turn
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void HandleFeedbackRequest(EventFeedbackRequest requestEvent)
+    {
+        Debug.Log("UIManager: Displaying info about what happened during the turn.");
+        Debug.Log("UIManager: Displaying dialogs.");
+        // TODO
+        // - Fetch (directly, no event) needed data from GameStateManager (collisions, pocketings, etc)
+        // - Update UI (opacity on pocketed balls, etc)
+        // - Fetch (directly, no event) generated prophecies from NarrationManager
+        // - Display prophecies recap
+        // - Dialogs
+        
+        Debug.Log("UIManager: Requesting next step.");
         EventBus.Publish(new EventGameloopNextStepRequest());
+    }
+
+    /// <summary>
+    /// Does everything needed on UI side to handle the start of the turn, depending on the active player
+    /// </summary>
+    /// <param name="requestEvent">contains _activePlayer</param>
+    private void HandleNextTurnUIDisplayRequest(EventNextTurnUIDisplayRequest requestEvent)
+    {
+        if (requestEvent._activePlayer == ActivePlayerName.Clotho)
+        {
+            Debug.Log("UIManager: Displaying everything needed for player input");
+            // TODO:
+            // - Dialogues and other needed UI elements
+            // - Cue input handling
+            // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
+        }
+        else
+        {
+            Debug.Log("UIManager: Displaying everything needed for AI auto play");
+            // TODO:
+            // - Dialogues and other needed UI elements
+            // - Fetch (directly, no event) AI behaviour to know where to place the cue
+            // - Automated play animation (non player)
+            // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
+        }
+        // placeholder values
+        float angle = 0.0f;
+        float force = 1.0f;
+        Debug.Log("UIManager: Requesting force application.");
+        EventBus.Publish(new EventApplyForceToWhiteRequest(angle, force));
     }
 }
