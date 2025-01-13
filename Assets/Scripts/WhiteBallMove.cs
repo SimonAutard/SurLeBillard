@@ -3,19 +3,24 @@ using UnityEngine;
 // La bille hérite de BallRoll qui est la classé générale pour les billes, gérant toute la partie collisions
 public class WhiteBallMove : BallRoll
 {
-    public float hitForce = 1;// Coef de force du coup de queue
+    public float forceFactor = 1;// Coef de force du coup de queue
     void OnEnable()
     {
         // Abonnement à l'evenement de clic de la souris
-        Controller.OnMouseClicked += HandleMouseClick;
+        //Controller.OnMouseClicked += HandleMouseClick;
+        EventBus.Subscribe<EventApplyForceToWhiteRequest>(PushThisBall);
     }
 
     void OnDisable()
     {
         //désabonnement de l'venement clic de souris, pour éviter les memory leaks
-        Controller.OnMouseClicked -= HandleMouseClick;
+        //Controller.OnMouseClicked -= HandleMouseClick;
+        EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(PushThisBall);
     }
-
+    /// <summary>
+    /// Fonction de déplacement de la bille blanche reservee au debug car declenchee par clic de souris
+    /// </summary>
+    /// <param name="clickPosition"></param>
     private void HandleMouseClick(Vector3 clickPosition)
     {
         // Restreint le mouvement aux axes X et Z
@@ -23,7 +28,32 @@ public class WhiteBallMove : BallRoll
 
         // Calcule la direction et la vitesse
         direction = (transform.position - clickPosition).normalized;
-        speed = hitForce * Vector3.Distance(transform.position, clickPosition);
+        speed = forceFactor * Vector3.Distance(transform.position, clickPosition);
     }
 
+    /// <summary>
+    /// Fonction de déplacement de la bille blanche nominale, declenchee par un event du UIManager
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void PushThisBall(EventApplyForceToWhiteRequest requestEvent)
+    {
+        //Partie debug au cas où l'angle ne amrche pas
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+
+        if (groundPlane.Raycast(ray, out float distance))
+        {
+            Vector3 clickPosition = ray.GetPoint(distance);
+            clickPosition.y = transform.position.y;
+        }
+
+        // Récupère les données du coup
+        float angle = requestEvent._angle;
+        float force = requestEvent._force;
+
+        // Calcule la direction et la vitesse
+        //direction = (transform.position - clickPosition).normalized;
+        direction = Vector3.left;
+        speed = force * forceFactor;
+    }
 }

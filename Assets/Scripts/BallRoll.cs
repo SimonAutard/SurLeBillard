@@ -9,25 +9,28 @@ public class BallRoll : MonoBehaviour
     public string ballSymbol; //thème de la bille
 
     // Variables de déplacement
-    [SerializeField]    protected float speed = 0; // vitesse de la bille à chaque instant
+    public float speed { get; protected set; } // vitesse de la bille à chaque instant
     protected Vector3 direction; // direction de la bille à chaque instant. Normalisé.
     [SerializeField] private float drag = 0.5f; // Coef des frottements du tapis sur la bille
     [SerializeField] private float bandSpeedReductionFactor = 0.8f; //coef d'atténuation de la vitesse par les bandes
+    private float minSpeedToMove = 0.1f;
 
     //Evenements
     public static event Action<string,string> TwoBallsCollision; // evenement de la collision de deux billes
-    public static event Action<string> BallPocketed; // evenement de destruction de la bille
+    public static event Action<BallRoll> BallPocketed; // evenement de destruction de la bille
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        // Vitese seuil sous laquelle la bille est consideree arretee
+        minSpeedToMove = PhysicsManager.Instance.minSpeedForBalls ;
+        speed = 0;
     }
 
     void Update()
     {
         // Si la vitesse est suffisante, on continue de faire rouelr la bille
-        if (speed > 0.1f)
+        if (speed > minSpeedToMove)
         {
             transform.position += direction * speed * Time.deltaTime;
             speed -= drag * Time.deltaTime; // les frottements sont incarnés par une réduction linéaire de la vitesse
@@ -128,7 +131,7 @@ public class BallRoll : MonoBehaviour
         if(hit.collider != null && hit.collider.gameObject.tag == "Poche")
         {
             Debug.Log("bille "+gameObject.GetComponent<Renderer>().material.name+" empochée");
-            BallPocketed?.Invoke(ballSymbol);
+            BallPocketed?.Invoke(this);
             Destroy(this.gameObject);
         }
     }
