@@ -47,6 +47,14 @@ public class GameStateManager : MonoBehaviour
         EventBus.Unsubscribe<EventNextPlayerTurnStartRequest>(HandleNextPlayerTurnStartRequest);
     }
 
+    private void OnDestroy()
+    {
+        // Unsubscribe from all events to avoid memory leaks
+        EventBus.Unsubscribe<EventNewGameSetupRequest>(HandleNewGameSetupRequest);
+        EventBus.Unsubscribe<EventApplyRulesRequest>(HandleRulesApplicationRequest);
+        EventBus.Unsubscribe<EventNextPlayerTurnStartRequest>(HandleNextPlayerTurnStartRequest);
+    }
+
     /// <summary>
     /// Sets up the initial state of a game (data only)
     /// </summary>
@@ -95,7 +103,7 @@ public class GameStateManager : MonoBehaviour
 
         if (_gameEnded)
         {
-
+            // TODO "rules" related things to handle the end of the game (if needed)
         }
         else
         {
@@ -107,11 +115,16 @@ public class GameStateManager : MonoBehaviour
             else
             {
                 _activePlayer = ActivePlayerName.Atropos;
-                // TODO add event to call AI play
+                EventBus.Publish(new EventAIShotRequest());
             }
             Debug.Log($"GameStateManager: Requesting the start of the turn on UI side");
             EventBus.Publish(new EventNextTurnUIDisplayRequest(_activePlayer));
         }
+    }
+
+    public bool GameHasEnded()
+    {
+        return _gameEnded;
     }
 
     

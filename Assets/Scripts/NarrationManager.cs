@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 public class NarrationManager : MonoBehaviour
 {
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
+    private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
 
     //Liste des th�mes de billes
     private string[] themesArray = new string[] { "Finances", "Sant�", "Carri�re", "Nature", "Amiti�", "Amour", "Spiritualit�" };
@@ -51,16 +52,11 @@ public class NarrationManager : MonoBehaviour
         }
     }
 
-    /*
-    public NarrationManager(GameManager gameManager)
-    {
-        _gameManager = gameManager;
-    }*/
-
     void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventProphecyGenerationRequest>(HandleProphecyGenerationRequest);
+        EventBus.Subscribe<EventCollisionSignal>(HandleCollisionSignal);
 
         // abonnement à l'evenement collisoin de billes
         BallRoll.TwoBallsCollision += TwoBallsCollisionNarration;
@@ -72,6 +68,19 @@ public class NarrationManager : MonoBehaviour
     {
         // Unsubscribe from all events to avoid memory leaks
         EventBus.Unsubscribe<EventProphecyGenerationRequest>(HandleProphecyGenerationRequest);
+        EventBus.Unsubscribe<EventCollisionSignal>(HandleCollisionSignal);
+
+        // d�sbonnement � l'evenement collisoin de billes
+        BallRoll.TwoBallsCollision -= TwoBallsCollisionNarration;
+        //d�sabonnement de l'venement clic de souris, pour �viter les memory leaks
+        Controller.OnMouseClicked -= CreateRandomStory;
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from all events to avoid memory leaks
+        EventBus.Unsubscribe<EventProphecyGenerationRequest>(HandleProphecyGenerationRequest);
+        EventBus.Unsubscribe<EventCollisionSignal>(HandleCollisionSignal);
 
         // d�sbonnement � l'evenement collisoin de billes
         BallRoll.TwoBallsCollision -= TwoBallsCollisionNarration;
@@ -124,6 +133,22 @@ public class NarrationManager : MonoBehaviour
         if (index1 == index2) { index2--; }
         LegoProphecy legoProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy();
         Debug.Log(legoProphecy.Sentence);
+    }
+
+    private void HandleCollisionSignal(EventCollisionSignal collision)
+    {
+        // TODO :
+        //  - generate prophecy based on collision
+        //  - add the prophecy to _lastProphecies
+
+        UIProphecy placeholderProphecy;
+        placeholderProphecy._fastestBall = "ball1";
+        placeholderProphecy._slowestBall = "ball2";
+        placeholderProphecy._positive = true;
+        placeholderProphecy._prophecy = "Connor fera la teuf et finira vraiment pas bien";
+        _lastProphecies.Add(placeholderProphecy);
+
+        // reset _lastProphecies
     }
 
     /// <summary>
@@ -215,5 +240,14 @@ public class NarrationManager : MonoBehaviour
         if (viableEntities.Count == 0) { viableEntities.Add(new StoryEntity("fake entity", 50)); }
         // On renvoie une entite aleatoire parmi les viables
         return viableEntities[random.Next(0, viableEntities.Count)];
+    }
+
+    /// <summary>
+    /// returns prophecies that have been generated during the previous shot
+    /// </summary>
+    /// <returns></returns>
+    public List<UIProphecy> LastTurnProphecies()
+    {
+        return _lastProphecies;
     }
 }

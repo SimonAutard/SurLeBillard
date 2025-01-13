@@ -128,6 +128,18 @@ public class EventApplyForceToWhiteRequest
     }
 }
 
+public class EventCollisionSignal
+{
+    public int _fastestBall { get; set; }
+    public int _slowestBall { get; set; }
+
+    public EventCollisionSignal(int fastestBall, int slowestBall)
+    {
+        _fastestBall = fastestBall;
+        _slowestBall = slowestBall;
+    }
+}
+
 //********************************
 //*** UIManager related events ***
 //********************************
@@ -173,6 +185,33 @@ public class EventNextTurnUIDisplayRequest
 public class EventFeedbackRequest
 {
     public EventFeedbackRequest()
+    {
+
+    }
+}
+
+/// <summary>
+/// Requests the display of everything related to the handling of the end of a game
+/// </summary>
+public class EventEndGameRoundupRequest
+{
+    public EventEndGameRoundupRequest()
+    {
+
+    }
+}
+
+
+//********************************
+//*** AIManager related events ***
+//********************************
+
+/// <summary>
+/// Requests for the calculation of the next AI play based on current
+/// </summary>
+public class EventAIShotRequest
+{
+    public EventAIShotRequest()
     {
 
     }

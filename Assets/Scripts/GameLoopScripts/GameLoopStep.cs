@@ -3,7 +3,7 @@ using UnityEngine;
 public abstract class GameLoopStep
 {
     public int _index { get; set; }
-    private int _nextStep { get; set; }
+    protected int _nextStep { get; set; }
 
     public GameLoopStep(int index, int nextStep)
     {

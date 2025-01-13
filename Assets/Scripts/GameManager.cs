@@ -34,11 +34,20 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        StepInit();
+        StepInit();        
+    }
+
+    private void OnEnable()
+    {
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventNewGameRequest>(HandleNewGameRequest);
         EventBus.Subscribe<EventGameloopNextStepRequest>(HandleGameloopNextStepRequest);
-        
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<EventNewGameRequest>(HandleNewGameRequest);
+        EventBus.Unsubscribe<EventGameloopNextStepRequest>(HandleGameloopNextStepRequest);
     }
 
     private void OnDestroy()
@@ -64,7 +73,7 @@ public class GameManager : MonoBehaviour
         _gameLoopSteps.Add(new ProphecyGeneration(_stepGenId++, _stepGenId));
         _gameLoopSteps.Add(new UIFeedback(_stepGenId++, _stepGenId));
         _stepGenId = 0;
-        // _gameEndSteps...
+        _gameEndSteps.Add(new EndGame(_stepGenId++, _stepGenId));
     }
 
     /// <summary>

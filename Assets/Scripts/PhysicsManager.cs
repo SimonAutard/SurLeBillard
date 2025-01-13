@@ -43,6 +43,13 @@ public class PhysicsManager : MonoBehaviour
         EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
     }
 
+    private void OnDestroy()
+    {
+        // Unsubscribe from all events before getting destroyed to avoid memory leaks
+        EventBus.Unsubscribe<EventInitialBallsSetupRequest>(HandleBallsInitialSetupRequest);
+        EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
+    }
+
     /// <summary>
     /// Sets up the balls in their initial state
     /// </summary>

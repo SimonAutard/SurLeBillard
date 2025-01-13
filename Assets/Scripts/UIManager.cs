@@ -40,6 +40,7 @@ public class UIManager : MonoBehaviour
         EventBus.Subscribe<EventInitialBreakRequest>(HandleInitialBreakRequest);
         EventBus.Subscribe<EventFeedbackRequest>(HandleFeedbackRequest);
         EventBus.Subscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
+        EventBus.Subscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
     }
 
     private void OnDisable()
@@ -48,14 +49,25 @@ public class UIManager : MonoBehaviour
         EventBus.Unsubscribe<EventInitialBreakRequest>(HandleInitialBreakRequest);
         EventBus.Unsubscribe<EventFeedbackRequest>(HandleFeedbackRequest);
         EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
+        EventBus.Unsubscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from all events before getting destroyed to avoid memory leaks
+        EventBus.Unsubscribe<EventInitialBreakRequest>(HandleInitialBreakRequest);
+        EventBus.Unsubscribe<EventFeedbackRequest>(HandleFeedbackRequest);
+        EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
+        EventBus.Unsubscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
     }
 
     /// <summary>
     /// Called by UI when the player actually starts the game (basically: the button "new game" has been clicked)
     /// </summary>
-    private void StartNewGame()
+    public void StartNewGame()
     {
         // TODO : UI related stuff if needed
+        Debug.Log("UIManager : Requesting the start of a new game");
         EventBus.Publish(new EventNewGameRequest());
     }
 
@@ -127,5 +139,20 @@ public class UIManager : MonoBehaviour
         float force = 1.0f;
         Debug.Log("UIManager: Requesting force application.");
         EventBus.Publish(new EventApplyForceToWhiteRequest(angle, force));
+    }
+
+    /// <summary>
+    /// Does everything needed on UI side to handle the end of the game
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void HandleEndGameRoundupRequest(EventEndGameRoundupRequest requestEvent)
+    {
+        Debug.Log("UIManager: Displaying end game recap and dialogs.");
+        // TODO:
+        // - Display winner (fetch info from GameStateManager)
+        // - Display dialogs depending on the winner
+        // - Display gameplay recap? (fetch data from GameStateManager)
+        // - Display story recap? (fetch data from NarrationManager)
+
     }
 }

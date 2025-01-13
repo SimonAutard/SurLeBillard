@@ -14,4 +14,16 @@ public class UIFeedback : GameLoopStep
         EventBus.Publish(new EventFeedbackRequest());
         return true;
     }
+
+    public override int NextStep()
+    {
+        if (GameStateManager.Instance.GameHasEnded())
+        {
+            return 0;
+        }
+        else
+        {
+            return _nextStep;
+        }
+    }
 }
