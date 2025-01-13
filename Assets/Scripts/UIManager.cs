@@ -1,4 +1,4 @@
-using NUnit.Framework;
+ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -55,7 +55,7 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Called by UI when the player actually starts the game (basically: the button "new game" has been clicked)
     /// </summary>
-    private void StartNewGame()
+    public void StartNewGame()
     {
         // TODO : UI related stuff if needed
         EventBus.Publish(new EventNewGameRequest());
@@ -75,10 +75,10 @@ public class UIManager : MonoBehaviour
         // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
         
         // placeholder values
-        float angle = 0.0f;
-        float force = 1.0f;
+        Vector3 BallCuePos = UISingleton.Instance.BallCuePos;
+        float force = UISingleton.Instance.force;
         Debug.Log("UIManager: Requesting force application.");
-        EventBus.Publish(new EventApplyForceToWhiteRequest(angle, force));
+        //EventBus.Publish(new EventApplyForceToWhiteRequest(BallCuePos, force));
 
     }
 
@@ -96,7 +96,15 @@ public class UIManager : MonoBehaviour
         // - Fetch (directly, no event) generated prophecies from NarrationManager
         // - Display prophecies recap
         // - Dialogs
+
+        //Vérifer que la liste des collisions est vide ou pas
+
+        /* if(listecollision.count == 0)
+           {
+                //UISingleton.Instance.isCollided = true;
+           }*/
         
+
         Debug.Log("UIManager: Requesting next step.");
         EventBus.Publish(new EventGameloopNextStepRequest());
     }

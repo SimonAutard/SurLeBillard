@@ -7,6 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 using UnityEngine.Rendering;
 using static UISingleton;
 using UnityEngine.UI;
+//using UnityEngine.UIElements;
 
 public class CueScript : MonoBehaviour
 {
@@ -46,6 +47,7 @@ public class CueScript : MonoBehaviour
     {
 
         this.gameObject.SetActive(false);
+        slider.gameObject.SetActive(false);
         isValidate = false;
         isCollision = false;
 
@@ -113,15 +115,18 @@ public class CueScript : MonoBehaviour
         }
 
     }
-
+     //convertit la valeur de la force entre 0 et 1
     void CalculateForce(float radius)
     {
         UISingleton.Instance.force = (radius - minForce)/(maxForce - minForce);
+        UISingleton.Instance.BallCuePos = orbVector;
         //Debug.Log("radius" + radius);
         //Debug.Log("force" + UISingleton.Instance.force);
-            
-        }
+
+    }
   
+
+    //Changer pour ontrigger avec seulement collider et is trigger
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "BilleBlanche")
