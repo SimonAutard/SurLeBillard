@@ -1,14 +1,16 @@
-using NUnit.Framework;
+ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+
 
 public class UIManager : MonoBehaviour
 {
     // Design pattern du singleton
     private static UIManager _instance; // instance statique du ui manager
 
+    //[SerializeField] GameObject cue;
     public static UIManager Instance
     {
         get
@@ -85,10 +87,10 @@ public class UIManager : MonoBehaviour
         // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
         
         // placeholder values
-        float angle = 0.0f;
-        float force = 1.0f;
+        Vector3 BallCuePos = UISingleton.Instance.BallCuePos;
+        float force = UISingleton.Instance.force;
         Debug.Log("UIManager: Requesting force application.");
-        EventBus.Publish(new EventApplyForceToWhiteRequest(angle, force));
+        //EventBus.Publish(new EventApplyForceToWhiteRequest(BallCuePos, force));
 
     }
 
@@ -106,7 +108,15 @@ public class UIManager : MonoBehaviour
         // - Fetch (directly, no event) generated prophecies from NarrationManager
         // - Display prophecies recap
         // - Dialogs
+
+        //Vérifer que la liste des collisions est vide ou pas
+
+        /* if(listecollision.count == 0)
+           {
+                //UISingleton.Instance.isCollided = true;
+           }*/
         
+
         Debug.Log("UIManager: Requesting next step.");
         EventBus.Publish(new EventGameloopNextStepRequest());
     }
@@ -124,6 +134,9 @@ public class UIManager : MonoBehaviour
             // - Dialogues and other needed UI elements
             // - Cue input handling
             // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
+
+            //UISingleton.Instance.isClothoTurn = true;
+
         }
         else
         {
@@ -133,6 +146,8 @@ public class UIManager : MonoBehaviour
             // - Fetch (directly, no event) AI behaviour to know where to place the cue
             // - Automated play animation (non player)
             // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
+
+            //UISingleton.Instance.isClothoTurn = false;
         }
         // placeholder values
         float angle = 0.0f;
