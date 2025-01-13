@@ -25,8 +25,8 @@ public class NarrationManager : MonoBehaviour
     //Perso principal
     MainCharacter MainCharacter;
     //Listes des types d'entités
-    List<Character> allCharacters = new List<Character>();
-    List<Place> allPlaces = new List<Place>();
+    List<StoryCharacter> allCharacters = new List<StoryCharacter>();
+    List<StoryPlace> allPlaces = new List<StoryPlace>();
     List<StoryActivity> allStoryActivities = new List<StoryActivity>();
     List<StoryItem> allStoryItems = new List<StoryItem>();
 
@@ -87,23 +87,23 @@ public class NarrationManager : MonoBehaviour
     void Start()
     {       
         //initialisation entity simple pour test
-        Character charTest = new Character(name: "sarah", mainCharacterBond: 60, health: 10);
+        StoryCharacter charTest = new StoryCharacter(name: "sarah", mainCharacterBond: 60, health: 10);
         allCharacters.Add(charTest);
-        charTest = new Character(name: "william", mainCharacterBond: 60, health: 10);
+        charTest = new StoryCharacter(name: "william", mainCharacterBond: 60, health: 10);
         allCharacters.Add(charTest);
-        charTest = new Character(name: "henry", mainCharacterBond: 60, health: 60);
+        charTest = new StoryCharacter(name: "henry", mainCharacterBond: 60, health: 60);
         allCharacters.Add(charTest);
 
-        Place placeTest = new Place(name: "dublin", mainCharacterBond: 10, placeType: "City");
+        StoryPlace placeTest = new StoryPlace(name: "dublin", mainCharacterBond: 10, placeType: "City");
         allPlaces.Add(placeTest);
-        placeTest = new Place(name: "Moher", mainCharacterBond: 60, placeType: "Nature");
+        placeTest = new StoryPlace(name: "Moher", mainCharacterBond: 60, placeType: "Nature");
         allPlaces.Add(placeTest);
-        placeTest = new Place(name: "Galway", mainCharacterBond: 60, placeType: "City");
+        placeTest = new StoryPlace(name: "Galway", mainCharacterBond: 60, placeType: "City");
         allPlaces.Add(placeTest);
 
         //initialisation préphétie simple pour test
         string sentence = "connor va manger avec {0} près de {1}";
-        Type[] types = new Type[] { typeof(Character), typeof(Place) };
+        Type[] types = new Type[] { typeof(StoryCharacter), typeof(StoryPlace) };
         (string, object)[] valchar = new (string, object)[] { ("BondMin", 30), ("HealthMin", 30) };
         (string, object)[] valplace = new (string, object)[] { ("BondMin", 30), ("PlaceTypeIs", "City") };
         List<(string, object)[]> listval = new List<(string, object)[]>() { valchar, valplace };
@@ -131,15 +131,15 @@ public class NarrationManager : MonoBehaviour
         if (index1 == index2) { index2--; }
         LegoProphecy legoProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy();
         Debug.Log(legoProphecy.Sentence);
-        Debug.Log("etat initial de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = "+ ((Character)legoProphecy.StoryEntities[0]).Health);
-        Debug.Log("etat initial de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = "+ ((Place)legoProphecy.StoryEntities[1]).State);
+        Debug.Log("etat initial de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = "+ ((StoryCharacter)legoProphecy.StoryEntities[0]).Health);
+        Debug.Log("etat initial de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = "+ ((StoryPlace)legoProphecy.StoryEntities[1]).State);
         UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[0, 0].ProphecyUpdators);
-        Debug.Log("etat final de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = " + ((Character)legoProphecy.StoryEntities[0]).Health);
-        Debug.Log("etat final de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = " + ((Place)legoProphecy.StoryEntities[1]).State);
+        Debug.Log("etat final de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = " + ((StoryCharacter)legoProphecy.StoryEntities[0]).Health);
+        Debug.Log("etat final de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = " + ((StoryPlace)legoProphecy.StoryEntities[1]).State);
     }
 
     /// <summary>
-    /// Handles EventStoryUpdateRequest from the reception of the event to the publishing of the delivery
+    /// Handles EventStoryUpdateRequest from the reception of the ev ent to the publishing of the delivery
     /// </summary>
     /// <param name="requestEvent">The event containing the data relative to what type of event is requested</param>
     private void HandleStoryBitRequest(EventStoryBitGenerationRequest requestEvent)
@@ -208,8 +208,8 @@ public class NarrationManager : MonoBehaviour
         //Liste des entités du type demandé en argument renseigné sous type générique
         List<StoryEntity> possibleEntities = new List<StoryEntity>();
         //Selection de la liste de story entities correspodnant au type demandé
-        if (requiredType == typeof(Character)) { possibleEntities = allCharacters.Cast<StoryEntity>().ToList(); }
-        if (requiredType == typeof(Place)) { possibleEntities = allPlaces.Cast<StoryEntity>().ToList(); }
+        if (requiredType == typeof(StoryCharacter)) { possibleEntities = allCharacters.Cast<StoryEntity>().ToList(); }
+        if (requiredType == typeof(StoryPlace)) { possibleEntities = allPlaces.Cast<StoryEntity>().ToList(); }
         if (requiredType == typeof(StoryActivity)) { possibleEntities = allStoryActivities.Cast<StoryEntity>().ToList(); }
         if (requiredType == typeof(StoryItem)) { possibleEntities = allStoryItems.Cast<StoryEntity>().ToList(); }
 

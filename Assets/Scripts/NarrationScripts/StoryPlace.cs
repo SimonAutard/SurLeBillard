@@ -2,14 +2,14 @@ using UnityEngine;
 using UnityEngine.TextCore.Text;
 
 
-public class Place : StoryEntity
+public class StoryPlace : StoryEntity
 {
     public string PlaceType { get; private set; }
     public float State { get; private set; }
     private float MinState = 0;
     private float MaxState = 100;
 
-    public Place (string name="generic place", float mainCharacterBond=50, string placeType = "generic type", float state = 50)
+    public StoryPlace (string name="generic place", float mainCharacterBond=50, string placeType = "generic type", float state = 50)
     {
         Name = name;
         MainCharacterBond = mainCharacterBond;

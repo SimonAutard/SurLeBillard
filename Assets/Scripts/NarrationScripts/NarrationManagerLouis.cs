@@ -20,8 +20,8 @@ public class NarrationManagerLouis : MonoBehaviour
     //Perso principal
     MainCharacter MainCharacter;
     //Listes des types d'entités
-    List<Character> allCharacters = new List<Character>();
-    List<Place> allPlaces = new List<Place>();
+    List<StoryCharacter> allCharacters = new List<StoryCharacter>();
+    List<StoryPlace> allPlaces = new List<StoryPlace>();
     List<StoryActivity> allStoryActivities = new List<StoryActivity>();
     List<StoryItem> allStoryItems = new List<StoryItem>();
     
@@ -67,23 +67,23 @@ public class NarrationManagerLouis : MonoBehaviour
     void Start()
     {
         //initialisation entity simple por test
-        Character charTest = new Character(name: "sarah", mainCharacterBond: 60, health: 10);
+        StoryCharacter charTest = new StoryCharacter(name: "sarah", mainCharacterBond: 60, health: 10);
         allCharacters.Add(charTest);
-         charTest = new Character(name:"william",mainCharacterBond:60, health:10);
+         charTest = new StoryCharacter(name:"william",mainCharacterBond:60, health:10);
         allCharacters.Add(charTest);
-         charTest = new Character(name: "henry", mainCharacterBond: 60, health: 60);
+         charTest = new StoryCharacter(name: "henry", mainCharacterBond: 60, health: 60);
         allCharacters.Add(charTest);
 
-        Place placeTest = new Place(name: "dublin", mainCharacterBond: 10, placeType: "City");
+        StoryPlace placeTest = new StoryPlace(name: "dublin", mainCharacterBond: 10, placeType: "City");
         allPlaces.Add(placeTest);
-        placeTest = new Place(name: "Moher", mainCharacterBond: 60, placeType: "Nature");
+        placeTest = new StoryPlace(name: "Moher", mainCharacterBond: 60, placeType: "Nature");
         allPlaces.Add(placeTest);
-        placeTest = new Place(name: "Galway", mainCharacterBond: 60, placeType: "City");
+        placeTest = new StoryPlace(name: "Galway", mainCharacterBond: 60, placeType: "City");
         allPlaces.Add(placeTest);
 
         //initialisation préphétie simple pour test
         string sentence = "connor va manger avec {0} près de {1}";
-        Type[] types = new Type[] {typeof(Character), typeof(Place)};
+        Type[] types = new Type[] {typeof(StoryCharacter), typeof(StoryPlace)};
         (string, object)[] valchar = new (string, object)[] { ("BondMin", 30),("HealthMin",30) };
         (string, object)[] valplace = new (string, object)[] { ("BondMin", 100),("PlaceTypeIs","City") };
         List<(string, object)[]> listval = new List<(string, object)[]>() { null,valplace };
@@ -116,8 +116,8 @@ public class NarrationManagerLouis : MonoBehaviour
         //Liste des entités du type demandé en argument renseigné sous type générique
         List<StoryEntity> possibleEntities = new List<StoryEntity>();
         //Selection de la liste de story entities correspodnant au type demandé
-        if (requiredType == typeof(Character)) { possibleEntities = allCharacters.Cast<StoryEntity>().ToList(); }
-        if (requiredType == typeof(Place)) { possibleEntities = allPlaces.Cast<StoryEntity>().ToList(); }
+        if (requiredType == typeof(StoryCharacter)) { possibleEntities = allCharacters.Cast<StoryEntity>().ToList(); }
+        if (requiredType == typeof(StoryPlace)) { possibleEntities = allPlaces.Cast<StoryEntity>().ToList(); }
         if (requiredType == typeof(StoryActivity)) { possibleEntities = allStoryActivities.Cast<StoryEntity>().ToList(); }
         if (requiredType == typeof(StoryItem)) { possibleEntities = allStoryItems.Cast<StoryEntity>().ToList(); }
 

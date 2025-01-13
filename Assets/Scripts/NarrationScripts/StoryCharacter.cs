@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
-public class Character : StoryEntity
+public class StoryCharacter : StoryEntity
 {
     //Attributs
     public float Health { get; private set; }
@@ -14,7 +14,7 @@ public class Character : StoryEntity
     private float MaxMoney = 100;
 
     //Constructeur
-    public Character (string name="generic character", float mainCharacterBond=50, float health = 50, float money = 50, string characterType = "generic type")
+    public StoryCharacter (string name="generic character", float mainCharacterBond=50, float health = 50, float money = 50, string characterType = "generic type")
     {
         Name = name;
         MainCharacterBond = mainCharacterBond;
