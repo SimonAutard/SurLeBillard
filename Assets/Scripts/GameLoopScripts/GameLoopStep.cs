@@ -13,6 +13,7 @@ public abstract class GameLoopStep
 
     public virtual bool Execute()
     {
+        GameManager.Instance.WaitForNextStep(false);
         Debug.Log($"Step {_index}: Starting step execution");
         return false;
     }

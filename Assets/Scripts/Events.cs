@@ -118,12 +118,12 @@ public class EventInitialBallsSetupRequest
 /// </summary>
 public class EventApplyForceToWhiteRequest
 {
-    public float _angle { get; set; }
+    public Vector3 _vector { get; set; }
     public float _force {  get; set; }
 
-    public EventApplyForceToWhiteRequest(float angle, float force)
+    public EventApplyForceToWhiteRequest(Vector3 vector, float force)
     {
-        _angle = angle;
+        _vector = vector;
         _force = force;
     }
 }
@@ -137,6 +137,17 @@ public class EventCollisionSignal
     {
         _fastestBall = fastestBall;
         _slowestBall = slowestBall;
+    }
+}
+
+/// <summary>
+/// Requests the initial break to be done
+/// </summary>
+public class EventInitialBreakRequest
+{
+    public EventInitialBreakRequest()
+    {
+
     }
 }
 
@@ -155,12 +166,9 @@ public class EventNewGameRequest
     }
 }
 
-/// <summary>
-/// Requests the initial break to be done
-/// </summary>
-public class EventInitialBreakRequest
+public class EventInitialBreakUIRequest
 {
-    public EventInitialBreakRequest()
+    public EventInitialBreakUIRequest()
     {
 
     }

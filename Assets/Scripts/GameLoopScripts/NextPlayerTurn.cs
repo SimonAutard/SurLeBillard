@@ -9,6 +9,7 @@ public class NextPlayerTurn : GameLoopStep
 
     public override bool Execute()
     {
+        GameManager.Instance.WaitForNextStep(true);
         base.Execute();
         Debug.Log("GameManager: Requesting the start of the next player's turn.");
         EventBus.Publish(new EventNextPlayerTurnStartRequest());

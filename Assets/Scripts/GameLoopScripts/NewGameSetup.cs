@@ -9,6 +9,7 @@ public class NewGameSetup : GameLoopStep
 
     public override bool Execute()
     {
+        GameManager.Instance.WaitForNextStep(false);
         base.Execute();
         Debug.Log("GameManager: Requesting the setup of a new game (rules).");
         EventBus.Publish(new EventNewGameSetupRequest());

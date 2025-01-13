@@ -9,6 +9,7 @@ public class BallsSetup : GameLoopStep
 
     public override bool Execute()
     {
+        GameManager.Instance.WaitForNextStep(true);
         base.Execute();
         Debug.Log("GameManager: Requesting the setup of a new game (scene/physics).");
         EventBus.Publish(new EventInitialBallsSetupRequest());

@@ -1,4 +1,5 @@
  using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -39,7 +40,7 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
-        EventBus.Subscribe<EventInitialBreakRequest>(HandleInitialBreakRequest);
+        EventBus.Subscribe<EventInitialBreakUIRequest>(HandleInitialBreakRequest);
         EventBus.Subscribe<EventFeedbackRequest>(HandleFeedbackRequest);
         EventBus.Subscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
         EventBus.Subscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
@@ -48,7 +49,7 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
-        EventBus.Unsubscribe<EventInitialBreakRequest>(HandleInitialBreakRequest);
+        EventBus.Unsubscribe<EventInitialBreakUIRequest>(HandleInitialBreakRequest);
         EventBus.Unsubscribe<EventFeedbackRequest>(HandleFeedbackRequest);
         EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
         EventBus.Unsubscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
@@ -57,7 +58,7 @@ public class UIManager : MonoBehaviour
     private void OnDestroy()
     {
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
-        EventBus.Unsubscribe<EventInitialBreakRequest>(HandleInitialBreakRequest);
+        EventBus.Unsubscribe<EventInitialBreakUIRequest>(HandleInitialBreakRequest);
         EventBus.Unsubscribe<EventFeedbackRequest>(HandleFeedbackRequest);
         EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
         EventBus.Unsubscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
@@ -77,7 +78,7 @@ public class UIManager : MonoBehaviour
     /// Displays any needed dialogue between characters during the initial break and play the animation for it
     /// </summary>
     /// <param name="requestEvent"></param>
-    private void HandleInitialBreakRequest(EventInitialBreakRequest requestEvent)
+    private void HandleInitialBreakRequest(EventInitialBreakUIRequest requestEvent)
     {
         Debug.Log("UIManager: Displaying everything needed for the initial break.");
         // TODO:
@@ -85,12 +86,15 @@ public class UIManager : MonoBehaviour
         // - Fetch (directly, no event) AI behaviour to know where to place the cue
         // - Automated play animation (non player)
         // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
-        
+
         // placeholder values
-        Vector3 BallCuePos = UISingleton.Instance.BallCuePos;
-        float force = UISingleton.Instance.force;
+        //Vector3 BallCuePos = UISingleton.Instance.BallCuePos;
+        //float force = UISingleton.Instance.force;
+        Tuple<Vector3, float> placeholderBreak = AIManager.Instance.NextShotInfo();
+        Vector3 BallCuePos = placeholderBreak.Item1;
+        float force = placeholderBreak.Item2;
         Debug.Log("UIManager: Requesting force application.");
-        //EventBus.Publish(new EventApplyForceToWhiteRequest(BallCuePos, force));
+        EventBus.Publish(new EventApplyForceToWhiteRequest(BallCuePos, force));
 
     }
 
@@ -135,7 +139,7 @@ public class UIManager : MonoBehaviour
             // - Cue input handling
             // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
 
-            //UISingleton.Instance.isClothoTurn = true;
+            UISingleton.Instance.isClothoTurn = true;
 
         }
         else
@@ -147,13 +151,13 @@ public class UIManager : MonoBehaviour
             // - Automated play animation (non player)
             // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
 
-            //UISingleton.Instance.isClothoTurn = false;
+            UISingleton.Instance.isClothoTurn = false;
         }
         // placeholder values
-        float angle = 0.0f;
+        Vector3 vector = Vector3.forward;
         float force = 1.0f;
         Debug.Log("UIManager: Requesting force application.");
-        EventBus.Publish(new EventApplyForceToWhiteRequest(angle, force));
+        EventBus.Publish(new EventApplyForceToWhiteRequest(vector, force));
     }
 
     /// <summary>

@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     private List<GameLoopStep> _gameLoopSteps = new List<GameLoopStep>();
     private List<GameLoopStep> _gameEndSteps = new List<GameLoopStep>();
     private int _stepGenId = 0;
-    private bool _waitForNextStep = false;
+    [SerializeField] private bool _waitForNextStep = false;
     private int _currentLoopStep = 0;
 
 
@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
         _gameStartSteps.Add(new NewGameSetup(_stepGenId++, _stepGenId));
         _gameStartSteps.Add(new BallsSetup(_stepGenId++, _stepGenId));
         _gameStartSteps.Add(new InitialBreak(_stepGenId++, _stepGenId));
+        _gameStartSteps.Add(new InitialBreakUI(_stepGenId++, _stepGenId));
         _gameStartSteps.Add(new UIFeedback(_stepGenId++, _stepGenId));
         _stepGenId = 0;
         _gameLoopSteps.Add(new NextPlayerTurn(_stepGenId++, _stepGenId));
@@ -86,9 +87,9 @@ public class GameManager : MonoBehaviour
         _currentLoopStep = 0;
         while (_currentLoopStep < _gameStartSteps.Count)
         {
-            _waitForNextStep = _gameStartSteps[_currentLoopStep].Execute();
+            _gameStartSteps[_currentLoopStep].Execute();
             while (_waitForNextStep)
-            {
+            { 
                 yield return 0;
             }
             _currentLoopStep = _gameStartSteps[_currentLoopStep].NextStep();
@@ -115,6 +116,11 @@ public class GameManager : MonoBehaviour
     private void HandleGameloopNextStepRequest(EventGameloopNextStepRequest requestEvent)
     {
         _waitForNextStep = false;
+    }
+
+    public void WaitForNextStep(bool wait)
+    {
+        _waitForNextStep = wait;
     }
 
 

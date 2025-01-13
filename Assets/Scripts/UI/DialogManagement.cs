@@ -39,7 +39,7 @@ public class DialogManagement : MonoBehaviour
         _childNumber = 0;*/
 
         //Debug.Log(textDialog.Count);
-        UISingleton.Instance.isClothoTurn = true;
+        //UISingleton.Instance.isClothoTurn = true;
         _isRound = false;
         this.gameObject.transform.GetChild(0).gameObject.SetActive(false);
         this.gameObject.transform.GetChild(1).gameObject.SetActive(false);

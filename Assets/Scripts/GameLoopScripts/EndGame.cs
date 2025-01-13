@@ -9,6 +9,7 @@ public class EndGame : GameLoopStep
 
     public override bool Execute()
     {
+        GameManager.Instance.WaitForNextStep(false);
         base.Execute();
         Debug.Log("GameManager: Requesting the end game round-up.");
         EventBus.Publish(new EventProphecyGenerationRequest());

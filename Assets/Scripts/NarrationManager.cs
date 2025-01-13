@@ -116,7 +116,7 @@ public class NarrationManager : MonoBehaviour
         List<(string, object)[]> listupd = new List<(string, object)[]>() { upd, null };
         Prophecy prophecy = new Prophecy(sentence, types, listval, listupd);
         prophecyMasterTable[0, 0] = prophecy;
-        CreateRandomStory(Vector3.zero);
+        //CreateRandomStory(Vector3.zero);
     }
 
     
