@@ -7,12 +7,11 @@ public class InitialBreakUI : GameLoopStep
 
     }
 
-    public override bool Execute()
+    public override void Execute()
     {
         GameManager.Instance.WaitForNextStep(true);
         base.Execute();
         Debug.Log("GameManager: Requesting the UI part of the initial break.");
         EventBus.Publish(new EventInitialBreakUIRequest());
-        return true;
     }
 }

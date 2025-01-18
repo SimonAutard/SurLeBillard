@@ -7,12 +7,11 @@ public class ProphecyGeneration : GameLoopStep
 
     }
 
-    public override bool Execute()
+    public override void Execute()
     {
         GameManager.Instance.WaitForNextStep(true);
         base.Execute();
         Debug.Log("GameManager: Requesting the generation of prophecies.");
         EventBus.Publish(new EventProphecyGenerationRequest());
-        return true;
     }
 }

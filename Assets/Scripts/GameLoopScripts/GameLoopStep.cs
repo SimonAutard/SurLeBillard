@@ -11,10 +11,9 @@ public abstract class GameLoopStep
         _nextStep = nextStep;
     }
 
-    public virtual bool Execute()
+    public virtual void Execute()
     {
         Debug.Log($"Step {_index}: Starting step execution");
-        return false;
     }
 
     public virtual int NextStep()

@@ -84,6 +84,7 @@ public class GameStateManager : MonoBehaviour
         }
         _turnCount = 0;
         _gameInitialised = true;
+        _gameEnded = false;
         Debug.Log($"GameStateManager: Initializing game state");
     }
 
@@ -124,11 +125,13 @@ public class GameStateManager : MonoBehaviour
         if (_activePlayer == ActivePlayerName.Clotho)
         {
             _turnCount++;
+            Debug.Log($"Clotho has played {_turnCount} times.");
         }
 
         // Placeholder win condition (autowin after n turns) for testing purpose
-        if (_turnCount > 5)
+        if (_turnCount > 2)
         {
+            Debug.Log("The game will end now.");
             _gameEnded = true;
             _winner = ActivePlayerName.Clotho;
         }

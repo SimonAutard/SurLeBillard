@@ -12,10 +12,10 @@ public class GameManager : MonoBehaviour
     private int _stepGenId = 0;
     [SerializeField] private bool _waitForNextStep = false;
     private int _currentLoopStep = 0;
+    private bool _gameToStart = false;
     public bool _initialisationPhase { get; private set; }
     public bool _mainPhase { get; private set; }
     public bool _endPhase { get; private set; }
-
 
 
     public static GameManager Instance
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
         _gameLoopSteps.Add(new UIFeedback(_stepGenId++, _stepGenId));
         _stepGenId = 0;
         _gameEndSteps.Add(new EndGame(_stepGenId++, _stepGenId));
-        _initialisationPhase = true;
+        _initialisationPhase = false;
         _mainPhase = false;
         _endPhase = false;
     }
@@ -87,60 +87,93 @@ public class GameManager : MonoBehaviour
     /// The main loop handling the various steps of a game.
     /// </summary>
     /// <returns></returns>
-    public IEnumerator MainLoop()
-    {
-        _initialisationPhase = true;
-        _endPhase = false;
-        Debug.Log("GameManager: Starting initialisation steps.");
-        _currentLoopStep = 0;
-        while (_currentLoopStep < _gameStartSteps.Count)
-        {
-            _gameStartSteps[_currentLoopStep].Execute();
-            while (_waitForNextStep)
-            { 
-                yield return 0;
-            }
-            _currentLoopStep = _gameStartSteps[_currentLoopStep].NextStep();
-        }
-        Debug.Log("GameManager: Initialisation steps have ended.");
-        _initialisationPhase = false;
-        _mainPhase = true;
-        Debug.Log("GameManager: Starting main loop steps.");
-        _currentLoopStep = 0;
-        while (_currentLoopStep < _gameLoopSteps.Count)
-        {
-            _waitForNextStep =_gameLoopSteps[_currentLoopStep].Execute();
-            while (_waitForNextStep)
-            {
-                yield return 0;
-            }
-            _currentLoopStep = _gameLoopSteps[_currentLoopStep].NextStep();
-            Debug.Log($"next step Id = {_currentLoopStep}");
-        }
-        Debug.Log("GameManager: Main loop steps have ended.");
-        _mainPhase = false;
-        _endPhase = true;
-        Debug.Log("GameManager: Starting end loop steps.");
-        _currentLoopStep = 0;
-
-
-    }
-
     private void Update()
     {
-        Debug.Log("Update:" + _waitForNextStep);
+        if (_gameToStart)
+        {
+            _gameToStart = false;
+            _initialisationPhase = true;
+            Debug.Log("GameManager: Starting initialisation steps.");
+            _currentLoopStep = 0;
+        }
+        else if (_initialisationPhase)
+        {
+            if (_waitForNextStep)
+            {
+                // do nothing, we're waiting for the end of the execution of the step before going next
+            }
+            else
+            {
+                if (_currentLoopStep < _gameStartSteps.Count)
+                {
+                    _gameStartSteps[_currentLoopStep].Execute();
+                    _currentLoopStep = _gameStartSteps[_currentLoopStep].NextStep();
+                    Debug.Log($"next step Id = {_currentLoopStep}");
+                }
+                else
+                {
+                    Debug.Log("GameManager: Initialisation steps have ended.");
+                    _initialisationPhase = false;
+                    _mainPhase = true;
+                    Debug.Log("GameManager: Starting main loop steps.");
+                    _currentLoopStep = 0;
+                }
+            } 
+        }
+        else if (_mainPhase)
+        {
+            if (_waitForNextStep)
+            {
+                // do nothing, we're waiting for the end of the execution of the step before going next
+            }
+            else
+            {
+                if (_currentLoopStep < _gameLoopSteps.Count)
+                {
+                    _gameLoopSteps[_currentLoopStep].Execute();
+                    _currentLoopStep = _gameLoopSteps[_currentLoopStep].NextStep();
+                    Debug.Log($"next step Id = {_currentLoopStep}");
+                }
+                else
+                {
+                    Debug.Log("GameManager: Main loop steps have ended.");
+                    _mainPhase = false;
+                    _endPhase = true;
+                    Debug.Log("GameManager: Starting end loop steps.");
+                    _currentLoopStep = 0;
+                }
+            }
+        }
+        else if (_endPhase)
+        {
+            if (_waitForNextStep)
+            {
+                // do nothing, we're waiting for the end of the execution of the step before going next
+            }
+            else
+            {
+                if (_currentLoopStep < _gameEndSteps.Count)
+                {
+                    _gameEndSteps[_currentLoopStep].Execute();
+                    _currentLoopStep = _gameEndSteps[_currentLoopStep].NextStep();
+                    Debug.Log($"next step Id = {_currentLoopStep}");
+                }
+                else
+                {
+                    Debug.Log("GameManager: End of game steps have ended.");
+                    _endPhase = false;
+                }
+            }
+        }
     }
 
     private void HandleGameloopNextStepRequest(EventGameloopNextStepRequest requestEvent)
     {
-        Debug.Log("_waitForNextStep=false");
         _waitForNextStep = false;
-        Debug.Log(_waitForNextStep);
     }
 
     public void WaitForNextStep(bool wait)
     {
-        Debug.Log($"_waitForNextStep={wait}");
         _waitForNextStep = wait;
     }
 
@@ -174,10 +207,6 @@ public class GameManager : MonoBehaviour
     private void HandleNewGameRequest(EventNewGameRequest requestEvent)
     {
         Debug.Log("GameManager: Starting a new game.");
-        if (_gameplayLoop != null)
-        {
-            StopCoroutine(_gameplayLoop);
-        }
-        _gameplayLoop = StartCoroutine(MainLoop());
+        _gameToStart = true;
     }
 }

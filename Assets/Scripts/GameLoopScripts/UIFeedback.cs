@@ -7,13 +7,12 @@ public class UIFeedback : GameLoopStep
 
     }
 
-    public override bool Execute()
+    public override void Execute()
     {
         GameManager.Instance.WaitForNextStep(true);
         base.Execute();
         Debug.Log("GameManager: Requesting end turn feedback.");
         EventBus.Publish(new EventFeedbackRequest());
-        return true;
     }
 
     public override int NextStep()
