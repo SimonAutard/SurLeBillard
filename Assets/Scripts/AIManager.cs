@@ -55,6 +55,9 @@ public class AIManager : MonoBehaviour
         Debug.Log("AIManager: Calculating Atropos shot.");
         _nextShotForce = 1.0f;
         _nextShotVector = Vector3.forward;
+        _shotCalculated = true;
+        // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
+        // which comes down to the same thing as storing it here and letting UIManager access it when it needs to
     }
 
     private void HandleInitialBreakRequest(EventInitialBreakRequest requestEvent)
@@ -63,6 +66,9 @@ public class AIManager : MonoBehaviour
         _nextShotForce = 1.0f;
         _nextShotVector = Vector3.forward;
         _shotCalculated = true;
+        // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
+        // which comes down to the same thing as storing it here and letting UIManager access it when it needs to
+        Debug.Log("AIManager: calling NextStep");
         EventBus.Publish(new EventGameloopNextStepRequest());
     }
 

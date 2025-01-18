@@ -144,7 +144,7 @@ public class NarrationManager : MonoBehaviour
         UIProphecy placeholderProphecy;
         placeholderProphecy._fastestBall = "ball1";
         placeholderProphecy._slowestBall = "ball2";
-        placeholderProphecy._positive = true;
+        placeholderProphecy._positive = false;
         placeholderProphecy._prophecy = "Connor fera la teuf et finira vraiment pas bien";
         _lastProphecies.Add(placeholderProphecy);
 
@@ -174,10 +174,9 @@ public class NarrationManager : MonoBehaviour
             Debug.Log($"NarrationManager: Generating a {pos} prophecy based on ball n°{collision.Item1.ToString()} and ball n°{collision.Item2.ToString()}.");
             // TODO: Generate prophecy and store it (with the associated themes used for generation and wether it's positive or not) so it can be easily accessed by the UIManager.
             // Maybe keep a list refering to prophecies generated in the last turn
-
-            EventBus.Publish(new EventGameloopNextStepRequest());
         }
-
+        Debug.Log("NarrationManager: calling NextStep");
+        EventBus.Publish(new EventGameloopNextStepRequest());
     }
 
     /// <summary>

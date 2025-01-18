@@ -7,6 +7,7 @@ public class BallRoll : MonoBehaviour
     [SerializeField] protected float mass = 1.0f;
     public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille
     public string ballSymbol; //thème de la bille
+    public int _ballId { get; protected set; }
 
     // Variables de déplacement
     public float speed { get; protected set; } // vitesse de la bille à chaque instant
@@ -98,7 +99,8 @@ public class BallRoll : MonoBehaviour
 
             canYetCollide = false;
 
-            TwoBallsCollision?.Invoke(ballSymbol, collider.GetComponent<BallRoll>().ballSymbol);
+            EventBus.Publish(new EventCollisionSignal(_ballId, collider.GetComponent<BallRoll>()._ballId));
+            //TwoBallsCollision?.Invoke(ballSymbol, collider.GetComponent<BallRoll>().ballSymbol);
         }
     }
 

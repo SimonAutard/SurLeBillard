@@ -42,6 +42,7 @@ public class PhysicsManager : MonoBehaviour
     {
         BallRoll[] ballRolls = FindObjectsByType<BallRoll>(FindObjectsSortMode.None);
         RemainingBalls = ballRolls.ToList();
+        minSpeedForBalls = 0.1f;
     }
 
     private void Update()

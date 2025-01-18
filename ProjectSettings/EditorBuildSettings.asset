@@ -12,8 +12,8 @@ EditorBuildSettings:
     path: Assets/Scenes/MenuScene.unity
     guid: ef17db38fb447664db80859bfd238e1b
   - enabled: 1
-    path: Assets/Scenes/UIScene.unity
-    guid: 30ebae82d70a7914c842e9dcc5e7da25
+    path: Assets/Scenes/PhysicsScene.unity
+    guid: bec4e7352a67b7a4894e1be91fd8c40d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -8,6 +8,9 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    public bool _isClothoTurn { get; set; }
+    [SerializeField] private DialogManagement _dialogManagement;
+
     // Design pattern du singleton
     private static UIManager _instance; // instance statique du ui manager
 
@@ -74,6 +77,11 @@ public class UIManager : MonoBehaviour
         EventBus.Publish(new EventNewGameRequest());
     }
 
+    public void AttachDialogManagement(DialogManagement dm)
+    {
+        _dialogManagement = dm;
+    }
+
     /// <summary>
     /// Displays any needed dialogue between characters during the initial break and play the animation for it
     /// </summary>
@@ -93,6 +101,7 @@ public class UIManager : MonoBehaviour
         Tuple<Vector3, float> placeholderBreak = AIManager.Instance.NextShotInfo();
         Vector3 BallCuePos = placeholderBreak.Item1;
         float force = placeholderBreak.Item2;
+        // TODO: Handle the cue animation for the break and any dialogue or other UI event needed during that phase
         Debug.Log("UIManager: Requesting force application.");
         EventBus.Publish(new EventApplyForceToWhiteRequest(BallCuePos, force));
 
@@ -139,7 +148,8 @@ public class UIManager : MonoBehaviour
             // - Cue input handling
             // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
 
-            UISingleton.Instance.isClothoTurn = true;
+            _isClothoTurn = true;
+            _dialogManagement.ShowFirstDialogOnClothoTurn();
 
         }
         else
@@ -151,13 +161,14 @@ public class UIManager : MonoBehaviour
             // - Automated play animation (non player)
             // - Store the shot angle and force in two floats (can easily be changed as needed, I just went with 2 floats for now)
 
-            UISingleton.Instance.isClothoTurn = false;
+            _isClothoTurn = false;
+            _dialogManagement.ShowFirstDialogOnAtroposTurn();
         }
         // placeholder values
-        Vector3 vector = Vector3.forward;
-        float force = 1.0f;
-        Debug.Log("UIManager: Requesting force application.");
-        EventBus.Publish(new EventApplyForceToWhiteRequest(vector, force));
+        //Vector3 vector = Vector3.forward;
+        //float force = 1.0f;
+        //Debug.Log("UIManager: Requesting force application.");
+        //EventBus.Publish(new EventApplyForceToWhiteRequest(vector, force));
     }
 
     /// <summary>

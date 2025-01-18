@@ -48,12 +48,12 @@ public class WhiteBallMove : BallRoll
         }
 
         // Récupère les données du coup
-        float angle = requestEvent._angle;
+        Vector3 pushVector = requestEvent._vector;
         float force = requestEvent._force;
 
         // Calcule la direction et la vitesse
         //direction = (transform.position - clickPosition).normalized;
-        direction = Vector3.left;
+        direction = pushVector;
         speed = force * forceFactor;
     }
 }

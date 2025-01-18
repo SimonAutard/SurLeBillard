@@ -33,7 +33,7 @@ public class CueScript : MonoBehaviour
     private Vector2 initialPosition;
     Vector3 clickPosition;
     Vector3 orbVector;
-    bool isValidate;
+    public bool isValidate {  get; set; }
     Vector3 queuePosition;
     bool isCollision;
 
@@ -98,8 +98,8 @@ public class CueScript : MonoBehaviour
    
         if (Input.GetMouseButtonDown(0) && UISingleton.Instance.isReady == true)
         {
+            UISingleton.Instance.isReady = false;
             isValidate = true;
-
             //HitBall(radius, queuePosition);
             //Debug.Log(UISingleton.Instance.isReady);
             //Debug.Log(Vector3.up);
@@ -107,32 +107,45 @@ public class CueScript : MonoBehaviour
         }
 
         //l'utilisateur a clique et la queue va vers la bille
-        if(isValidate == true && !isCollision)
+        float distanceToBall = Vector3.Distance(transform.position, orb.position);
+        if(isValidate == true)
         {
-            //Debug.Log(radius);
-            CalculateForce(radius);
-            transform.position = Vector3.MoveTowards(transform.position, orb.position, Time.deltaTime*radius * radius);
+            if (distanceToBall > radius * 0.9f)
+            {
+                //Debug.Log(radius);
+                transform.position = Vector3.MoveTowards(transform.position, orb.position, Time.deltaTime*radius * radius);
+            }
+            else
+            {
+                CalculateForce(radius);
+                Debug.Log("UIManager: Requesting force application.");
+                EventBus.Publish(new EventApplyForceToWhiteRequest(orbVector, UISingleton.Instance.force));
+                gameObject.SetActive(false);
+            }
         }
+        
 
     }
      //convertit la valeur de la force entre 0 et 1
     void CalculateForce(float radius)
     {
         UISingleton.Instance.force = (radius - minForce)/(maxForce - minForce);
+        orbVector.y = 0.0f;
         UISingleton.Instance.BallCuePos = orbVector;
         //Debug.Log("radius" + radius);
         //Debug.Log("force" + UISingleton.Instance.force);
-
+        
     }
   
 
     //Changer pour ontrigger avec seulement collider et is trigger
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "BilleBlanche")
-        {
-            isCollision = true;
-        }
-    }
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    if (collision.gameObject.TryGetComponent<WhiteBallMove>(out WhiteBallMove whiteBall))
+    //    {
+    //        isCollision = true;
+    //        gameObject.SetActive(false);
+    //    }
+    //}
 
 }

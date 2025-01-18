@@ -8,7 +8,7 @@ public class UISingleton : MonoBehaviour
     public bool isReady = false;
     public bool isCollided = false;
     public float force;
-    public bool isClothoTurn = false;
+    //public bool isClothoTurn = false;
     public bool isAthroposTurn = false;
     public Vector3 BallCuePos;
 

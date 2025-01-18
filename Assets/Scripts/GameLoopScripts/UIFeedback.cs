@@ -18,13 +18,13 @@ public class UIFeedback : GameLoopStep
 
     public override int NextStep()
     {
-        if (GameStateManager.Instance.GameHasEnded())
+        if (GameManager.Instance._initialisationPhase || GameStateManager.Instance.GameHasEnded())
         {
-            return 0;
+            return _nextStep;
         }
         else
         {
-            return _nextStep;
+            return 0;
         }
     }
 }

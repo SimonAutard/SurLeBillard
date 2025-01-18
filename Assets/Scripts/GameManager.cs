@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     private int _stepGenId = 0;
     [SerializeField] private bool _waitForNextStep = false;
     private int _currentLoopStep = 0;
+    public bool _initialisationPhase { get; private set; }
+    public bool _mainPhase { get; private set; }
+    public bool _endPhase { get; private set; }
 
 
 
@@ -75,6 +78,9 @@ public class GameManager : MonoBehaviour
         _gameLoopSteps.Add(new UIFeedback(_stepGenId++, _stepGenId));
         _stepGenId = 0;
         _gameEndSteps.Add(new EndGame(_stepGenId++, _stepGenId));
+        _initialisationPhase = true;
+        _mainPhase = false;
+        _endPhase = false;
     }
 
     /// <summary>
@@ -83,6 +89,8 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator MainLoop()
     {
+        _initialisationPhase = true;
+        _endPhase = false;
         Debug.Log("GameManager: Starting initialisation steps.");
         _currentLoopStep = 0;
         while (_currentLoopStep < _gameStartSteps.Count)
@@ -95,6 +103,8 @@ public class GameManager : MonoBehaviour
             _currentLoopStep = _gameStartSteps[_currentLoopStep].NextStep();
         }
         Debug.Log("GameManager: Initialisation steps have ended.");
+        _initialisationPhase = false;
+        _mainPhase = true;
         Debug.Log("GameManager: Starting main loop steps.");
         _currentLoopStep = 0;
         while (_currentLoopStep < _gameLoopSteps.Count)
@@ -105,21 +115,32 @@ public class GameManager : MonoBehaviour
                 yield return 0;
             }
             _currentLoopStep = _gameLoopSteps[_currentLoopStep].NextStep();
+            Debug.Log($"next step Id = {_currentLoopStep}");
         }
         Debug.Log("GameManager: Main loop steps have ended.");
+        _mainPhase = false;
+        _endPhase = true;
         Debug.Log("GameManager: Starting end loop steps.");
         _currentLoopStep = 0;
 
 
     }
 
+    private void Update()
+    {
+        Debug.Log("Update:" + _waitForNextStep);
+    }
+
     private void HandleGameloopNextStepRequest(EventGameloopNextStepRequest requestEvent)
     {
+        Debug.Log("_waitForNextStep=false");
         _waitForNextStep = false;
+        Debug.Log(_waitForNextStep);
     }
 
     public void WaitForNextStep(bool wait)
     {
+        Debug.Log($"_waitForNextStep={wait}");
         _waitForNextStep = wait;
     }
 
