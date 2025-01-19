@@ -4,12 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static Unity.VisualScripting.Member;
 
 
 public class UIManager : MonoBehaviour
 {
     public bool _isClothoTurn { get; set; }
+    public bool popupEnabled { get; set; }
     [SerializeField] private DialogManagement _dialogManagement;
+    public List<UIProphecy> prophecies { get; set; }
 
     // Design pattern du singleton
     private static UIManager _instance; // instance statique du ui manager
@@ -123,15 +126,20 @@ public class UIManager : MonoBehaviour
         // - Dialogs
 
         //Vérifer que la liste des collisions est vide ou pas
-
-        /* if(listecollision.count == 0)
-           {
-                //UISingleton.Instance.isCollided = true;
-           }*/
+        //prophecies = NarrationManager.Instance.LastTurnProphecies();
+        prophecies = new List<UIProphecy>(NarrationManager.Instance.LastTurnProphecies());
         
+        if (prophecies.Count != 0)
+           {
+                Debug.Log("prophecies : " + prophecies);
+                UISingleton.Instance.isCollided = true;
+  
+           }
 
-        Debug.Log("UIManager: Requesting next step.");
-        EventBus.Publish(new EventGameloopNextStepRequest());
+        StartCoroutine(WaitPopup());
+        //EventBus.Publish(new EventGameloopNextStepRequest());
+
+
     }
 
     /// <summary>
@@ -185,4 +193,20 @@ public class UIManager : MonoBehaviour
         // - Display story recap? (fetch data from NarrationManager)
 
     }
+
+    IEnumerator WaitPopup()
+    {
+        while (popupEnabled == true)
+        {
+            yield return null;
+            //Debug.Log("*******************Popup ouverte*****************");
+        }
+        Debug.Log("UIManager: Requesting next step.");
+        Debug.Log("******************* next step *****************");
+        EventBus.Publish(new EventGameloopNextStepRequest());
+
+    }
+    
+
+
 }

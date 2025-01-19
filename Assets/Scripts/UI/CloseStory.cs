@@ -5,9 +5,12 @@ public class CloseStory : MonoBehaviour
 
     [SerializeField]
     GameObject storyPopup;
+
+
+
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -17,5 +20,6 @@ public class CloseStory : MonoBehaviour
         storyPopup.gameObject.transform.GetChild(1).gameObject.SetActive(false);
         storyPopup.gameObject.transform.GetChild(2).gameObject.SetActive(false);
         UISingleton.Instance.isCollided = false;
+        UIManager.Instance.popupEnabled = false;
     }
 }
