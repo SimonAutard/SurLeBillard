@@ -44,10 +44,10 @@ public class StoryManagement : MonoBehaviour
         this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
         this.gameObject.transform.GetChild(2).gameObject.SetActive(true);
         DisplayStory();
-        closeButton.onClick.AddListener(CloseStory);
+        //closeButton.onClick.AddListener(CloseStory);
     }
     
-    public void CloseStory()
+   /* public void CloseStory()
     {
         Debug.Log("sdjvhkqsdhfsqdfsdfsqdfqsdf");
         gameObject.transform.GetChild(0).gameObject.SetActive(false);
@@ -55,7 +55,7 @@ public class StoryManagement : MonoBehaviour
         gameObject.transform.GetChild(2).gameObject.SetActive(false);
         UISingleton.Instance.isCollided = false;
         UIManager.Instance.popupEnabled = false;
-    }
+    }*/
 
 
     //Instantie texte dynamiquement à partir d'un prefab textPrefab

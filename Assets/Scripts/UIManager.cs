@@ -196,7 +196,8 @@ public class UIManager : MonoBehaviour
 
     IEnumerator WaitPopup()
     {
-        while (popupEnabled == true)
+       
+        while (UISingleton.Instance.isCollided == true)
         {
             yield return null;
             //Debug.Log("*******************Popup ouverte*****************");
