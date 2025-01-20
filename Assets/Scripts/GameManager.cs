@@ -71,9 +71,12 @@ public class GameManager : MonoBehaviour
         _gameStartSteps.Add(new BallsSetup(_stepGenId++, _stepGenId));
         _gameStartSteps.Add(new InitialBreak(_stepGenId++, _stepGenId));
         _gameStartSteps.Add(new InitialBreakUI(_stepGenId++, _stepGenId));
+        _gameStartSteps.Add(new ApplyRules(_stepGenId++, _stepGenId));
         _gameStartSteps.Add(new UIFeedback(_stepGenId++, _stepGenId));
         _stepGenId = 0;
         _gameLoopSteps.Add(new NextPlayerTurn(_stepGenId++, _stepGenId));
+        _gameLoopSteps.Add(new NextPlayerTurnUI(_stepGenId++, _stepGenId));
+        _gameLoopSteps.Add(new ApplyRules(_stepGenId++, _stepGenId));
         _gameLoopSteps.Add(new ProphecyGeneration(_stepGenId++, _stepGenId));
         _gameLoopSteps.Add(new UIFeedback(_stepGenId++, _stepGenId));
         _stepGenId = 0;
@@ -175,6 +178,25 @@ public class GameManager : MonoBehaviour
     public void WaitForNextStep(bool wait)
     {
         _waitForNextStep = wait;
+    }
+
+    /// <summary>
+    /// Asks the GameManager to jump arbitrarily to a specific step of the current phase.
+    /// The gameManager will evaluate if this change is ok and return a bool depending on wether it accepted the jump or not.
+    /// Note that if the requested step doesn't exit and is accepted, the current phase will end (this is intended).
+    /// </summary>
+    /// <param name="nextStep">The requested step id</param>
+    /// <returns>true if the jump has been done, false if it hasn't been accepted (phase will keep going as it was)</returns>
+    public bool AlterNextStep(int nextStep)
+    {
+        // placeholder validation. 
+        bool valid = true;
+
+        if (valid)
+        {
+            _currentLoopStep = nextStep;
+        }
+        return valid;
     }
 
 

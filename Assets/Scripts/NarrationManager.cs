@@ -158,8 +158,7 @@ public class NarrationManager : MonoBehaviour
     private void HandleProphecyGenerationRequest(EventProphecyGenerationRequest requestEvent)
     {
         Debug.Log($"NarrationManager: Fetching turn collisions.");
-        // TODO: Fetch GameStateManager (directly, no event) to get the list of collisions
-        List<Tuple<int, int, bool>> collisions = new List<Tuple<int, int, bool>>(); // will stay empty for now, placeholder
+        List<Tuple<int, int, bool>> collisions = GameStateManager.Instance.LastCollisions();
         foreach (Tuple<int, int, bool> collision in collisions)
         {
             string pos;

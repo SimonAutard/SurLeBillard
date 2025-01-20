@@ -13,6 +13,11 @@ public class PhysicsManager : MonoBehaviour
     private bool dispersionPhase = false;
     public float minSpeedForBalls {  get; private set; }
 
+    // collisions that have happened during the turn (all of them, even white)
+    private List<Tuple<int, int, bool>> _turnCollisions = new List<Tuple<int, int, bool>>();
+    // pocketings that have happened during the turn (all of them, even white and black)
+    private List<Tuple<int, int>> _turnPocketings = new List<Tuple<int, int>>();
+
     //Array des billes restantes
     List<BallRoll> RemainingBalls = new List<BallRoll>();
 
@@ -65,13 +70,8 @@ public class PhysicsManager : MonoBehaviour
             if (BallsAllMotionless) {
                 dispersionPhase = false;
 
-                // collisions info : fastest ball id, slowest ball id, positive or not
-                List<Tuple<int, int, bool>> collisions = new List<Tuple<int, int, bool>>();
-                // pocketings info : ball id, pocket id
-                List<Tuple<int, int>> pocketings = new List<Tuple<int, int>>();
-
-                Debug.Log("Physics Manager: Requesting rules application.");
-                EventBus.Publish(new EventApplyRulesRequest(collisions, pocketings));
+                Debug.Log("Physics Manager: Requesting next step.");
+                EventBus.Publish(new EventGameloopNextStepRequest());
             }
         }
         
@@ -82,6 +82,8 @@ public class PhysicsManager : MonoBehaviour
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventInitialBallsSetupRequest>(HandleBallsInitialSetupRequest);
         EventBus.Subscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
+        EventBus.Subscribe<EventReplaceWhiteRequest>(HandleReplaceWhiteRequest);
+        EventBus.Subscribe<EventReplaceBlackRequest>(HandleReplaceBlackRequest);
         // abonnement à l'evenement empochement de billes
         BallRoll.BallPocketed += UnregisterBall;
     }
@@ -91,6 +93,8 @@ public class PhysicsManager : MonoBehaviour
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
         EventBus.Unsubscribe<EventInitialBallsSetupRequest>(HandleBallsInitialSetupRequest);
         EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
+        EventBus.Unsubscribe<EventReplaceWhiteRequest>(HandleReplaceWhiteRequest);
+        EventBus.Unsubscribe<EventReplaceBlackRequest>(HandleReplaceBlackRequest);
         // abonnement à l'evenement empochement de billes
         BallRoll.BallPocketed += UnregisterBall;
     }
@@ -100,6 +104,8 @@ public class PhysicsManager : MonoBehaviour
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
         EventBus.Unsubscribe<EventInitialBallsSetupRequest>(HandleBallsInitialSetupRequest);
         EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
+        EventBus.Unsubscribe<EventReplaceWhiteRequest>(HandleReplaceWhiteRequest);
+        EventBus.Unsubscribe<EventReplaceBlackRequest>(HandleReplaceBlackRequest);
     }
 
     /// <summary>
@@ -133,6 +139,42 @@ public class PhysicsManager : MonoBehaviour
     private void UnregisterBall(BallRoll ball)
     {
         RemainingBalls.Remove(ball);
+    }
+
+    /// <summary>
+    /// Replaces the white ball at a random position
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void HandleReplaceWhiteRequest(EventReplaceWhiteRequest requestEvent)
+    {
+        // TODO (don't forget to check if the ball is already on the field before doing anything, just in case the event is published at the wrong time for some reason)
+    }
+
+    /// <summary>
+    /// Replaces the black ball at a random position
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void HandleReplaceBlackRequest(EventReplaceBlackRequest requestEvent)
+    {
+        // TODO (don't forget to check if the ball is already on the field before doing anything, just in case the event is published at the wrong time for some reason)
+    }
+
+    /// <summary>
+    /// Returns all collisions that have happened during the turn, including the ones with white ball
+    /// </summary>
+    /// <returns></returns>
+    public List<Tuple<int, int, bool>> TurnCollisions()
+    {
+        return _turnCollisions;
+    }
+
+    /// <summary>
+    /// Returns all pocketings that have happened during the turn, including white and black balls
+    /// </summary>
+    /// <returns></returns>
+    public List<Tuple<int, int>> TurnPocketings()
+    {
+        return _turnPocketings;
     }
 
 }
