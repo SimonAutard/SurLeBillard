@@ -21,5 +21,10 @@ public class CloseStory : MonoBehaviour
         storyPopup.gameObject.transform.GetChild(2).gameObject.SetActive(false);
         UISingleton.Instance.isCollided = false;
         UIManager.Instance.popupEnabled = false;
+        UIManager.Instance.storyDisplayed = false;
+        foreach(Transform Child in storyPopup.gameObject.transform.GetChild(1))
+        {
+            Destroy(Child.gameObject);
+        }
     }
 }

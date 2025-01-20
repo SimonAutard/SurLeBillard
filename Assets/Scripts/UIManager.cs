@@ -13,9 +13,10 @@ public class UIManager : MonoBehaviour
     public bool popupEnabled { get; set; }
     [SerializeField] private DialogManagement _dialogManagement;
     public List<UIProphecy> prophecies { get; set; }
+    public bool storyDisplayed { get; set; }
 
-    // Design pattern du singleton
-    private static UIManager _instance; // instance statique du ui manager
+// Design pattern du singleton
+private static UIManager _instance; // instance statique du ui manager
 
     //[SerializeField] GameObject cue;
     public static UIManager Instance
@@ -204,6 +205,7 @@ public class UIManager : MonoBehaviour
         }
         Debug.Log("UIManager: Requesting next step.");
         Debug.Log("******************* next step *****************");
+        prophecies.Clear();
         EventBus.Publish(new EventGameloopNextStepRequest());
 
     }

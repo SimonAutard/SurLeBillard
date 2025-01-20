@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ public class StoryManagement : MonoBehaviour
     public bool isCol = false;
     Button closeButton;
     [SerializeField] GameObject textPrefab;
+
+    //bool storyDisplayed = false;
 
     Transform popup;
 
@@ -20,14 +23,19 @@ public class StoryManagement : MonoBehaviour
         closeButton = this.gameObject.transform.GetChild(2).GetComponent<Button>();
         popup = this.gameObject.transform.GetChild(1);
 
+        UIManager.Instance.storyDisplayed = false;
+
     }
 
     private void Update()
     {
-        if(UISingleton.Instance.isCollided == true)
+        //On vérifie qu'il y a une collision et que la narration est déjà affichée dans la popup
+        if(UISingleton.Instance.isCollided == true && UIManager.Instance.storyDisplayed == false)
         {
             ShowStory();
         }
+
+
     }
 
     // Update is called once per frame
@@ -44,6 +52,7 @@ public class StoryManagement : MonoBehaviour
         this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
         this.gameObject.transform.GetChild(2).gameObject.SetActive(true);
         DisplayStory();
+
         //closeButton.onClick.AddListener(CloseStory);
     }
     
@@ -62,15 +71,25 @@ public class StoryManagement : MonoBehaviour
 
     public void DisplayStory()
     {
-        
+        //GameObject newTextObject = Instantiate(textPrefab, popup);
+
+        //Debug.Log("khfkuhfkfeh" + newTextObject.transform.childCount);
+        //textObject = thisBlock.transform.GetChild(0).gameObject;
+        //textObject.GetComponent<TextMeshPro>().text = "" + currentResult;
+       
+        //newTextObject.transform.GetChild(0).GetComponent<TMP_Text>().text = "hello";
+       
         foreach(UIProphecy prophecy in UIManager.Instance.prophecies)
         {
+
+           
             // Instancier le prefab du texte
             GameObject newTextObject = Instantiate(textPrefab, popup);
             // Récupérer le composant Text sur le prefab
-            Text textTheme1 = newTextObject.transform.GetChild(0).GetComponent<Text>();
-            Text textTheme2 = newTextObject.transform.GetChild(1).GetComponent<Text>();
-            Text textProphecy = newTextObject.transform.GetChild(2).GetComponent<Text>();
+            TMP_Text textTheme1 = newTextObject.transform.GetChild(0).GetComponent<TMP_Text>();
+            TMP_Text textTheme2 = newTextObject.transform.GetChild(1).GetComponent<TMP_Text>();
+            TMP_Text textProphecy = newTextObject.transform.GetChild(2).GetComponent<TMP_Text>();
+
             // Mettre à jour le contenu du texte
             if (textTheme1 != null)
             {
@@ -85,6 +104,8 @@ public class StoryManagement : MonoBehaviour
                 textProphecy.text = prophecy._prophecy;
             }
         }
+
+        UIManager.Instance.storyDisplayed = true;
 
     }
 
