@@ -1,0 +1,106 @@
+Ball1;Ball2;ProphecyText;EntityType;SelfCondition;Entity1Conditions;Entity2Conditions;Entity3Conditions;SelfEffect;Entity1Effect;Entity2Effect;Entity3Effect;;;;;;;;;;;
+Finances;Santé;Recevant de l'aide financière de {0} que Connor aura beaucoup aidé en {1}, il pourra s'acheter une jambe de bois top performance;Character,Place;HealthMax,30;"BondMin,70
+MoneyMin,60";BondMin,50;;HealthPlus,30;"BondPlus,10
+MoneyPlus,-10";;;;;;;;;;;;;
+Finances;Carrière;Connor recevra une prime à son poste de {0} car sa connaissance de {1} l'aura aidé dans sa tâche;Activity,Activity;;IsJob,True;;BondMin,75;CareerPlus,10;BondPlus,20;;;;;;;;;;;;;
+Finances;Nature;Alors qu'il se promènera au bord de mer près de {0}, Connor trébuchera sur un vieux coffre dépassant du sable. Dedans, il trouvera un {1} d'une valeur inestimable.;Place,Item;;"ItemType,Artefact
+BondMin,20
+StateMax,40";BondMax,0;;;BondPLus,10;"BondPlus,10
+StatePlus,80";;;;;;;;;;;;
+Finances;Amitié;{0} sera au comble du bonheur quand Connor lui apportera le coup de pouce financier nécessaire pour fonder son commerce de {1};Character,Activity;;"BondMin,20
+MoneyMax,50";;;FinancesPlus,-5;"BondPlus,30
+MoneyPlus,10";BondPlus,10;;;;;;;;;;;;
+Finances;Amour;Comme il saura que son ennemi {0} sera actif dans le secteur du {1}, Connor fera en sorte de jouer en bourse pour le ruiner;Character,Activity;;"BondMin,30
+MoneyMin,50";BondMin,40;;;MoneyPlus,-20;PopularityPlus,-20;;;;;;;;;;;;
+Finances;Spiritualité;Pendant une conversation philosophique avec {0} à {1} trop compliquée pour lui, Connor comprendra tout de travers et partira investir en bourse dans les {2} avec succès;Character,Place,Item;;BondMin,30;PlaceType,City;PopularityMax,50;FinancesPlus,10;;BondPlus,5;"PopularityPlus,10
+BondPlus,10";;;;;;;;;;;
+Santé;Carrière;Alors qu'il sera en mission à {0} avec {1}, ce dernier risquera de mourir en tombant dans un endroit dangereux, ce dont Connor le protégera grâce à son agiltié et sa force. ;Place,Character;;PlaceType,Nature;IsBoss;;CareerPlus,10;StatePlus,-10;BondPlus,10;;;;;;;;;;;;
+Santé;Nature;Connor gagnera à un jeu télévisé un voyage all-inclusive à {0} où il invitera {1}, passant des vacances vivifiantes;Place,Character;;PlaceType,Nature;"CharacterType,Crush
+BondMin,30";;HealthPlus,10;"BondMin,10
+StatePlus,10";BondPlus,10;;;;;;;;;;;;
+Santé;Amitié;Connor prit en pitié {0}, bien mal en point des suites d'un accident avec {1}. Il décidera donc de l'aider à sa rééducation en pratiquant le {2} avec lui/elle, qui lui en sera toujours reconnaissant;Character,Item,Activity;;HealthMax,30;BondMin,30;BondMin,20;;"BondPlus,20
+HealthPlus,20";BondPlus,-10;BondPlus,5;;;;;;;;;;;
+Santé;Amour;Afin de trouver une excuse pour fréquenter régulièrement {0}, Connor acceptera à reculons sa proposition de s'inscrire au cours de {1} ensemble, où il s'y plaira contre toute attente;Character,Activity;;"CharacterType,Crush
+BondMin,30";BondMax,20;;HealthPlus,5;BondPlus,10;BondPlus,20;;;;;;;;;;;;
+Santé;Spiritualité;Il pratiquera trop intésensément {0} et s'évanouira de fatigue et de douleur. Dans l'ambulance, il aura une expérience de mort imminente où il verra {1} lui parler de {2}, qu'il ne verra plus jamais de la même façon;Activity,Character,Any;;"ActivityType,Sport
+BondMin,50
+PopularityMax,80";;;HealthPlus,-10;BondPlus,-10;BondPlus,5;BondReverse,1;;;;;;;;;;;
+Carrière;Nature;Alors qu'il flânera sur les bords de mer à {0}, Connor prendra conscience que seul un travail dans un tel environnement pourra lui plaire. Il deviendra donc {1};Place,Activity;;"PlaceType,Nature
+BondMin,50
+StateMin,30";"AssociatedPlace,Nature
+StateMax,True";;CareerPlus,-10;BondPlus,30;"BondPlus,30
+PopularityPlus,10";;;;;;;;;;;;
+Carrière;Amitié;{0} rejoindra la même entreprise que Connor grâce à une recommandation de sa part;Character;;"BondMin,50
+MoneyMax,50";;;CareerPlus,5;"BondPlus,10
+MoneyPlus,10";;;;;;;;;;;;;
+Carrière;Amour;Connor parviendra à convaicnre {0} de l'envoyer en mission à {1}, ce qui lui permettra de voir {2} pour la convaincre d'au moins rester amis;Character,Place,Character;;"IsBoss,True
+BondMin,30";StateMin,30;"CharacterType,Crush
+BondMax,30";;;BondPlus,10;BondPlus,20;;;;;;;;;;;
+Carrière;Spiritualité;Connor comprendra que pour exceller à son métier, il devra s'améliorer d'abord en {0}, ce qu'il fera sous la guidance de {1};Activity,Character;;BondMax,50;"BondMin,20
+HealthMin,40
+MoneyMin,20";;CareerPlus,10;BondPlus,10;BondPlus,10;;;;;;;;;;;;
+Nature;Amitié;A force que {0} emmène Connor à {1}, il comprendra l'importance d'en sauvegarder la pureté sauvage et s'investira dans sa protection;Character,Place;;;"PlaceType,Nature
+BondMax,50
+StateMax,40";;;;"BondPlus,20
+StatePlus,10";;;;;;;;;;;;
+Nature;Amour;Connaissant les moindres recoins de {0}, Connor y emmenera {1} pour une ballade en amoureux afin d'y faire {2}. Le date sera un succès qu'ils n'oublieront jamais.;Place,Character,Activity;;"PlaceType,Nature
+BondMin,70
+StateMin,60";CharacterType,Crush;BondMin,30;;BondPlus,5;BondPlus,10;;;;;;;;;;;;
+Nature;Spiritualité;Connor contemplera la vie sauvage à {0} ce qui lui permettra de comprendre son amour pour {1};Place,Character;;"BondMin,30
+StateMax,80";BondMax,50;;;;BondPlus,10;;;;;;;;;;;;
+Amitié;Amour;Connor ne saura pas quoi porter à un bal dansant où il aura déjà invité {0}, mais {1} lui apportera un accessoire branché, fabriqué à partir de {2};Character,Character,Item;;CharacterType,Crush;"CharacterType,Friend
+BondMin,50
+MoneyMin,60";"ItemType,Artefact
+StateMin,30";;BondPlus,20;BondPlus,10;"BondPlus,20
+StatePlus,-5";;;;;;;;;;;
+Amitié;Spiritualité;Après avoir fait {0} toute la soirée avec {1}, Connor discutera profondément avec lui autour d'un plat de {2}. Chaque fois qu'il pensera au sens de la vie, Connor se remémorera ce repas.;Activity,Character,Item;;"ActivityType,Leisure
+BondMin,25";"CharacterType,Friend
+BondMin,30";ItemType,Food;;;BondPlus,10;BondPlus,15;;;;;;;;;;;
+Amour;Spiritualité;Alors qu'il passera devant l'église de {0}, Connor remarquera {1} sortir du confessionnal. Il en profitera pour lui proposer de lui confier ses soucis, alors qu'elle en aura bien besoin.;Place,Character;;"PlaceType,City
+BondMin,10
+StateMin,20";"HealthMax,40
+CharacterType,Crush";;;BondPlus,10;"BondPlus,10
+HealthPlus,10";;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
