@@ -151,6 +151,28 @@ public class EventInitialBreakRequest
     }
 }
 
+/// <summary>
+/// Requests to replace the white ball on the table
+/// </summary>
+public class EventReplaceWhiteRequest
+{
+    public EventReplaceWhiteRequest()
+    {
+
+    }
+}
+
+/// <summary>
+/// Requests to replace the black ball on the table
+/// </summary>
+public class EventReplaceBlackRequest
+{
+    public EventReplaceBlackRequest()
+    {
+
+    }
+}
+
 //********************************
 //*** UIManager related events ***
 //********************************

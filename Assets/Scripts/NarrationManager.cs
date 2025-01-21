@@ -11,6 +11,7 @@ public class NarrationManager : MonoBehaviour
 {
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
     private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
+    private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
     //Liste des th�mes de billes
     private string[] themesArray = new string[] { "Finances", "Sant�", "Carri�re", "Nature", "Amiti�", "Amour", "Spiritualit�" };
@@ -57,6 +58,8 @@ public class NarrationManager : MonoBehaviour
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventProphecyGenerationRequest>(HandleProphecyGenerationRequest);
         EventBus.Subscribe<EventCollisionSignal>(HandleCollisionSignal);
+        EventBus.Subscribe<EventNewGameSetupRequest>(HandleNewGameSetupRequest);
+        EventBus.Subscribe<EventNextPlayerTurnStartRequest>(HandleNextPlayerTurnStartRequest);
 
         // abonnement à l'evenement collisoin de billes
         BallRoll.TwoBallsCollision += TwoBallsCollisionNarration;
@@ -69,6 +72,8 @@ public class NarrationManager : MonoBehaviour
         // Unsubscribe from all events to avoid memory leaks
         EventBus.Unsubscribe<EventProphecyGenerationRequest>(HandleProphecyGenerationRequest);
         EventBus.Unsubscribe<EventCollisionSignal>(HandleCollisionSignal);
+        EventBus.Unsubscribe<EventNewGameSetupRequest>(HandleNewGameSetupRequest);
+        EventBus.Unsubscribe<EventNextPlayerTurnStartRequest>(HandleNextPlayerTurnStartRequest);
 
         // d�sbonnement � l'evenement collisoin de billes
         BallRoll.TwoBallsCollision -= TwoBallsCollisionNarration;
@@ -81,6 +86,8 @@ public class NarrationManager : MonoBehaviour
         // Unsubscribe from all events to avoid memory leaks
         EventBus.Unsubscribe<EventProphecyGenerationRequest>(HandleProphecyGenerationRequest);
         EventBus.Unsubscribe<EventCollisionSignal>(HandleCollisionSignal);
+        EventBus.Unsubscribe<EventNewGameSetupRequest>(HandleNewGameSetupRequest);
+        EventBus.Unsubscribe<EventNextPlayerTurnStartRequest>(HandleNextPlayerTurnStartRequest);
 
         // d�sbonnement � l'evenement collisoin de billes
         BallRoll.TwoBallsCollision -= TwoBallsCollisionNarration;
@@ -146,6 +153,7 @@ public class NarrationManager : MonoBehaviour
         placeholderProphecy._slowestBall = "ball2";
         placeholderProphecy._positive = false;
         placeholderProphecy._prophecy = "Connor fera la teuf et finira vraiment pas bien";
+        _gameProphecies.Add(placeholderProphecy);
         _lastProphecies.Add(placeholderProphecy);
 
         // reset _lastProphecies
@@ -158,8 +166,7 @@ public class NarrationManager : MonoBehaviour
     private void HandleProphecyGenerationRequest(EventProphecyGenerationRequest requestEvent)
     {
         Debug.Log($"NarrationManager: Fetching turn collisions.");
-        // TODO: Fetch GameStateManager (directly, no event) to get the list of collisions
-        List<Tuple<int, int, bool>> collisions = new List<Tuple<int, int, bool>>(); // will stay empty for now, placeholder
+        List<Tuple<int, int, bool>> collisions = GameStateManager.Instance.LastCollisions();
         foreach (Tuple<int, int, bool> collision in collisions)
         {
             string pos;
@@ -242,6 +249,15 @@ public class NarrationManager : MonoBehaviour
     }
 
     /// <summary>
+    /// returns prophecies that have been generated since the start of the game
+    /// </summary>
+    /// <returns></returns>
+    public List<UIProphecy> GameProphecies()
+    {
+        return _gameProphecies;
+    }
+
+    /// <summary>
     /// returns prophecies that have been generated during the previous shot
     /// </summary>
     /// <returns></returns>
@@ -249,4 +265,32 @@ public class NarrationManager : MonoBehaviour
     {
         return _lastProphecies;
     }
+
+    /// <summary>
+    /// returns the most recently generated prophecy
+    /// </summary>
+    /// <returns></returns>
+    public UIProphecy LastProphecy()
+    {
+        return _gameProphecies[_gameProphecies.Count - 1];
+    }
+
+    /// <summary>
+    /// Things to setup at the start of a new game
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void HandleNewGameSetupRequest (EventNewGameSetupRequest requestEvent)
+    {
+        _gameProphecies.Clear();
+    }
+
+    /// <summary>
+    /// Things to setup at the start of new turn
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void HandleNextPlayerTurnStartRequest (EventNextPlayerTurnStartRequest requestEvent)
+    {
+        _lastProphecies.Clear();
+    }
+
 }

@@ -21,6 +21,7 @@ public class UIFeedback : GameLoopStep
         {
             return _nextStep;
         }
+        // only loops during the main phase, as long as the game doesn't end
         else
         {
             return 0;
