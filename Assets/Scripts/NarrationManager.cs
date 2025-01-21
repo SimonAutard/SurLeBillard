@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+using System.Globalization;
 
 
 public class NarrationManager : MonoBehaviour
@@ -18,21 +19,21 @@ public class NarrationManager : MonoBehaviour
 
     //PROPHETIES
     //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles
-    [SerializeField] Prophecy[,] prophecyMasterTable = new Prophecy[1, 1]; //initilaisé à 1,1 pour les tests
-    private string prophecyFilePath = "Assets/Scripts/Data/prophecydata.csv";
+    [SerializeField] Prophecy[,] prophecyMasterTable; 
+    private string prophecyFilePath = "Assets/Scripts/RawData/NSData(PositiveProphecyRawData).csv";
 
     //STORY ENTITIES
     //Perso principal
     MainCharacter MainCharacter;
     //Listes des types d'entités
     List<StoryCharacter> allCharacters = new List<StoryCharacter>();
-    private string characterFilePath = "Assets/Scripts/Data/characterdata.csv";
+    private string characterFilePath = "Assets/Scripts/RawData/characterdata.csv";
     List<StoryPlace> allPlaces = new List<StoryPlace>();
-    private string placeFilePath = "Assets/Scripts/Data/placedata.csv";
+    private string placeFilePath = "Assets/Scripts/RawData/placedata.csv";
     List<StoryActivity> allStoryActivities = new List<StoryActivity>();
-    private string activityFilePath = "Assets/Scripts/Data/activitydata.csv";
+    private string activityFilePath = "Assets/Scripts/RawData/activitydata.csv";
     List<StoryItem> allStoryItems = new List<StoryItem>();
-    private string itemFilePath = "Assets/Scripts/Data/itemdata.csv";
+    private string itemFilePath = "Assets/Scripts/RawData/itemdata.csv";
 
     // Design pattern du singleton
     private static NarrationManager instance; // instance statique du narration manager
@@ -91,7 +92,15 @@ public class NarrationManager : MonoBehaviour
     void Start()
     {
         InitializeProphecies();
+        Debug.Log(prophecyMasterTable[0, 0].SentenceToFill);
+        Debug.Log(prophecyMasterTable[1, 0].SentenceToFill);
+        Debug.Log(prophecyMasterTable[2, 0].SentenceToFill);
+        Debug.Log(prophecyMasterTable[3, 0].SentenceToFill);
+        Debug.Log(prophecyMasterTable[4, 0].SentenceToFill);
+        Debug.Log(prophecyMasterTable[5, 0].SentenceToFill);
+        Debug.Log(prophecyMasterTable[6, 0].SentenceToFill);
 
+        /*
         //initialisation entity simple pour test
         StoryCharacter charTest = new StoryCharacter(name: "sarah", mainCharacterBond: 60, health: 10);
         allCharacters.Add(charTest);
@@ -120,7 +129,7 @@ public class NarrationManager : MonoBehaviour
         List<(string, object)[]> listupd = new List<(string, object)[]>() { updChar, updPlace };
         Prophecy prophecy = new Prophecy(sentence, types, listval, listupd);
         prophecyMasterTable[0, 0] = prophecy;
-        CreateRandomStory(Vector3.zero);
+        CreateRandomStory(Vector3.zero);*/
     }
 
 
@@ -288,6 +297,7 @@ public class NarrationManager : MonoBehaviour
         string[] lines = RawDataInitializationChecks(prophecyFilePath);
         if (lines != null)
         {
+            prophecyMasterTable = new Prophecy[themesArray.Length,themesArray.Length];
             // Traitement des lignes restantes (données)
             for (int i = 1; i < lines.Length; i++)
             {
@@ -375,8 +385,11 @@ public class NarrationManager : MonoBehaviour
 
         foreach (string cell in allCells)
         {
+            //Cas sans validator
+            if (cell == "") { result.Add(null); }
+
             // Séparer les blocs par les retours à la ligne
-            string[] blocks = cell.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] blocks = cell.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             List<(string, object)> validators = new List<(string, object)>();
             foreach (string block in blocks)
             {

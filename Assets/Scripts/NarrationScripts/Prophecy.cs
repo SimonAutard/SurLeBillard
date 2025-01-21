@@ -21,7 +21,8 @@ public class Prophecy
         ProphecyStoryEntityTypes = storyEntityTypes;
         ProphecyValidators = validators;
         ProphecyUpdators = storyStateUpdators;
-        if (ProphecyStoryEntityTypes.Length != ProphecyValidators.Count || ProphecyStoryEntityTypes.Length != ProphecyUpdators.Count) { throw new Exception("La  prophétie suivante a été créée avec un nombre incorrect de story entities, validators ou updators : "+sentence); }
+        if (ProphecyStoryEntityTypes.Length != ProphecyValidators.Count || ProphecyStoryEntityTypes.Length != ProphecyUpdators.Count) 
+        { throw new Exception("La  prophétie suivante a été créée avec un nombre incorrect de story entities, validators ou updators : "+sentence); }
 
     } 
     /// <summary>
