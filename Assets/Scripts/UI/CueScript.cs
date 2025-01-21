@@ -60,7 +60,7 @@ public class CueScript : MonoBehaviour
         //oriente la queue tant que l'utilisateur n'a pas clique
         if(isValidate == false /*&&  UISingleton.Instance.isReady == true*/)
         {
-            //gestion rotation
+            //gestion rotation en fonction de la souris
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
@@ -71,7 +71,8 @@ public class CueScript : MonoBehaviour
             }
 
             queuePosition = (clickPosition - orb.position).normalized * radius;
-            transform.position = queuePosition + orb.position;
+            transform.position = new Vector3 (queuePosition.x + orb.position.x, 0.5f, queuePosition.z + orb.position.z);
+            //transform.position = queuePosition + orb.position;
             orbVector = orb.position - transform.position;
             Quaternion rotation = Quaternion.LookRotation(orbVector, Vector3.up);
             transform.rotation = rotation;
@@ -95,7 +96,7 @@ public class CueScript : MonoBehaviour
 
         }
 
-   
+        //enregistre que l'utilisateur a cliqué pour tirer
         if (Input.GetMouseButtonDown(0) && UISingleton.Instance.isReady == true)
         {
             UISingleton.Instance.isReady = false;
@@ -106,11 +107,11 @@ public class CueScript : MonoBehaviour
            
         }
 
-        //l'utilisateur a clique et la queue va vers la bille
+        //l'utilisateur a cliqué et la queue va vers la bille
         float distanceToBall = Vector3.Distance(transform.position, orb.position);
         if(isValidate == true)
         {
-            if (distanceToBall > radius * 0.9f)
+            if (distanceToBall > 4)
             {
                 //Debug.Log(radius);
                 transform.position = Vector3.MoveTowards(transform.position, orb.position, Time.deltaTime*radius * radius);
@@ -129,7 +130,8 @@ public class CueScript : MonoBehaviour
      //convertit la valeur de la force entre 0 et 1
     void CalculateForce(float radius)
     {
-        UISingleton.Instance.force = (radius - minForce)/(maxForce - minForce);
+        //on convertit la valeur du radius comprise entre 5 et 8 pour la mettre entre 0.2 et 1
+        UISingleton.Instance.force = (radius - minForce)/(maxForce - minForce) * (1f-0.2f) + 0.2f;
         orbVector.y = 0.0f;
         UISingleton.Instance.BallCuePos = orbVector;
         //Debug.Log("radius" + radius);
@@ -138,14 +140,7 @@ public class CueScript : MonoBehaviour
     }
   
 
-    //Changer pour ontrigger avec seulement collider et is trigger
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //    if (collision.gameObject.TryGetComponent<WhiteBallMove>(out WhiteBallMove whiteBall))
-    //    {
-    //        isCollision = true;
-    //        gameObject.SetActive(false);
-    //    }
-    //}
+
+   
 
 }
