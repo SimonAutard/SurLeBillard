@@ -45,8 +45,6 @@ public class PhysicsManager : MonoBehaviour
 
     private void Start()
     {
-        BallRoll[] ballRolls = FindObjectsByType<BallRoll>(FindObjectsSortMode.None);
-        RemainingBalls = ballRolls.ToList();
         minSpeedForBalls = 0.1f;
     }
 
@@ -84,6 +82,8 @@ public class PhysicsManager : MonoBehaviour
         EventBus.Subscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
         EventBus.Subscribe<EventReplaceWhiteRequest>(HandleReplaceWhiteRequest);
         EventBus.Subscribe<EventReplaceBlackRequest>(HandleReplaceBlackRequest);
+        EventBus.Subscribe<EventNewGameSetupRequest>(HandleNewGameSetupRequest);
+        
         // abonnement à l'evenement empochement de billes
         BallRoll.BallPocketed += UnregisterBall;
     }
@@ -95,6 +95,7 @@ public class PhysicsManager : MonoBehaviour
         EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
         EventBus.Unsubscribe<EventReplaceWhiteRequest>(HandleReplaceWhiteRequest);
         EventBus.Unsubscribe<EventReplaceBlackRequest>(HandleReplaceBlackRequest);
+        EventBus.Unsubscribe<EventNewGameSetupRequest>(HandleNewGameSetupRequest);
         // abonnement à l'evenement empochement de billes
         BallRoll.BallPocketed += UnregisterBall;
     }
@@ -106,6 +107,7 @@ public class PhysicsManager : MonoBehaviour
         EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(HandleForceApplicationToWhiteRequest);
         EventBus.Unsubscribe<EventReplaceWhiteRequest>(HandleReplaceWhiteRequest);
         EventBus.Unsubscribe<EventReplaceBlackRequest>(HandleReplaceBlackRequest);
+        EventBus.Unsubscribe<EventNewGameSetupRequest>(HandleNewGameSetupRequest);
     }
 
     /// <summary>
@@ -175,6 +177,16 @@ public class PhysicsManager : MonoBehaviour
     public List<Tuple<int, int>> TurnPocketings()
     {
         return _turnPocketings;
+    }
+
+    /// <summary>
+    /// Things to setup at the start of a new game
+    /// </summary>
+    /// <param name="requestEvent"></param>
+    private void HandleNewGameSetupRequest(EventNewGameSetupRequest requestEvent)
+    {
+        BallRoll[] ballRolls = FindObjectsByType<BallRoll>(FindObjectsSortMode.None);
+        RemainingBalls = ballRolls.ToList();
     }
 
 }
