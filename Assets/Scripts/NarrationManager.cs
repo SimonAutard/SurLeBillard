@@ -16,7 +16,7 @@ public class NarrationManager : MonoBehaviour
     private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
     //Liste des thï¿½mes de billes
-    private string[] themesArray = new string[] { "Finances", "Santï¿½", "Carriï¿½re", "Nature", "Amitiï¿½", "Amour", "Spiritualitï¿½" };
+    private string[] themesArray = new string[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
 
     //PROPHETIES
     //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles
