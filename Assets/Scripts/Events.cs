@@ -140,6 +140,29 @@ public class EventCollisionSignal
     }
 }
 
+public class EventPocketingSignal
+{
+    public BallRoll _ball { get; set; }
+    public int _pocketID { get; set; }
+
+    public EventPocketingSignal(BallRoll ball, int pocketID)
+    {
+        _ball = ball;
+        _pocketID = pocketID;
+    }
+}
+
+public class EventBallWasCreated
+{
+    public GameObject _ball { get; set; }
+
+    public EventBallWasCreated(GameObject ball)
+    {
+        _ball = ball;
+    }
+}
+
+
 /// <summary>
 /// Requests the initial break to be done
 /// </summary>

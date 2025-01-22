@@ -7,7 +7,7 @@ public class BallRoll : MonoBehaviour
     [SerializeField] protected float mass = 1.0f;
     public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille
     public string ballSymbol; //thème de la bille
-    public int _ballId { get; protected set; }
+    public int _ballId;
 
     // Variables de déplacement
     public float speed { get; protected set; } // vitesse de la bille à chaque instant
@@ -54,7 +54,7 @@ public class BallRoll : MonoBehaviour
         
         if (collider.tag == "Bandes")
         {
-            Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
+            //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
             BounceOnBand(collider);
         }
         if (collider.tag == "Bille")
@@ -112,7 +112,7 @@ public class BallRoll : MonoBehaviour
     {
         // Etape 1 = On calcule la normale du rebond, qui dépend de la bande
         Vector3 normalVector = collider.GetComponent<BandBehavior>().normalVector.normalized; // Vecteur normal de la bande de rebond
-        Debug.Log("normal vector of band is "+normalVector);
+        //Debug.Log("normal vector of band is "+normalVector);
         //Etape 2 = On calcule la nouvelle direction de la bille post rebond 
         if (normalVector != Vector3.zero)
         {
@@ -132,8 +132,8 @@ public class BallRoll : MonoBehaviour
         //Verification qu'un collider a ete touche et quil sagissait dune poche
         if(hit.collider != null && hit.collider.gameObject.tag == "Poche")
         {
-            Debug.Log("bille "+gameObject.GetComponent<Renderer>().material.name+" empochée");
-            BallPocketed?.Invoke(this);
+            Debug.Log("bille "+ _ballId +" empochée");
+            EventBus.Publish(new EventPocketingSignal(this,0));
             Destroy(this.gameObject);
         }
     }

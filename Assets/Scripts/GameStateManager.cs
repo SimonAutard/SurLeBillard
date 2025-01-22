@@ -19,6 +19,10 @@ public class GameStateManager : MonoBehaviour
     private List<Tuple<int, int>> _lastPocketings = new List<Tuple<int, int>>();
     private List<Tuple<int, int>> _gamePocketings = new List<Tuple<int, int>>();
 
+    //Paramètres des billes
+    public int whiteBallID { get; private set; }
+    public int blackBallID { get; private set; }
+
     // Design pattern du singleton
     private static GameStateManager _instance; // instance statique du game state manager
 
@@ -41,6 +45,8 @@ public class GameStateManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        whiteBallID = 0;
+        blackBallID = 4;
     }
 
     private void OnEnable()
