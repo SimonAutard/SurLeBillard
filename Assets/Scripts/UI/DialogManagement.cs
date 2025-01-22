@@ -47,12 +47,12 @@ public class DialogManagement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (UIManager.Instance._isClothoTurn == true && Input.GetMouseButtonDown(0) && _isRound)
+        if (UIManager.Instance._isClothoTurn == true && Input.GetMouseButtonDown(0) && _isRound && UIManager.Instance.popupEnabled == false)
         {
             CloseFirstDialog();
 
         }
-        else if (UIManager.Instance._isClothoTurn == false && Input.GetMouseButtonDown(0) && _isRound)
+        else if (UIManager.Instance._isClothoTurn == false && Input.GetMouseButtonDown(0) && _isRound && UIManager.Instance.popupEnabled == false)
         {
             CloseFirstDialog();
 
