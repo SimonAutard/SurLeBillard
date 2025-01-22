@@ -6,6 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using System.Globalization;
+using Unity.Android.Gradle;
 
 
 public class NarrationManager : MonoBehaviour
@@ -92,13 +93,12 @@ public class NarrationManager : MonoBehaviour
     void Start()
     {
         InitializeProphecies();
-        Debug.Log(prophecyMasterTable[0, 0].SentenceToFill);
-        Debug.Log(prophecyMasterTable[1, 0].SentenceToFill);
-        Debug.Log(prophecyMasterTable[2, 0].SentenceToFill);
-        Debug.Log(prophecyMasterTable[3, 0].SentenceToFill);
-        Debug.Log(prophecyMasterTable[4, 0].SentenceToFill);
-        Debug.Log(prophecyMasterTable[5, 0].SentenceToFill);
-        Debug.Log(prophecyMasterTable[6, 0].SentenceToFill);
+        Prophecy prophecy = prophecyMasterTable[1, 0];
+        Debug.Log(prophecy.SentenceToFill+" "+
+            (prophecy.ProphecyStoryEntityTypes[1]==typeof(StoryPlace)) +" "+
+            prophecy.ProphecyValidators[0][0].ToString()+" "+
+            prophecy.ProphecyUpdators[0][0].ToString());
+
 
         /*
         //initialisation entity simple pour test
@@ -304,6 +304,10 @@ public class NarrationManager : MonoBehaviour
                 string line = lines[i];
                 string[] cells = line.Split(';');
 
+                //Rangement de la prophetie
+                string theme1 = cells[0];
+                string theme2 = cells[1];
+
                 // Instanciation de la prophetie
                 string sentence = cells[2];
 
@@ -317,14 +321,11 @@ public class NarrationManager : MonoBehaviour
 
                 Prophecy prophecy = new Prophecy(sentence,entityTypes,validators, updators);
 
-                //Rangement de la prophetie
-
-                string theme1 = cells[0];
-                string theme2 = cells[1];
+                
 
                 int index1 = Array.IndexOf(themesArray, theme1);
                 int index2 = Array.IndexOf( themesArray, theme2);
-
+                Debug.Log(i + " " + index1 + " " + index2);
                 prophecyMasterTable[index1, index2] = prophecy;
                 prophecyMasterTable[index2, index1] = prophecy;
 
@@ -345,11 +346,22 @@ public class NarrationManager : MonoBehaviour
             Debug.LogError($"Fichier non trouvé : {prophecyFilePath}");
             return null;
         }
-
+        // On continue si le fichier existe
         else
         {
-            // Lire toutes les lignes du fichier
-            string[] lines = File.ReadAllLines(prophecyFilePath);
+            //Extraction
+            string[] lines;
+            //On précise la methode d'encodage pour garder les accents
+            using (StreamReader reader = new StreamReader(prophecyFilePath, System.Text.Encoding.GetEncoding("ISO-8859-1")))
+            {
+                lines = reader
+                    .ReadToEnd()                       // Lire tout le contenu
+                    .Split(Environment.NewLine)        // Séparer par les sauts de ligne
+                    .Where(line =>                     // Filtrer les lignes non vides
+                        !string.IsNullOrWhiteSpace(line) &&  // Pas vide ni espaces
+                        line.Trim(';').Length > 0)          // Pas seulement des points-virgules
+                    .ToArray();                        // Convertir en tableau
+            }
 
             // Vérifier si le fichier contient au moins une ligne (l'en-tête)
             if (lines.Length < 1)
@@ -386,7 +398,10 @@ public class NarrationManager : MonoBehaviour
         foreach (string cell in allCells)
         {
             //Cas sans validator
-            if (cell == "") { result.Add(null); }
+            if (cell=="") { 
+                result.Add(null);
+                continue;
+            }
 
             // Séparer les blocs par les retours à la ligne
             string[] blocks = cell.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
