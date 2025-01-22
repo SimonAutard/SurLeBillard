@@ -10,7 +10,7 @@ public class GameStateManager : MonoBehaviour
     private List<PenaltyType> _currentTurnPenalties = new List<PenaltyType>();
     public bool _gameInitialised {  get; private set; }
     private bool _gameEnded = false;
-    private ActivePlayerName _winner;
+    public ActivePlayerName _winner { get; private set; }
     private int _turnCount = 0;
     private List<int> _ballsInPlay = new List<int>();
     private List<int> _ballsPocketed = new List<int>();

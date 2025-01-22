@@ -1,4 +1,5 @@
  using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +15,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private DialogManagement _dialogManagement;
     public List<UIProphecy> prophecies { get; set; }
     public bool storyDisplayed { get; set; }
+
+    public bool VictoryPanelDisplayed { get; set; }
+
 
 // Design pattern du singleton
 private static UIManager _instance; // instance statique du ui manager
@@ -79,6 +83,7 @@ private static UIManager _instance; // instance statique du ui manager
         // TODO : UI related stuff if needed
         Debug.Log("UIManager : Requesting the start of a new game");
         EventBus.Publish(new EventNewGameRequest());
+       
     }
 
     public void AttachDialogManagement(DialogManagement dm)
@@ -192,6 +197,9 @@ private static UIManager _instance; // instance statique du ui manager
         // - Display dialogs depending on the winner
         // - Display gameplay recap? (fetch data from GameStateManager)
         // - Display story recap? (fetch data from NarrationManager)
+
+        VictoryPanelDisplayed = true;
+
 
     }
 
