@@ -71,5 +71,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-# UNity asset store items
-/[Aa]ssets/UnityStoreAssets/*
+#UNity asset store
+/[Aa]ssets/[Uu]nity[Ss]tore[Aa]ssets/

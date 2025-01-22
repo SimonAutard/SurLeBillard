@@ -2,15 +2,19 @@ using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
-public class Character : StoryEntity
+public class StoryCharacter : StoryEntity
 {
     //Attributs
     public float Health { get; private set; }
     public float Money { get; private set; }
     public string CharacterType { get; private set; }
+    private float MinHealth = 0;
+    private float MaxHealth = 100;
+    private float MinMoney = 0;
+    private float MaxMoney = 100;
 
     //Constructeur
-    public Character (string name="generic character", float mainCharacterBond=50, float health = 50, float money = 50, string characterType = "generic type")
+    public StoryCharacter (string name="generic character", float mainCharacterBond=50, float health = 50, float money = 50, string characterType = "generic type")
     {
         Name = name;
         MainCharacterBond = mainCharacterBond;
@@ -26,6 +30,10 @@ public class Character : StoryEntity
     public bool MoneyMin(float moneyMin) { if (moneyMin <= Money) return true; else return false; }
     public bool MoneyMax(float moneyMax) { if (moneyMax >= Money) return true; else return false; }
 
+    //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
+    public void HealthPlus(float healthPlus) { Health = ValuePlus(Health, healthPlus, MinHealth, MaxHealth); }
+    public void MoneyPlus(float moneyPlus) { Money = ValuePlus(Money, moneyPlus, MinMoney, MaxMoney); }
+    public void CharacterTypeBecomes(string newCharacterType) { CharacterType = newCharacterType; }
 }
 /*
 public class CharacterValidator : StoryEntityValidator
