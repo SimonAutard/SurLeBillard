@@ -1,0 +1,11 @@
+Nom;Bond;Type;AssociatedPlaces;Popularity
+scuplture;50;Art;City;50
+surfer;50;Sport;Nature;50
+jouer au football;50;Sport;City,Nature;50
+se cacher dans les placards;50;Leisure;City;50
+jouer du violon;50;Art;City,Nature;50
+tondre des moutons;50;Leisure;Nature;50
+boire de la guiness;50;Leisure;City,Nature;50
+danser;50;Art;City,Nature;50
+aller au pub;50;Leisure;City,Nature;50
+regarder le foot;50;Leisure;City,Nature;50

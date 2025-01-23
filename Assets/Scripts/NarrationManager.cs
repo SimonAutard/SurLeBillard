@@ -4,9 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
-using System.Globalization;
-using Unity.Android.Gradle;
 
 
 public class NarrationManager : MonoBehaviour
@@ -16,11 +13,11 @@ public class NarrationManager : MonoBehaviour
     private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
     //Liste des thï¿½mes de billes
-    private string[] themesArray = new string[] { "Finances", "Santï¿½", "Carriï¿½re", "Nature", "Amitiï¿½", "Amour", "Spiritualitï¿½" };
+    private string[] themesArray = new string[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
 
     //PROPHETIES
     //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles
-    [SerializeField] Prophecy[,] prophecyMasterTable; 
+    [SerializeField] Prophecy[,] prophecyMasterTable;
     private string prophecyFilePath = "Assets/Scripts/RawData/NSData(PositiveProphecyRawData).csv";
 
     //STORY ENTITIES
@@ -28,13 +25,13 @@ public class NarrationManager : MonoBehaviour
     MainCharacter MainCharacter;
     //Listes des types d'entités
     List<StoryCharacter> allCharacters = new List<StoryCharacter>();
-    private string characterFilePath = "Assets/Scripts/RawData/characterdata.csv";
+    private string characterFilePath = "Assets/Scripts/RawData/NSData(StoryCharacterRawData).csv";
     List<StoryPlace> allPlaces = new List<StoryPlace>();
-    private string placeFilePath = "Assets/Scripts/RawData/placedata.csv";
+    private string placeFilePath = "Assets/Scripts/RawData/NSData(StoryPlaceRawData).csv";
     List<StoryActivity> allStoryActivities = new List<StoryActivity>();
-    private string activityFilePath = "Assets/Scripts/RawData/activitydata.csv";
+    private string activityFilePath = "Assets/Scripts/RawData/NSData(StoryActivityRawData).csv";
     List<StoryItem> allStoryItems = new List<StoryItem>();
-    private string itemFilePath = "Assets/Scripts/RawData/itemdata.csv";
+    private string itemFilePath = "Assets/Scripts/RawData/NSData(StoryItemRawData).csv";
 
     // Design pattern du singleton
     private static NarrationManager instance; // instance statique du narration manager
@@ -107,11 +104,20 @@ public class NarrationManager : MonoBehaviour
     {
         InitializeProphecies();
         Prophecy prophecy = prophecyMasterTable[1, 0];
-        Debug.Log(prophecy.SentenceToFill+" "+
-            (prophecy.ProphecyStoryEntityTypes[1]==typeof(StoryPlace)) +" "+
-            prophecy.ProphecyValidators[0][0].ToString()+" "+
+        Debug.Log(prophecy.SentenceToFill + " " +
+            (prophecy.ProphecyStoryEntityTypes[1] == typeof(StoryPlace)) + " " +
+            prophecy.ProphecyValidators[0][0].ToString() + " " +
             prophecy.ProphecyUpdators[0][0].ToString());
-
+        InitializeStoryCharacters();
+        InitializeStoryPlaces();
+        InitializeStoryItems();
+        InitializeStoryActivities();
+        StoryActivity storyActivity = allStoryActivities[allStoryActivities.Count - 1];
+        Debug.Log(storyActivity.Name + " " +
+            storyActivity.MainCharacterBond + " " +
+            storyActivity.ActivityType + " " +
+            storyActivity.Popularity + " " +
+            storyActivity.AssociatedPlaceTypes[1]);
 
         /*
         //initialisation entity simple pour test
@@ -303,7 +309,7 @@ public class NarrationManager : MonoBehaviour
     /// Things to setup at the start of a new game
     /// </summary>
     /// <param name="requestEvent"></param>
-    private void HandleNewGameSetupRequest (EventNewGameSetupRequest requestEvent)
+    private void HandleNewGameSetupRequest(EventNewGameSetupRequest requestEvent)
     {
         _gameProphecies.Clear();
     }
@@ -312,7 +318,7 @@ public class NarrationManager : MonoBehaviour
     /// Things to setup at the start of new turn
     /// </summary>
     /// <param name="requestEvent"></param>
-    private void HandleNextPlayerTurnStartRequest (EventNextPlayerTurnStartRequest requestEvent)
+    private void HandleNextPlayerTurnStartRequest(EventNextPlayerTurnStartRequest requestEvent)
     {
         _lastProphecies.Clear();
     }
@@ -347,21 +353,24 @@ public class NarrationManager : MonoBehaviour
     /// </summary>
     void InitializeProphecies()
     {
+        //Recuperation du csv sous forme de string[]
         string[] lines = RawDataInitializationChecks(prophecyFilePath);
         if (lines != null)
         {
-            prophecyMasterTable = new Prophecy[themesArray.Length,themesArray.Length];
+            //Initialisation de la prophecyMasterTable
+            prophecyMasterTable = new Prophecy[themesArray.Length, themesArray.Length];
             // Traitement des lignes restantes (données)
             for (int i = 1; i < lines.Length; i++)
             {
                 string line = lines[i];
                 string[] cells = line.Split(';');
 
-                //Rangement de la prophetie
+                //Coordonnees de la prophetie dans la prophecyMasterTable
                 string theme1 = cells[0];
                 string theme2 = cells[1];
+                int index1 = Array.IndexOf(themesArray, theme1);
+                int index2 = Array.IndexOf(themesArray, theme2);
 
-                // Instanciation de la prophetie
                 string sentence = cells[2];
 
                 Type[] entityTypes = ExtractProphecyTypes(cells[3]);
@@ -370,15 +379,13 @@ public class NarrationManager : MonoBehaviour
 
                 List<(string, object)[]> validators = ExtractProphecyValidators(cells[5], cells[6], cells[7]);
 
+                //INSERER ICI RECUPERATION DES INFOS DE SELF EFFECT
+
                 List<(string, object)[]> updators = ExtractProphecyValidators(cells[9], cells[10], cells[11]); //Normalement la fonction devrait etre differetnte de celle d'extraction des validateurs, mais leur fonctionnement sont identiques donc on garde la meme
 
-                Prophecy prophecy = new Prophecy(sentence,entityTypes,validators, updators);
+                Prophecy prophecy = new Prophecy(sentence, entityTypes, validators, updators);
 
-                
-
-                int index1 = Array.IndexOf(themesArray, theme1);
-                int index2 = Array.IndexOf( themesArray, theme2);
-                Debug.Log(i + " " + index1 + " " + index2);
+                // On renseigne la prophetie aux deux intersections du tableau double entree pour la retrouver facilement
                 prophecyMasterTable[index1, index2] = prophecy;
                 prophecyMasterTable[index2, index1] = prophecy;
 
@@ -394,7 +401,7 @@ public class NarrationManager : MonoBehaviour
     string[] RawDataInitializationChecks(string filePath)
     {
         // Vérifie que le fichier existe
-        if (!File.Exists(prophecyFilePath))
+        if (!File.Exists(filePath))
         {
             Debug.LogError($"Fichier non trouvé : {prophecyFilePath}");
             return null;
@@ -405,7 +412,7 @@ public class NarrationManager : MonoBehaviour
             //Extraction
             string[] lines;
             //On précise la methode d'encodage pour garder les accents
-            using (StreamReader reader = new StreamReader(prophecyFilePath, System.Text.Encoding.GetEncoding("ISO-8859-1")))
+            using (StreamReader reader = new StreamReader(filePath, System.Text.Encoding.GetEncoding("ISO-8859-1")))
             {
                 lines = reader
                     .ReadToEnd()                       // Lire tout le contenu
@@ -419,7 +426,7 @@ public class NarrationManager : MonoBehaviour
             // Vérifier si le fichier contient au moins une ligne (l'en-tête)
             if (lines.Length < 1)
             {
-                Debug.LogError("Le fichier CSV est vide !");
+                Debug.LogError("Le fichier CSV " + filePath + " est vide !");
                 return null;
             }
             else { return lines; }
@@ -429,7 +436,8 @@ public class NarrationManager : MonoBehaviour
     }
 
     Type[] ExtractProphecyTypes(string cell)
-    {                // Séparer les noms par la virgule
+    {
+        // Séparer les noms par la virgule
         string[] classNames = cell.Split(',');
         // Créer un tableau pour stocker les types
         Type[] requiredTypes = new Type[classNames.Length];
@@ -441,24 +449,34 @@ public class NarrationManager : MonoBehaviour
         return requiredTypes;
     }
 
+    /// <summary>
+    /// Transforme les 3 cellules d'une ligne du csv prophetie en List<(string,object)[]> comprehensible par le constructeur de prophetie
+    /// </summary>
+    /// <param name="cell1">validateurs de la 1ere entite</param>
+    /// <param name="cell2">validateurs de la 2eme entite</param>
+    /// <param name="cell3">validateurs de la 3eme entite</param>
+    /// <returns></returns>
     List<(string, object)[]> ExtractProphecyValidators(string cell1, string cell2, string cell3)
     {
-
-        List<string> allCells = new List<string>() { cell1,cell2,cell3};
-
-        List<(string, object)[]> result = new List<(string, object)[]>() ;
-
+        //Concatenation des cellules de valdiation des 3 entites de la prophetie
+        List<string> allCells = new List<string>() { cell1, cell2, cell3 };
+        //Liste vide accueillant les valdiateurs
+        List<(string, object)[]> result = new List<(string, object)[]>();
+        //On parcourt chaque cellule de la ligne csv
         foreach (string cell in allCells)
         {
             //Cas sans validator
-            if (cell=="") { 
-                result.Add(null);
+            if (cell == "")
+            {
+                result.Add(null); // le constructeur de prophetie se debrouille meme sans validateur
                 continue;
             }
 
-            // Séparer les blocs par les retours à la ligne
+            // Séparer les criteres par les espace sdans la cellule
             string[] blocks = cell.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            // Initialisation du validateur de la cellule
             List<(string, object)> validators = new List<(string, object)>();
+            //On parcourt chaque critere du validateur
             foreach (string block in blocks)
             {
                 // Séparer les deux chaînes par la virgule
@@ -481,16 +499,89 @@ public class NarrationManager : MonoBehaviour
                     }
 
                     // Ajouter le tuple dans la liste
-                    validators.Add(  (key, castedValue) );
+                    validators.Add((key, castedValue));
                 }
                 else
                 {
-                    Debug.LogWarning($"Bloc mal formé : {block}");
+                    Debug.LogWarning($"Validateur mal écrit : {block} dans" + cell);
                 }
             }
+            //On assemble tous les criteres pour former le validateur associe a cette cellule
             result.Add(validators.ToArray());
         }
 
         return result;
+    }
+
+    /**
+     * FONCTIONS DE CONVERSION DU CSV EN DIFFERETNES STORY ENTITIES DU JEU
+     * */
+    private void InitializeStoryCharacters()
+    {
+        //Extraction du csv en string
+        string[] lines = RawDataInitializationChecks(characterFilePath);
+        if (lines != null)
+        {
+            //lecture de chaque ligne du csv
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                //separation de la ligne en cellules
+                string[] cells = line.Split(';');
+                //création de l'entité
+                StoryCharacter entity = new StoryCharacter(cells[0], int.Parse(cells[1]), cells[2], int.Parse(cells[3]), int.Parse(cells[4]));
+                //ajout de lentite a la liste qui lui correspond
+                allCharacters.Add(entity);
+
+            }
+        }
+    }
+    private void InitializeStoryPlaces()
+    {
+        string[] lines = RawDataInitializationChecks(placeFilePath);
+        if (lines != null)
+        {
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                string[] cells = line.Split(';');
+
+                StoryPlace entity = new StoryPlace(cells[0], float.Parse(cells[1]), cells[2], float.Parse(cells[3]));
+
+                allPlaces.Add(entity);
+            }
+        }
+    }
+    private void InitializeStoryItems()
+    {
+        string[] lines = RawDataInitializationChecks(itemFilePath);
+        if (lines != null)
+        {
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                string[] cells = line.Split(';');
+
+                StoryItem entity = new StoryItem(cells[0], int.Parse(cells[1]), cells[2], int.Parse(cells[3]));
+
+                allStoryItems.Add(entity);
+            }
+        }
+    }
+    private void InitializeStoryActivities()
+    {
+        string[] lines = RawDataInitializationChecks(activityFilePath);
+        if (lines != null)
+        {
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                string[] cells = line.Split(';');
+
+                StoryActivity entity = new StoryActivity(cells[0], int.Parse(cells[1]), cells[2], cells[3].Split(','), int.Parse(cells[4]));
+
+                allStoryActivities.Add(entity);
+            }
+        }
     }
 }

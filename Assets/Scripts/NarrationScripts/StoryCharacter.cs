@@ -14,7 +14,7 @@ public class StoryCharacter : StoryEntity
     private float MaxMoney = 100;
 
     //Constructeur
-    public StoryCharacter (string name="generic character", float mainCharacterBond=50, float health = 50, float money = 50, string characterType = "generic type")
+    public StoryCharacter (string name="generic character", float mainCharacterBond=50, string characterType = "generic type", float health = 50, float money = 50)
     {
         Name = name;
         MainCharacterBond = mainCharacterBond;
