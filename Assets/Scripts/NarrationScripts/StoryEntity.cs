@@ -23,6 +23,7 @@ public class StoryEntity
     //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
     public void NewName(string name) {  Name = name; }
     public void BondPlus(float bondPlus) { MainCharacterBond = ValuePlus( MainCharacterBond, bondPlus,MinBond,MaxBond); }
+    public void BondReverse(float boolean) { MainCharacterBond = MaxBond - MainCharacterBond; }
 
     protected float ValuePlus( float baseValue, float valuePlus, float minValue, float maxValue)
     {

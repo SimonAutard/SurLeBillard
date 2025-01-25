@@ -24,5 +24,5 @@ public class StoryItem : StoryEntity
 
     //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
     public void StatePlus(float statePlus) { State = ValuePlus(State, statePlus, MinState, MaxState); }
-    public void ItemTypeBecomes(string newPlaceType) { ItemType = newPlaceType; }
+    public void ItemTypeBecomes(string newItemType) { ItemType = newItemType; }
 }

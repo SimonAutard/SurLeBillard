@@ -22,7 +22,7 @@ public class NarrationManager : MonoBehaviour
 
     //STORY ENTITIES
     //Perso principal
-    MainCharacter MainCharacter;
+    public MainCharacter MainCharacter { get; private set; }
     //Listes des types d'entités
     List<StoryCharacter> allCharacters = new List<StoryCharacter>();
     private string characterFilePath = "Assets/Scripts/RawData/NSData(StoryCharacterRawData).csv";
@@ -103,22 +103,11 @@ public class NarrationManager : MonoBehaviour
     void Start()
     {
         InitializeProphecies();
-        Prophecy prophecy = prophecyMasterTable[1, 0];
-        Debug.Log(prophecy.SentenceToFill + " " +
-            (prophecy.ProphecyStoryEntityTypes[1] == typeof(StoryPlace)) + " " +
-            prophecy.ProphecyValidators[0][0].ToString() + " " +
-            prophecy.ProphecyUpdators[0][0].ToString());
         InitializeStoryCharacters();
         InitializeStoryPlaces();
         InitializeStoryItems();
         InitializeStoryActivities();
-        StoryActivity storyActivity = allStoryActivities[allStoryActivities.Count - 1];
-        Debug.Log(storyActivity.Name + " " +
-            storyActivity.MainCharacterBond + " " +
-            storyActivity.ActivityType + " " +
-            storyActivity.Popularity + " " +
-            storyActivity.AssociatedPlaceTypes[1]);
-
+        InitializeMainCharacter();
         /*
         //initialisation entity simple pour test
         StoryCharacter charTest = new StoryCharacter(name: "sarah", mainCharacterBond: 60, health: 10);
@@ -162,14 +151,14 @@ public class NarrationManager : MonoBehaviour
     {
         int index1 = random.Next(0, themesArray.Length);
         int index2 = random.Next(0, themesArray.Length);
+        Debug.Log(" prophecy for " + themesArray[index1] + " " + themesArray[index2]);
         if (index1 == index2) { index2--; }
-        LegoProphecy legoProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy();
+        LegoProphecy legoProphecy = prophecyMasterTable[index1, index2].GetCompletedProphecy();
         Debug.Log(legoProphecy.Sentence);
-        Debug.Log("etat initial de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = " + ((StoryCharacter)legoProphecy.StoryEntities[0]).Health);
-        Debug.Log("etat initial de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = " + ((StoryPlace)legoProphecy.StoryEntities[1]).State);
-        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[0, 0].ProphecyUpdators);
-        Debug.Log("etat final de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = " + ((StoryCharacter)legoProphecy.StoryEntities[0]).Health);
-        Debug.Log("etat final de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = " + ((StoryPlace)legoProphecy.StoryEntities[1]).State);
+
+        DebugLogEntitiesState(legoProphecy,"initial");
+        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2].ProphecyUpdators);
+        DebugLogEntitiesState(legoProphecy,"final");
     }
 
     private void HandleCollisionSignal(EventCollisionSignal collision)
@@ -262,7 +251,7 @@ public class NarrationManager : MonoBehaviour
                         // Appeler la mï¿½thode en passant les paramï¿½tres
                         isCandidate = (bool)method.Invoke(entity, new object[1] { methodValue });
                     }
-                    else { throw new Exception("Mï¿½thode introuvable : " + methodName); }
+                    else { throw new Exception("Méthode introuvable : " + methodName); }
                     // On sort de la boucle des quun critere nest pas verifie pour passer a lentite suivante parmi les candidates
                     if (!isCandidate) { break; }
                 }
@@ -329,8 +318,11 @@ public class NarrationManager : MonoBehaviour
     /// <param name="gameEntityList"></param>
     public void UpdateStoryEntitiesFromProphecy(StoryEntity[] gameEntityList, List<(string, object)[]> updators)
     {
+        //On change l'etat des entites les unes apres les autres
         for (int i = 0; i < gameEntityList.Length; i++)
         {
+            //Si une entite na pas de updators, cest quon na pas besoin de la changer
+            if (updators[i] == null) { continue; }
             foreach ((string, object) updator in updators[i])
             {
                 string methodName = updator.Item1; //nom de la fonction de'update de lentite
@@ -581,6 +573,57 @@ public class NarrationManager : MonoBehaviour
                 StoryActivity entity = new StoryActivity(cells[0], int.Parse(cells[1]), cells[2], cells[3].Split(','), int.Parse(cells[4]));
 
                 allStoryActivities.Add(entity);
+            }
+        }
+    }
+    private void InitializeMainCharacter()
+    {
+        (string, object)[] placeValidator = { ("NameIs", "Galway") };
+        StoryPlace livingPlace = (StoryPlace)GetFittingEntity(typeof(StoryPlace), placeValidator);
+
+        (string, object)[] characterValidator = { ("NameIs", "Harold") };
+        StoryCharacter boss = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterValidator);
+
+        (string, object)[] activityValidator = { ("NameIs", "tondre des moutons") };
+        StoryActivity job = (StoryActivity)GetFittingEntity(typeof(StoryActivity), activityValidator);
+
+        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, 30, 30);
+    }
+    private void DebugLogEntitiesState(LegoProphecy legoProphecy,string stateName)
+    {
+        foreach (StoryEntity entity in legoProphecy.StoryEntities)
+        {
+            if (entity is StoryCharacter storyCharacter)
+            {
+                Debug.Log("etat "+stateName + " de "+storyCharacter.Name +
+                    ": bond = " + storyCharacter.MainCharacterBond +
+                    "; Money = " + storyCharacter.Money +
+                    "; health = " + storyCharacter.Health);
+
+            }
+            else if (entity is StoryPlace storyPlace)
+            {
+                Debug.Log("etat " + stateName + " de " + storyPlace.Name +
+                    ": bond = " + storyPlace.MainCharacterBond +
+                    "; type = " + storyPlace.PlaceType +
+                    "; state = " + storyPlace.State);
+
+            }
+            else if (entity is StoryItem storyItem)
+            {
+                Debug.Log("etat " + stateName + " de " + storyItem.Name +
+                    ": bond = " + storyItem.MainCharacterBond +
+                    "; type = " + storyItem.ItemType +
+                    "; state = " + storyItem.State);
+
+            }
+            else if (entity is StoryActivity storyActivity)
+            {
+                Debug.Log("etat " + stateName + " de " + storyActivity.Name +
+                    " : bond = " + storyActivity.MainCharacterBond +
+                    "; type = " + storyActivity.ActivityType +
+                    "; popularity = " + storyActivity.Popularity);
+
             }
         }
     }

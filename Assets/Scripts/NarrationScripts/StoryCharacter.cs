@@ -29,6 +29,7 @@ public class StoryCharacter : StoryEntity
     public bool HealthMax(float healthMax) { if (healthMax >= Health) return true; else return false; }
     public bool MoneyMin(float moneyMin) { if (moneyMin <= Money) return true; else return false; }
     public bool MoneyMax(float moneyMax) { if (moneyMax >= Money) return true; else return false; }
+    public bool IsBoss(float useless) { if(this ==NarrationManager.Instance.MainCharacter.Boss) return true; else return false; }
 
     //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
     public void HealthPlus(float healthPlus) { Health = ValuePlus(Health, healthPlus, MinHealth, MaxHealth); }
