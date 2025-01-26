@@ -1,0 +1,60 @@
+Ball1;Ball2;ProphecyText;EntityType;SelfCondition;Entity1Conditions;Entity2Conditions;Entity3Conditions;SelfEffect;Entity1Effect;Entity2Effect;Entity3Effect;;;;;;;;;;
+Finances;Santé;Comme il s'entendra déjà mal avec {0}, Connor brisera sa jambe de bois lors d'une bagarre avec lui, mais n'aura que les moyens de s'en acheter une nouvelle de piètre qualité;StoryCharacter;;BondMax,50;;;HealthPlus,- 10;"
+BondPlus,-20";;;;;;;;;;;;
+Finances;Carrière;Une période de fatigue et de démotivation fera que les performances de Connor à son travail consistant à {0} seront mauvaises, à tel point qu'il sera mis à pied par {1};StoryActivity,StoryCharacter;;IsJob,1;"
+StateMin,70 IsBoss,1";;"
+MoneyPlus,-5 CareerPlus,-10 JobBecomes,null BossBecomes,null";StatePlus,-10;BondPlus,-20;;;;;;;;;;;
+Finances;Nature;Connor ira acheter {0} pour faire un cadeau à {1} mais sur le trajet du retour il tombera dans {2}, à tel point que le cadeau sera irréparablement endommagé.;StoryItem,StoryCharacter,StoryPlace;"
+";StateMin,70 ItemTypeIs,Artefact;BondMin,60;StateMax,30 PlaceTypeIs,Nature;;StatePlus,-50;"
+BondPlus,-5";"
+StatePlus,+20";;;;;;;;;;
+Finances;Amitié;Quand {0} de Connor sera en piteux état, {1} refusera de lui avancer de l'argent pour l'aider à payer les réparations.;StoryItem,StoryCharacter;;StateMin,50 ItemTypeIs,Artefact;"
+HealthMin,40 MoneyMin,50";;"
+MoneyPlus,-10";StatePlus,-20;"
+BondPlus,-10";;;;;;;;;;;
+Finances;Amour;Apprenant que l'activité annexe de Connor consistant à {0} marchera bien, {1} paiera des gens pour faire de fausses mauvaises reviews pour dégrader son image;StoryActivity,  StoryCharacter;;PopularityMax,50 BondMin,60;MoneyMin,60 BondMax,30 IsJob,1;;"
+
+MoneyPlus,-10";PopularityPlus,-5 BondPlus,-5;BondPlus,-5;;;;;;;;;;;
+Finances;Spiritualité;Connor devra aider financièrement {0} qui se fera arnaquer par quelqu'un prétendant récolter des fonds pour la rénovation de la chapelle de {1};StoryCharacter,StoryPlace;;State Min,20 BondMin,50 CharacterTypeIs,Family;StateMax,40;;"
+MoneyPlus,-10";StatePlus,-10 BondPlus,+20;"
+StatePlus,-5";;;;;;;;;;;
+Santé;Carrière;Connor aura un accident de voiture à {0} en se rendant au travail et {1} sera mécontant car il aura vraiment compté sur la présence de Connor ce jour là;StoryPlace,StoryCharacter;;StateMax,40 BondMin,50;BondMin,50 IsBoss,1;;"
+HealthPlus,-10";StatePlus,-10 BondPlus,-20;"
+BondPlus,-10";;;;;;;;;;;
+Santé;Nature;Une vague de froid rendra Connor malade, le forçant à annuler ses vacances à {0}. {1} qui devait venir avec lui sera déçu de cette annulation.;StoryPlace,StoryCharacter;;StateMin,60;"
+BondMin,50 CharacterType,Crush";;"
+HealthPlus,-10";BondPlus,-10;"
+BondPlus,-10";;;;;;;;;;;
+Santé;Amitié;Connor se fera une entorse et ne pourra donc pas conduire pour se rendre à {0}. Quand il demandera à {1} de l'y ammener ce dernier lui dira qu'il n'a pas le temps.;StoryPlace,StoryCharacter;;BondMin,50;"
+BondMin,40";;"
+HealthPlus,-10";BondPlus,-10;"
+BondPlus,-10";;;;;;;;;;;
+Santé;Amour;{0} fera une mauvaise blague à Connor impliquant {1}. La situation sérapera, blessant grièvement Connor.;StoryCharacter,StoryCharacter;;BondMin,40;;;"
+
+HealthPlus,-10";BondPlus,-20;BondPlus,-10;;;;;;;;;;;
+Santé;Spiritualité;Alors que Connor pratiquera {0} il sera victime de Plusieurs petites blessures consécutives, à tel point qu'il se demandera si {1} n'a pas décidé de lui pourrir la vie.;StoryActivity,StoryCharacter;;BondMin,30;BondMin,30 CharacterTypeIs,SpiritualFigure;;"
+HealthPlus,-5";BondPlus,-5;BondPlus,-10;;;;;;;;;;;
+Carrière;Nature;Connor devra aller travailler à {0} et il sera malheureux car il ne pourra pas pratiquer {1} à cet endroit;StoryPlace,StoryActivity ;;PlaceTypeIs,Inland;BondMin,60 AssociatedPlacesComprise,Seaside;;LivingPlaceBecomes,0;BondPlus,-40;;;;;;;;;;;;
+Carrière;Amitié;Connor se verra refuser une augmentation à son travail car {1} la recevra à sa place;StoryCharacter;;BondMin,50 IsColleague,1;;;"
+CareerPlus,-10";"
+BondPlus,-20";;;;;;;;;;;;
+Carrière;Amour;{0} sera embauchée dans la même entreprise que Connor, mais bien qu'initialement heureux, il réalisera que travailler ensemble est source de tensions entre eux;StoryActivity;;IsJob,1;;;;BondPlus,-10;;;;;;;;;;;;
+Carrière;Spiritualité;Un jour en arrivant au travail, Connor y trouvera des gens bizarre et apprendra peu après que {1} a rejoint une secte dont ces gens font partie;StoryCharacter;;IsBoss,1;;;"
+CareerPlus,-10";MoneyPlus,-20 BondPlus,-10;;;;;;;;;;;;
+Nature;Amitié;En ballade avec {0} à {1}, Conor aura une forte dispute avec lui en le voyant jeter l'emballage de son repas dans la nature, allant ainsi à l'encontre de ses principes écologiques.;StoryCharacter, StoryPlace;;BondMin,60 CharacterTypeIs,Friend;"
+BondMin,40 StateMax,40 PlaceTypeIs,Nature";;;BondPlus,-20;"
+StatePlus,-5";;;;;;;;;;;
+Nature;Amour;Connor emmènera {0} en ballade bucollique à {1} mais remarquera assez vite qu'elle s'ennuie fortement et le reste du rendez-vous sera très gênant;StoryCharacter,StoryPlace;;BondMin,40 CharacterType,Crush;"
+BondMin,40 PlaceTypeIs,Nature";;;BondPlus,-10;"
+BondPlus,-10";;;;;;;;;;;
+Nature;Spiritualité;Lors d'une ballade dans {0} Connor sera persuadé d'être visité par l'esprit de {1}. Il se réveillera dans {2} et réalisera que les champignons qu'il a croqué tantôt étaient probablement hallucinogènes.;StoryPlace,StoryItem,StoryPlace;;BondMin,30;"
+BondMin,40 StateMin,50 ItemTypeIs,Concept";PlaceTypeIs,Nature StateMax,40;"
+HealthPlus,-10";BondPlus,-10;"
+BondPlus,-20";;;;;;;;;;;
+Amitié;Amour;Ami de longue date avec {0}, Conor finira par tenter sa chance avec elle lors de {1} à {2}, mais il prendra une rebiffade et sera dévasté.;StoryCharacter,StoryActivity,StoryPlace;;BondMin,60 CharacterType,Crush;PopularityMin,50 ActivityTypeIs,Event;;;BondPlus,-20;"
+BondPlus,-30";"
+BondPlus,-20";;;;;;;;;;
+Amitié;Spiritualité;Lors d'une soirée à {0}, Connor fera un trait d'humour vis à vis de {1}, ce qui offensera {2};StoryPlace,StoryCharacter,StoryCharacter;;BondMin,20;BondMax,50;"
+BondMin,40 CharacterTypeIs,Friend";;;;BondPlus,-10;;;;;;;;;;
+Amour;Spiritualité;Connor réalisera lors d'une discussion avec {0} qu'elle a des opinions particulières sur {1}, à tel point qu'elles remettront en cause son intérêt pour elle;StoryCharacter,StoryCharacter;;BondMin,50 CharacterType,Crush;BondMax,30 StateMin,50 CharacterTypeIs,SpiritualFigure;;;BondPlus,-10;BondReverse,1;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;

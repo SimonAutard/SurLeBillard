@@ -13,12 +13,14 @@ public class NarrationManager : MonoBehaviour
     private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
     //Liste des thï¿½mes de billes
-    private string[] themesArray = new string[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
+    private string[] themesArray = new[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
 
     //PROPHETIES
     //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles
-    [SerializeField] Prophecy[,] prophecyMasterTable;
-    private string prophecyFilePath = "Assets/Scripts/RawData/NSData(PositiveProphecyRawData).csv";
+    [SerializeField] List<Prophecy>[,] positiveProphecyMasterTable;
+    private string positiveProphecyFilePath = "Assets/Scripts/RawData/NSData(PositiveProphecyRawData).csv";
+    [SerializeField] List<Prophecy>[,] negativeProphecyMasterTable;
+    private string negativeProphecyFilePath = "Assets/Scripts/RawData/NSData(NegativeProphecyRawData).csv";
 
     //STORY ENTITIES
     //Perso principal
@@ -102,7 +104,8 @@ public class NarrationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        InitializeProphecies();
+        positiveProphecyMasterTable = InitializeProphecies(true,positiveProphecyFilePath);
+        negativeProphecyMasterTable = InitializeProphecies(false,negativeProphecyFilePath);
         InitializeStoryCharacters();
         InitializeStoryPlaces();
         InitializeStoryItems();
@@ -151,14 +154,22 @@ public class NarrationManager : MonoBehaviour
     {
         int index1 = random.Next(0, themesArray.Length);
         int index2 = random.Next(0, themesArray.Length);
-        Debug.Log(" prophecy for " + themesArray[index1] + " " + themesArray[index2]);
         if (index1 == index2) { index2--; }
-        LegoProphecy legoProphecy = prophecyMasterTable[index1, index2].GetCompletedProphecy();
+        int valence = random.Next(0, 2);
+        List<Prophecy>[,] prophecyMasterTable;
+        int index3;
+        if (valence == 0) { prophecyMasterTable = negativeProphecyMasterTable; }
+        else { prophecyMasterTable = positiveProphecyMasterTable; }
+        index3 = random.Next(0, prophecyMasterTable[index1, index2].Count);
+
+
+        Debug.Log(" prophecy for " + themesArray[index1] + " " + themesArray[index2]);
+        LegoProphecy legoProphecy = prophecyMasterTable[index1, index2][index3].GetCompletedProphecy();
         Debug.Log(legoProphecy.Sentence);
 
-        DebugLogEntitiesState(legoProphecy,"initial");
-        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2].ProphecyUpdators);
-        DebugLogEntitiesState(legoProphecy,"final");
+        DebugLogEntitiesState(legoProphecy, "initial");
+        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2][index3].ProphecyUpdators);
+        DebugLogEntitiesState(legoProphecy, "final");
     }
 
     private void HandleCollisionSignal(EventCollisionSignal collision)
@@ -343,14 +354,20 @@ public class NarrationManager : MonoBehaviour
     /// <summary>
     /// Cette fonction récupere les donnees csv de propheties et les convertit en instances de propheties
     /// </summary>
-    void InitializeProphecies()
+    List<Prophecy>[,] InitializeProphecies(bool tableValence,string prophecyFilePath)
     {
+        List<Prophecy>[,] prophecyMasterTable = new List<Prophecy>[themesArray.Length,themesArray.Length];
         //Recuperation du csv sous forme de string[]
         string[] lines = RawDataInitializationChecks(prophecyFilePath);
         if (lines != null)
         {
-            //Initialisation de la prophecyMasterTable
-            prophecyMasterTable = new Prophecy[themesArray.Length, themesArray.Length];
+            for (int i = 0; i < themesArray.Length; i++)
+            {
+                for (int j = 0; j < themesArray.Length; j++)
+                {
+                    prophecyMasterTable[i, j] = new List<Prophecy>();
+                }
+            }
             // Traitement des lignes restantes (données)
             for (int i = 1; i < lines.Length; i++)
             {
@@ -378,12 +395,13 @@ public class NarrationManager : MonoBehaviour
                 Prophecy prophecy = new Prophecy(sentence, entityTypes, validators, updators);
 
                 // On renseigne la prophetie aux deux intersections du tableau double entree pour la retrouver facilement
-                prophecyMasterTable[index1, index2] = prophecy;
-                prophecyMasterTable[index2, index1] = prophecy;
+                prophecyMasterTable[index1, index2].Add(prophecy);
+                prophecyMasterTable[index2, index1].Add(prophecy);
 
             }
+             
         }
-
+        return prophecyMasterTable;
     }
     /// <summary>
     /// Cette fonction renvoie un tableau de string si le rawdata est valide, null sinon
@@ -395,7 +413,7 @@ public class NarrationManager : MonoBehaviour
         // Vérifie que le fichier existe
         if (!File.Exists(filePath))
         {
-            Debug.LogError($"Fichier non trouvé : {prophecyFilePath}");
+            Debug.LogError($"Fichier non trouvé : {positiveProphecyFilePath}");
             return null;
         }
         // On continue si le fichier existe
@@ -587,15 +605,15 @@ public class NarrationManager : MonoBehaviour
         (string, object)[] activityValidator = { ("NameIs", "tondre des moutons") };
         StoryActivity job = (StoryActivity)GetFittingEntity(typeof(StoryActivity), activityValidator);
 
-        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, 30, 30);
+        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, null, 30, 30);
     }
-    private void DebugLogEntitiesState(LegoProphecy legoProphecy,string stateName)
+    private void DebugLogEntitiesState(LegoProphecy legoProphecy, string stateName)
     {
         foreach (StoryEntity entity in legoProphecy.StoryEntities)
         {
             if (entity is StoryCharacter storyCharacter)
             {
-                Debug.Log("etat "+stateName + " de "+storyCharacter.Name +
+                Debug.Log("etat " + stateName + " de " + storyCharacter.Name +
                     ": bond = " + storyCharacter.MainCharacterBond +
                     "; Money = " + storyCharacter.Money +
                     "; health = " + storyCharacter.Health);
