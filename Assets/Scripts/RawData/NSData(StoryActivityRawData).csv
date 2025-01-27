@@ -1,0 +1,19 @@
+Nom;Bond;Type;AssociatedPlaces;Popularity
+scuplter le bois;10;Art;City;20
+surfer;60;Sport;Nature;60
+jouer au football;70;Sport;City,Nature;30
+se cacher dans les placards;80;Leisure;City;0
+jouer du violon;30;Art;City,Nature;40
+tondre des moutons;100;Leisure;Nature;10
+boire de la guiness;20;Leisure;City,Nature;80
+danser;10;Art;City,Nature;90
+aller au pub;50;Leisure;City,Nature;70
+commenter des matchs de foot;90;Leisure;City,Nature;100
+compter les moutons;100;;Nature;20
+tenir un pub;20;;City;60
+pêcher;10;;Nature;30
+tondre et jardiner;50;;Nature;0
+manger au restaurant;90;;City,Nature;40
+rendre la justice;10;;City;10
+vendre des fish and chips;60;;City;80
+cuisiner des spécialités locales;70;;City;90

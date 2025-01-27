@@ -4,37 +4,39 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
-using System.Globalization;
-using Unity.Android.Gradle;
 
 
 public class NarrationManager : MonoBehaviour
 {
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
-    private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
-    private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
+
+    //DEBUG 
+    [SerializeField] bool debugMode;
 
     //Liste des thï¿½mes de billes
-    private string[] themesArray = new string[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
+    private string[] themesArray = new[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
 
     //PROPHETIES
     //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles
-    [SerializeField] Prophecy[,] prophecyMasterTable; 
-    private string prophecyFilePath = "Assets/Scripts/RawData/NSData(PositiveProphecyRawData).csv";
+    [SerializeField] List<Prophecy>[,] positiveProphecyMasterTable;
+    private string positiveProphecyFilePath = "Assets/Scripts/RawData/NSData(PositiveProphecyRawData).csv";
+    [SerializeField] List<Prophecy>[,] negativeProphecyMasterTable;
+    private string negativeProphecyFilePath = "Assets/Scripts/RawData/NSData(NegativeProphecyRawData).csv";
+    private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
+    private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
     //STORY ENTITIES
     //Perso principal
-    MainCharacter MainCharacter;
+    public MainCharacter MainCharacter { get; private set; }
     //Listes des types d'entités
     List<StoryCharacter> allCharacters = new List<StoryCharacter>();
-    private string characterFilePath = "Assets/Scripts/RawData/characterdata.csv";
+    private string characterFilePath = "Assets/Scripts/RawData/NSData(StoryCharacterRawData).csv";
     List<StoryPlace> allPlaces = new List<StoryPlace>();
-    private string placeFilePath = "Assets/Scripts/RawData/placedata.csv";
+    private string placeFilePath = "Assets/Scripts/RawData/NSData(StoryPlaceRawData).csv";
     List<StoryActivity> allStoryActivities = new List<StoryActivity>();
-    private string activityFilePath = "Assets/Scripts/RawData/activitydata.csv";
+    private string activityFilePath = "Assets/Scripts/RawData/NSData(StoryActivityRawData).csv";
     List<StoryItem> allStoryItems = new List<StoryItem>();
-    private string itemFilePath = "Assets/Scripts/RawData/itemdata.csv";
+    private string itemFilePath = "Assets/Scripts/RawData/NSData(StoryItemRawData).csv";
 
     // Design pattern du singleton
     private static NarrationManager instance; // instance statique du narration manager
@@ -105,14 +107,13 @@ public class NarrationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        InitializeProphecies();
-        Prophecy prophecy = prophecyMasterTable[1, 0];
-        Debug.Log(prophecy.SentenceToFill+" "+
-            (prophecy.ProphecyStoryEntityTypes[1]==typeof(StoryPlace)) +" "+
-            prophecy.ProphecyValidators[0][0].ToString()+" "+
-            prophecy.ProphecyUpdators[0][0].ToString());
-
-
+        positiveProphecyMasterTable = InitializeProphecies(true, positiveProphecyFilePath);
+        negativeProphecyMasterTable = InitializeProphecies(false, negativeProphecyFilePath);
+        InitializeStoryCharacters();
+        InitializeStoryPlaces();
+        InitializeStoryItems();
+        InitializeStoryActivities();
+        InitializeMainCharacter();
         /*
         //initialisation entity simple pour test
         StoryCharacter charTest = new StoryCharacter(name: "sarah", mainCharacterBond: 60, health: 10);
@@ -148,39 +149,48 @@ public class NarrationManager : MonoBehaviour
 
     private void TwoBallsCollisionNarration(string ball1Theme, string ball2Theme)
     {
-        Debug.Log(ball2Theme + " " + ball1Theme);
+        //Debug.Log(ball2Theme + " " + ball1Theme);
     }
 
     // TODO : change method so it can handle the parameters that'll be sent to it
     private void CreateRandomStory(Vector3 useless)
     {
-        int index1 = random.Next(0, themesArray.Length);
-        int index2 = random.Next(0, themesArray.Length);
-        if (index1 == index2) { index2--; }
-        LegoProphecy legoProphecy = prophecyMasterTable[0, 0].GetCompletedProphecy();
-        Debug.Log(legoProphecy.Sentence);
-        Debug.Log("etat initial de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = " + ((StoryCharacter)legoProphecy.StoryEntities[0]).Health);
-        Debug.Log("etat initial de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = " + ((StoryPlace)legoProphecy.StoryEntities[1]).State);
-        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[0, 0].ProphecyUpdators);
-        Debug.Log("etat final de " + legoProphecy.StoryEntities[0].Name + " - bond = " + legoProphecy.StoryEntities[0].MainCharacterBond + " - health = " + ((StoryCharacter)legoProphecy.StoryEntities[0]).Health);
-        Debug.Log("etat final de " + legoProphecy.StoryEntities[1].Name + " - bond = " + legoProphecy.StoryEntities[1].MainCharacterBond + " - state = " + ((StoryPlace)legoProphecy.StoryEntities[1]).State);
+        if (debugMode)
+        {
+            int index1 = random.Next(0, themesArray.Length);
+            int index2 = random.Next(0, themesArray.Length);
+            if (index1 == index2) { index2 += index2 == 0 ? 1 : -1; }
+            int valence = random.Next(0, 2);
+            bool valenceBool = false;
+            if (valence != 0) { valenceBool = true; }
+
+            GenerateStoryBit(index1, index2, valenceBool);
+        }
     }
 
     private void HandleCollisionSignal(EventCollisionSignal collision)
     {
-        // TODO :
-        //  - generate prophecy based on collision
-        //  - add the prophecy to _lastProphecies
+        //Recuperation des informations de collision
+        string firstBallTheme = collision._fastestBallTheme;
+        string secondBallTheme = collision._slowestBallTheme;
+        bool valence = collision._valence;
 
-        UIProphecy placeholderProphecy;
-        placeholderProphecy._fastestBall = "ball1";
-        placeholderProphecy._slowestBall = "ball2";
-        placeholderProphecy._positive = false;
-        placeholderProphecy._prophecy = "Connor fera la teuf et finira vraiment pas bien";
-        _gameProphecies.Add(placeholderProphecy);
-        _lastProphecies.Add(placeholderProphecy);
+        //Conversion des themes en indice des masterTable
+        int index1 = Array.IndexOf(themesArray, firstBallTheme);
+        int index2 = Array.IndexOf(themesArray, secondBallTheme);
 
-        // reset _lastProphecies
+        //Creation de la prophetie
+        string prophecyFullSentence = GenerateStoryBit(index1, index2, valence);
+        UIProphecy displayableProphecy;
+        displayableProphecy._fastestBall = firstBallTheme;
+        displayableProphecy._slowestBall = secondBallTheme;
+        displayableProphecy._positive = valence;
+        displayableProphecy._prophecy = prophecyFullSentence;
+
+        //Ajout aux depots de propheties
+        _gameProphecies.Add(displayableProphecy);
+        _lastProphecies.Add(displayableProphecy);
+
     }
 
     /// <summary>
@@ -217,11 +227,29 @@ public class NarrationManager : MonoBehaviour
     /// <param name="wordB">The second theme the story bit is based on</param>
     /// <param name="positive">States if the story bit should be positive or not</param>
     /// <returns>The generated story bit</returns>
-    private string GenerateStoryBit(string wordA, string wordB, bool positive)
+    private string GenerateStoryBit(int index1, int index2, bool valence)
     {
-        // TODO everything related to the generation of the story bit, be it Cave of Qud algo or LLM prompt
-        string pos = (positive) ? "positive" : "negative";
-        return $"Placeholder {pos} story bit based on '{wordA}' and '{wordB}'";
+        //--Partie debug
+        string valenceString = valence ? "positive" : "negative";
+
+        //--Partie standard
+        //Recherche du bon tableau de propheties a charger
+        List<Prophecy>[,] prophecyMasterTable;
+        prophecyMasterTable = valence ? positiveProphecyMasterTable : negativeProphecyMasterTable;
+        //Choix  d'une prophetie aleatoire dans la liste des propheties possibles pour ce duo de themes
+        int index3 = random.Next(0, prophecyMasterTable[index1, index2].Count);
+        Debug.Log(valenceString + " prophecy for " + themesArray[index1] + " " + themesArray[index2]);
+
+        //Completion de la prophetie
+        LegoProphecy legoProphecy = prophecyMasterTable[index1, index2][index3].GetCompletedProphecy();
+        Debug.Log(legoProphecy.Sentence);
+
+        //Mise a jour des entites affectees par la prophetie
+        DebugLogEntitiesState(legoProphecy, "initial");
+        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2][index3].ProphecyUpdators);
+        DebugLogEntitiesState(legoProphecy, "final");
+
+        return legoProphecy.Sentence;
     }
 
     /// <summary>
@@ -256,7 +284,7 @@ public class NarrationManager : MonoBehaviour
                         // Appeler la mï¿½thode en passant les paramï¿½tres
                         isCandidate = (bool)method.Invoke(entity, new object[1] { methodValue });
                     }
-                    else { throw new Exception("Mï¿½thode introuvable : " + methodName); }
+                    else { throw new Exception("Méthode introuvable : " + methodName); }
                     // On sort de la boucle des quun critere nest pas verifie pour passer a lentite suivante parmi les candidates
                     if (!isCandidate) { break; }
                 }
@@ -267,9 +295,25 @@ public class NarrationManager : MonoBehaviour
         // si aucun validator n'a ete renseignï¿½ pour cette entite, alors on prend n'importe quelle entitï¿½
         else { viableEntities = possibleEntities; }
         // si aucune entite ne remplissait les critï¿½res, alors on en cree une 
-        if (viableEntities.Count == 0) { viableEntities.Add(new StoryEntity("fake entity", 50)); }
+        if (viableEntities.Count == 0) { viableEntities.Add(CreateStoryEntityFromScratch(requiredType)); }
         // On renvoie une entite aleatoire parmi les viables
         return viableEntities[random.Next(0, viableEntities.Count)];
+    }
+
+    /// <summary>
+    /// Creee une entite de toute piece quand aucune entite repondant aux criteres d'un valdiateur n'a ete trouvee
+    /// </summary>
+    /// <param name="requiredType"></param>
+    /// <returns></returns>
+    private StoryEntity CreateStoryEntityFromScratch(Type requiredType)
+    {
+        //TODO : speicfier le constructeur pour repodnre aux criteres du validateur
+        if (requiredType == typeof(StoryCharacter)) { return new StoryCharacter(); }
+        else if (requiredType == typeof(StoryPlace)) { return new StoryPlace(); }
+        else if (requiredType == typeof(StoryActivity)) { return new StoryActivity(); }
+        else if (requiredType == typeof(StoryItem)) { return new StoryItem(); }
+        else { return new StoryEntity(); }
+
     }
 
     /// <summary>
@@ -303,7 +347,7 @@ public class NarrationManager : MonoBehaviour
     /// Things to setup at the start of a new game
     /// </summary>
     /// <param name="requestEvent"></param>
-    private void HandleNewGameSetupRequest (EventNewGameSetupRequest requestEvent)
+    private void HandleNewGameSetupRequest(EventNewGameSetupRequest requestEvent)
     {
         _gameProphecies.Clear();
     }
@@ -312,7 +356,7 @@ public class NarrationManager : MonoBehaviour
     /// Things to setup at the start of new turn
     /// </summary>
     /// <param name="requestEvent"></param>
-    private void HandleNextPlayerTurnStartRequest (EventNextPlayerTurnStartRequest requestEvent)
+    private void HandleNextPlayerTurnStartRequest(EventNextPlayerTurnStartRequest requestEvent)
     {
         _lastProphecies.Clear();
     }
@@ -323,8 +367,11 @@ public class NarrationManager : MonoBehaviour
     /// <param name="gameEntityList"></param>
     public void UpdateStoryEntitiesFromProphecy(StoryEntity[] gameEntityList, List<(string, object)[]> updators)
     {
+        //On change l'etat des entites les unes apres les autres
         for (int i = 0; i < gameEntityList.Length; i++)
         {
+            //Si une entite na pas de updators, cest quon na pas besoin de la changer
+            if (updators[i] == null) { continue; }
             foreach ((string, object) updator in updators[i])
             {
                 string methodName = updator.Item1; //nom de la fonction de'update de lentite
@@ -345,23 +392,32 @@ public class NarrationManager : MonoBehaviour
     /// <summary>
     /// Cette fonction récupere les donnees csv de propheties et les convertit en instances de propheties
     /// </summary>
-    void InitializeProphecies()
+    List<Prophecy>[,] InitializeProphecies(bool tableValence, string prophecyFilePath)
     {
+        List<Prophecy>[,] prophecyMasterTable = new List<Prophecy>[themesArray.Length, themesArray.Length];
+        //Recuperation du csv sous forme de string[]
         string[] lines = RawDataInitializationChecks(prophecyFilePath);
         if (lines != null)
         {
-            prophecyMasterTable = new Prophecy[themesArray.Length,themesArray.Length];
+            for (int i = 0; i < themesArray.Length; i++)
+            {
+                for (int j = 0; j < themesArray.Length; j++)
+                {
+                    prophecyMasterTable[i, j] = new List<Prophecy>();
+                }
+            }
             // Traitement des lignes restantes (données)
             for (int i = 1; i < lines.Length; i++)
             {
                 string line = lines[i];
                 string[] cells = line.Split(';');
 
-                //Rangement de la prophetie
+                //Coordonnees de la prophetie dans la prophecyMasterTable
                 string theme1 = cells[0];
                 string theme2 = cells[1];
+                int index1 = Array.IndexOf(themesArray, theme1);
+                int index2 = Array.IndexOf(themesArray, theme2);
 
-                // Instanciation de la prophetie
                 string sentence = cells[2];
 
                 Type[] entityTypes = ExtractProphecyTypes(cells[3]);
@@ -370,21 +426,20 @@ public class NarrationManager : MonoBehaviour
 
                 List<(string, object)[]> validators = ExtractProphecyValidators(cells[5], cells[6], cells[7]);
 
+                //INSERER ICI RECUPERATION DES INFOS DE SELF EFFECT
+
                 List<(string, object)[]> updators = ExtractProphecyValidators(cells[9], cells[10], cells[11]); //Normalement la fonction devrait etre differetnte de celle d'extraction des validateurs, mais leur fonctionnement sont identiques donc on garde la meme
 
-                Prophecy prophecy = new Prophecy(sentence,entityTypes,validators, updators);
+                Prophecy prophecy = new Prophecy(sentence, entityTypes, validators, updators);
 
-                
-
-                int index1 = Array.IndexOf(themesArray, theme1);
-                int index2 = Array.IndexOf( themesArray, theme2);
-                Debug.Log(i + " " + index1 + " " + index2);
-                prophecyMasterTable[index1, index2] = prophecy;
-                prophecyMasterTable[index2, index1] = prophecy;
+                // On renseigne la prophetie aux deux intersections du tableau double entree pour la retrouver facilement
+                prophecyMasterTable[index1, index2].Add(prophecy);
+                prophecyMasterTable[index2, index1].Add(prophecy);
 
             }
-        }
 
+        }
+        return prophecyMasterTable;
     }
     /// <summary>
     /// Cette fonction renvoie un tableau de string si le rawdata est valide, null sinon
@@ -394,9 +449,9 @@ public class NarrationManager : MonoBehaviour
     string[] RawDataInitializationChecks(string filePath)
     {
         // Vérifie que le fichier existe
-        if (!File.Exists(prophecyFilePath))
+        if (!File.Exists(filePath))
         {
-            Debug.LogError($"Fichier non trouvé : {prophecyFilePath}");
+            Debug.LogError($"Fichier non trouvé : {positiveProphecyFilePath}");
             return null;
         }
         // On continue si le fichier existe
@@ -405,7 +460,7 @@ public class NarrationManager : MonoBehaviour
             //Extraction
             string[] lines;
             //On précise la methode d'encodage pour garder les accents
-            using (StreamReader reader = new StreamReader(prophecyFilePath, System.Text.Encoding.GetEncoding("ISO-8859-1")))
+            using (StreamReader reader = new StreamReader(filePath, System.Text.Encoding.GetEncoding("ISO-8859-1")))
             {
                 lines = reader
                     .ReadToEnd()                       // Lire tout le contenu
@@ -419,7 +474,7 @@ public class NarrationManager : MonoBehaviour
             // Vérifier si le fichier contient au moins une ligne (l'en-tête)
             if (lines.Length < 1)
             {
-                Debug.LogError("Le fichier CSV est vide !");
+                Debug.LogError("Le fichier CSV " + filePath + " est vide !");
                 return null;
             }
             else { return lines; }
@@ -429,7 +484,8 @@ public class NarrationManager : MonoBehaviour
     }
 
     Type[] ExtractProphecyTypes(string cell)
-    {                // Séparer les noms par la virgule
+    {
+        // Séparer les noms par la virgule
         string[] classNames = cell.Split(',');
         // Créer un tableau pour stocker les types
         Type[] requiredTypes = new Type[classNames.Length];
@@ -441,24 +497,34 @@ public class NarrationManager : MonoBehaviour
         return requiredTypes;
     }
 
+    /// <summary>
+    /// Transforme les 3 cellules d'une ligne du csv prophetie en List<(string,object)[]> comprehensible par le constructeur de prophetie
+    /// </summary>
+    /// <param name="cell1">validateurs de la 1ere entite</param>
+    /// <param name="cell2">validateurs de la 2eme entite</param>
+    /// <param name="cell3">validateurs de la 3eme entite</param>
+    /// <returns></returns>
     List<(string, object)[]> ExtractProphecyValidators(string cell1, string cell2, string cell3)
     {
-
-        List<string> allCells = new List<string>() { cell1,cell2,cell3};
-
-        List<(string, object)[]> result = new List<(string, object)[]>() ;
-
+        //Concatenation des cellules de valdiation des 3 entites de la prophetie
+        List<string> allCells = new List<string>() { cell1, cell2, cell3 };
+        //Liste vide accueillant les valdiateurs
+        List<(string, object)[]> result = new List<(string, object)[]>();
+        //On parcourt chaque cellule de la ligne csv
         foreach (string cell in allCells)
         {
             //Cas sans validator
-            if (cell=="") { 
-                result.Add(null);
+            if (cell == "")
+            {
+                result.Add(null); // le constructeur de prophetie se debrouille meme sans validateur
                 continue;
             }
 
-            // Séparer les blocs par les retours à la ligne
+            // Séparer les criteres par les espace sdans la cellule
             string[] blocks = cell.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            // Initialisation du validateur de la cellule
             List<(string, object)> validators = new List<(string, object)>();
+            //On parcourt chaque critere du validateur
             foreach (string block in blocks)
             {
                 // Séparer les deux chaînes par la virgule
@@ -481,16 +547,140 @@ public class NarrationManager : MonoBehaviour
                     }
 
                     // Ajouter le tuple dans la liste
-                    validators.Add(  (key, castedValue) );
+                    validators.Add((key, castedValue));
                 }
                 else
                 {
-                    Debug.LogWarning($"Bloc mal formé : {block}");
+                    Debug.LogWarning($"Validateur mal écrit : {block} dans" + cell);
                 }
             }
+            //On assemble tous les criteres pour former le validateur associe a cette cellule
             result.Add(validators.ToArray());
         }
 
         return result;
+    }
+
+    /**
+     * FONCTIONS DE CONVERSION DU CSV EN DIFFERETNES STORY ENTITIES DU JEU
+     * */
+    private void InitializeStoryCharacters()
+    {
+        //Extraction du csv en string
+        string[] lines = RawDataInitializationChecks(characterFilePath);
+        if (lines != null)
+        {
+            //lecture de chaque ligne du csv
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                //separation de la ligne en cellules
+                string[] cells = line.Split(';');
+                //création de l'entité
+                StoryCharacter entity = new StoryCharacter(cells[0], int.Parse(cells[1]), cells[2], int.Parse(cells[3]), int.Parse(cells[4]));
+                //ajout de lentite a la liste qui lui correspond
+                allCharacters.Add(entity);
+
+            }
+        }
+    }
+    private void InitializeStoryPlaces()
+    {
+        string[] lines = RawDataInitializationChecks(placeFilePath);
+        if (lines != null)
+        {
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                string[] cells = line.Split(';');
+
+                StoryPlace entity = new StoryPlace(cells[0], float.Parse(cells[1]), cells[2], float.Parse(cells[3]));
+
+                allPlaces.Add(entity);
+            }
+        }
+    }
+    private void InitializeStoryItems()
+    {
+        string[] lines = RawDataInitializationChecks(itemFilePath);
+        if (lines != null)
+        {
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                string[] cells = line.Split(';');
+
+                StoryItem entity = new StoryItem(cells[0], int.Parse(cells[1]), cells[2], int.Parse(cells[3]));
+
+                allStoryItems.Add(entity);
+            }
+        }
+    }
+    private void InitializeStoryActivities()
+    {
+        string[] lines = RawDataInitializationChecks(activityFilePath);
+        if (lines != null)
+        {
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                string[] cells = line.Split(';');
+
+                StoryActivity entity = new StoryActivity(cells[0], int.Parse(cells[1]), cells[2], cells[3].Split(','), int.Parse(cells[4]));
+
+                allStoryActivities.Add(entity);
+            }
+        }
+    }
+    private void InitializeMainCharacter()
+    {
+        (string, object)[] placeValidator = { ("NameIs", "Galway") };
+        StoryPlace livingPlace = (StoryPlace)GetFittingEntity(typeof(StoryPlace), placeValidator);
+
+        (string, object)[] characterValidator = { ("NameIs", "le vieux Harold") };
+        StoryCharacter boss = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterValidator);
+
+        (string, object)[] activityValidator = { ("NameIs", "tondre des moutons") };
+        StoryActivity job = (StoryActivity)GetFittingEntity(typeof(StoryActivity), activityValidator);
+
+        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, null, null, 30, 30);
+    }
+    private void DebugLogEntitiesState(LegoProphecy legoProphecy, string stateName)
+    {
+        foreach (StoryEntity entity in legoProphecy.StoryEntities)
+        {
+            if (entity is StoryCharacter storyCharacter)
+            {
+                Debug.Log("etat " + stateName + " de " + storyCharacter.Name +
+                    ": bond = " + storyCharacter.MainCharacterBond +
+                    "; Money = " + storyCharacter.Money +
+                    "; health = " + storyCharacter.Health);
+
+            }
+            else if (entity is StoryPlace storyPlace)
+            {
+                Debug.Log("etat " + stateName + " de " + storyPlace.Name +
+                    ": bond = " + storyPlace.MainCharacterBond +
+                    "; type = " + storyPlace.PlaceType +
+                    "; state = " + storyPlace.State);
+
+            }
+            else if (entity is StoryItem storyItem)
+            {
+                Debug.Log("etat " + stateName + " de " + storyItem.Name +
+                    ": bond = " + storyItem.MainCharacterBond +
+                    "; type = " + storyItem.ItemType +
+                    "; state = " + storyItem.State);
+
+            }
+            else if (entity is StoryActivity storyActivity)
+            {
+                Debug.Log("etat " + stateName + " de " + storyActivity.Name +
+                    " : bond = " + storyActivity.MainCharacterBond +
+                    "; type = " + storyActivity.ActivityType +
+                    "; popularity = " + storyActivity.Popularity);
+
+            }
+        }
     }
 }

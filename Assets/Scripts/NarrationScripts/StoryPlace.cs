@@ -22,6 +22,7 @@ public class StoryPlace : StoryEntity
     public bool PlaceTypeIs(string type) { if (PlaceType == type) return true; else return false; }
     public bool StateMin(float stateMin) { if (stateMin <= State) return true; else return false; }
     public bool StateMax(float stateMax) { if (stateMax >= State) return true; else return false; }
+    public bool IsLivingPlace(float useless) { if (this == NarrationManager.Instance.MainCharacter.LivingPlace) return true; else return false; }
 
     //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
     public void StatePlus(float statePlus) { State = ValuePlus(State, statePlus, MinState, MaxState); }

@@ -1,14 +1,10 @@
-using UnityEngine;
-using UnityEngine.TextCore.Text;
-
-
 public class StoryItem : StoryEntity
 {
     public string ItemType { get; private set; }
     public float State { get; private set; }
     private float MinState = 0;
     private float MaxState = 100;
-    public StoryItem(string name, float mainCharacterBond, string itemType, float state)
+    public StoryItem(string name = "generic name", float mainCharacterBond = 50, string itemType = "any", float state = 50)
     {
         Name = name;
         MainCharacterBond = mainCharacterBond;
@@ -24,5 +20,5 @@ public class StoryItem : StoryEntity
 
     //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
     public void StatePlus(float statePlus) { State = ValuePlus(State, statePlus, MinState, MaxState); }
-    public void ItemTypeBecomes(string newPlaceType) { ItemType = newPlaceType; }
+    public void ItemTypeBecomes(string newItemType) { ItemType = newItemType; }
 }

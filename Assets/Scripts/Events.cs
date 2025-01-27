@@ -132,11 +132,17 @@ public class EventCollisionSignal
 {
     public int _fastestBall { get; set; }
     public int _slowestBall { get; set; }
+    public string _fastestBallTheme { get; set; }  
+    public string _slowestBallTheme { get; set; }  
+    public bool _valence {  get; set; }
 
-    public EventCollisionSignal(int fastestBall, int slowestBall)
+    public EventCollisionSignal(int fastestBall, int slowestBall,string fastestBallTheme, string slowestBallTheme,bool valence)
     {
         _fastestBall = fastestBall;
         _slowestBall = slowestBall;
+        _fastestBallTheme = fastestBallTheme;
+        _slowestBallTheme = slowestBallTheme;
+        _valence = valence;
     }
 }
 
