@@ -22,6 +22,7 @@ public class StoryActivity : StoryEntity
     public bool AssociatedPlacesComprise(string placeType) { if (Array.IndexOf(AssociatedPlaceTypes,placeType)>-1) return true; else return false; }
     public bool PopularityMin(float popularityMin) { if (popularityMin <= Popularity) return true; else return false; }
     public bool PopularityMax(float popularityMax) { if (popularityMax >= Popularity) return true; else return false; }
+    public bool IsJob(float useless) { if (NarrationManager.Instance.MainCharacter.Job != null && this == NarrationManager.Instance.MainCharacter.Job) return true; else return false; }
 
     //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
     public void PopularityPlus(float popularityPlus) { Popularity = ValuePlus(Popularity, popularityPlus, MinPop, MaxPop); }

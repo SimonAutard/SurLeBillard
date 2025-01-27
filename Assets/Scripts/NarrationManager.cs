@@ -154,16 +154,18 @@ public class NarrationManager : MonoBehaviour
     {
         int index1 = random.Next(0, themesArray.Length);
         int index2 = random.Next(0, themesArray.Length);
-        if (index1 == index2) { index2--; }
+        if (index1 == index2) {index2 += index2==0? 1 : -1; }
         int valence = random.Next(0, 2);
         List<Prophecy>[,] prophecyMasterTable;
+        string valencestring;
         int index3;
-        if (valence == 0) { prophecyMasterTable = negativeProphecyMasterTable; }
-        else { prophecyMasterTable = positiveProphecyMasterTable; }
+        if (valence == 0) { prophecyMasterTable = negativeProphecyMasterTable; valencestring = "negative"; }
+        else { prophecyMasterTable = positiveProphecyMasterTable; valencestring = "positive"; }
+        Debug.Log("prophecy index="+index1 +" "+index2);
         index3 = random.Next(0, prophecyMasterTable[index1, index2].Count);
 
 
-        Debug.Log(" prophecy for " + themesArray[index1] + " " + themesArray[index2]);
+        Debug.Log(valencestring+" prophecy for " + themesArray[index1] + " " + themesArray[index2]);
         LegoProphecy legoProphecy = prophecyMasterTable[index1, index2][index3].GetCompletedProphecy();
         Debug.Log(legoProphecy.Sentence);
 
@@ -273,9 +275,19 @@ public class NarrationManager : MonoBehaviour
         // si aucun validator n'a ete renseign� pour cette entite, alors on prend n'importe quelle entit�
         else { viableEntities = possibleEntities; }
         // si aucune entite ne remplissait les crit�res, alors on en cree une 
-        if (viableEntities.Count == 0) { viableEntities.Add(new StoryEntity("fake entity", 50)); }
+        if (viableEntities.Count == 0) { viableEntities.Add(CreateStoryEntityFromScratch(requiredType)); }
         // On renvoie une entite aleatoire parmi les viables
         return viableEntities[random.Next(0, viableEntities.Count)];
+    }
+
+    private StoryEntity CreateStoryEntityFromScratch(Type requiredType)
+    {
+        if (requiredType == typeof(StoryCharacter)) { return new StoryCharacter(); }
+        else if (requiredType == typeof(StoryPlace)) { return new StoryPlace(); }
+        else if (requiredType == typeof(StoryActivity)) { return new StoryActivity(); }
+        else if (requiredType == typeof(StoryItem)) { return new StoryItem(); }
+        else { return new StoryEntity(); }
+
     }
 
     /// <summary>
@@ -599,13 +611,13 @@ public class NarrationManager : MonoBehaviour
         (string, object)[] placeValidator = { ("NameIs", "Galway") };
         StoryPlace livingPlace = (StoryPlace)GetFittingEntity(typeof(StoryPlace), placeValidator);
 
-        (string, object)[] characterValidator = { ("NameIs", "Harold") };
+        (string, object)[] characterValidator = { ("NameIs", "le vieux Harold") };
         StoryCharacter boss = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterValidator);
 
         (string, object)[] activityValidator = { ("NameIs", "tondre des moutons") };
         StoryActivity job = (StoryActivity)GetFittingEntity(typeof(StoryActivity), activityValidator);
 
-        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, null, 30, 30);
+        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, null,null, 30, 30);
     }
     private void DebugLogEntitiesState(LegoProphecy legoProphecy, string stateName)
     {

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
@@ -29,7 +30,9 @@ public class StoryCharacter : StoryEntity
     public bool HealthMax(float healthMax) { if (healthMax >= Health) return true; else return false; }
     public bool MoneyMin(float moneyMin) { if (moneyMin <= Money) return true; else return false; }
     public bool MoneyMax(float moneyMax) { if (moneyMax >= Money) return true; else return false; }
-    public bool IsBoss(float useless) { if(this ==NarrationManager.Instance.MainCharacter.Boss) return true; else return false; }
+    public bool IsBoss(float useless) { if(NarrationManager.Instance.MainCharacter.Boss !=null && this == NarrationManager.Instance.MainCharacter.Boss) return true; else return false; }
+    public bool IsColleague(float useless) { if (NarrationManager.Instance.MainCharacter.Colleagues != null && NarrationManager.Instance.MainCharacter.Colleagues.Contains( this) ) return true; else return false; }
+    public bool IsLover(float useless) { if(NarrationManager.Instance.MainCharacter.Lover != null &&this == NarrationManager.Instance.MainCharacter.Lover) return true; else return false; }
 
     //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
     public void HealthPlus(float healthPlus) { Health = ValuePlus(Health, healthPlus, MinHealth, MaxHealth); }

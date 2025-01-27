@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.TextCore.Text;
-
-
+using System.Collections.Generic;
 public class MainCharacter : StoryEntity
 {
     // Attributs
     public StoryPlace LivingPlace { get; private set; }
     public StoryActivity Job { get; private set; }
     public StoryCharacter Boss { get; private set; }
+    public List<StoryCharacter> Colleagues { get; private set; }
     public StoryCharacter Lover { get; private set; }
     public float Health { get; private set; }
     public float Money { get; private set; }
@@ -16,7 +16,7 @@ public class MainCharacter : StoryEntity
     private float MinHealth = 0;
     private float MaxHealth = 100;
 
-    public MainCharacter(string name, StoryPlace livingPlace, StoryActivity job, StoryCharacter boss, StoryCharacter lover, float health, float money)
+    public MainCharacter(string name, StoryPlace livingPlace, StoryActivity job, StoryCharacter boss, List<StoryCharacter> colleagues, StoryCharacter lover, float health, float money)
     { 
         Name = name;
 
