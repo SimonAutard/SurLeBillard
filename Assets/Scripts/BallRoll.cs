@@ -6,7 +6,7 @@ public class BallRoll : MonoBehaviour
     //Variables générales
     [SerializeField] protected float mass = 1.0f;
     public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille
-    public string ballSymbol; //thème de la bille
+    public string ballTheme; //thème de la bille
     public int _ballId;
 
     // Variables de déplacement
@@ -99,7 +99,9 @@ public class BallRoll : MonoBehaviour
 
             canYetCollide = false;
 
-            EventBus.Publish(new EventCollisionSignal(_ballId, collider.GetComponent<BallRoll>()._ballId));
+            bool valence = GetValence();
+
+            EventBus.Publish(new EventCollisionSignal(_ballId, collider.GetComponent<BallRoll>()._ballId, ballTheme, collider.GetComponent<BallRoll>().ballTheme, valence));
             //TwoBallsCollision?.Invoke(ballSymbol, collider.GetComponent<BallRoll>().ballSymbol);
         }
     }
@@ -136,5 +138,14 @@ public class BallRoll : MonoBehaviour
             EventBus.Publish(new EventPocketingSignal(this,0));
             Destroy(this.gameObject);
         }
+    }
+    /// <summary>
+    /// Renvoie true si la balle est dans une zone positive, false sinon
+    /// </summary>
+    /// <returns></returns>
+    public bool GetValence()
+    {
+        if (transform.position.x > 0) { return true; }
+        else { return false; }
     }
 }

@@ -9,8 +9,9 @@ using UnityEngine;
 public class NarrationManager : MonoBehaviour
 {
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
-    private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
-    private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
+
+    //DEBUG 
+    [SerializeField] bool debugMode;
 
     //Liste des thï¿½mes de billes
     private string[] themesArray = new[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
@@ -21,6 +22,8 @@ public class NarrationManager : MonoBehaviour
     private string positiveProphecyFilePath = "Assets/Scripts/RawData/NSData(PositiveProphecyRawData).csv";
     [SerializeField] List<Prophecy>[,] negativeProphecyMasterTable;
     private string negativeProphecyFilePath = "Assets/Scripts/RawData/NSData(NegativeProphecyRawData).csv";
+    private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
+    private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
     //STORY ENTITIES
     //Perso principal
@@ -104,8 +107,8 @@ public class NarrationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        positiveProphecyMasterTable = InitializeProphecies(true,positiveProphecyFilePath);
-        negativeProphecyMasterTable = InitializeProphecies(false,negativeProphecyFilePath);
+        positiveProphecyMasterTable = InitializeProphecies(true, positiveProphecyFilePath);
+        negativeProphecyMasterTable = InitializeProphecies(false, negativeProphecyFilePath);
         InitializeStoryCharacters();
         InitializeStoryPlaces();
         InitializeStoryItems();
@@ -146,49 +149,48 @@ public class NarrationManager : MonoBehaviour
 
     private void TwoBallsCollisionNarration(string ball1Theme, string ball2Theme)
     {
-        Debug.Log(ball2Theme + " " + ball1Theme);
+        //Debug.Log(ball2Theme + " " + ball1Theme);
     }
 
     // TODO : change method so it can handle the parameters that'll be sent to it
     private void CreateRandomStory(Vector3 useless)
     {
-        int index1 = random.Next(0, themesArray.Length);
-        int index2 = random.Next(0, themesArray.Length);
-        if (index1 == index2) {index2 += index2==0? 1 : -1; }
-        int valence = random.Next(0, 2);
-        List<Prophecy>[,] prophecyMasterTable;
-        string valencestring;
-        int index3;
-        if (valence == 0) { prophecyMasterTable = negativeProphecyMasterTable; valencestring = "negative"; }
-        else { prophecyMasterTable = positiveProphecyMasterTable; valencestring = "positive"; }
-        Debug.Log("prophecy index="+index1 +" "+index2);
-        index3 = random.Next(0, prophecyMasterTable[index1, index2].Count);
+        if (debugMode)
+        {
+            int index1 = random.Next(0, themesArray.Length);
+            int index2 = random.Next(0, themesArray.Length);
+            if (index1 == index2) { index2 += index2 == 0 ? 1 : -1; }
+            int valence = random.Next(0, 2);
+            bool valenceBool = false;
+            if (valence != 0) { valenceBool = true; }
 
-
-        Debug.Log(valencestring+" prophecy for " + themesArray[index1] + " " + themesArray[index2]);
-        LegoProphecy legoProphecy = prophecyMasterTable[index1, index2][index3].GetCompletedProphecy();
-        Debug.Log(legoProphecy.Sentence);
-
-        DebugLogEntitiesState(legoProphecy, "initial");
-        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2][index3].ProphecyUpdators);
-        DebugLogEntitiesState(legoProphecy, "final");
+            GenerateStoryBit(index1, index2, valenceBool);
+        }
     }
 
     private void HandleCollisionSignal(EventCollisionSignal collision)
     {
-        // TODO :
-        //  - generate prophecy based on collision
-        //  - add the prophecy to _lastProphecies
+        //Recuperation des informations de collision
+        string firstBallTheme = collision._fastestBallTheme;
+        string secondBallTheme = collision._slowestBallTheme;
+        bool valence = collision._valence;
 
-        UIProphecy placeholderProphecy;
-        placeholderProphecy._fastestBall = "ball1";
-        placeholderProphecy._slowestBall = "ball2";
-        placeholderProphecy._positive = false;
-        placeholderProphecy._prophecy = "Connor fera la teuf et finira vraiment pas bien";
-        _gameProphecies.Add(placeholderProphecy);
-        _lastProphecies.Add(placeholderProphecy);
+        //Conversion des themes en indice des masterTable
+        int index1 = Array.IndexOf(themesArray, firstBallTheme);
+        int index2 = Array.IndexOf(themesArray, secondBallTheme);
 
-        // reset _lastProphecies
+        //Creation de la prophetie
+        string prophecyFullSentence = GenerateStoryBit(index1, index2, valence);
+        UIProphecy displayableProphecy;
+        displayableProphecy._fastestBall = firstBallTheme;
+        displayableProphecy._slowestBall = secondBallTheme;
+        displayableProphecy._positive = valence;
+        displayableProphecy._prophecy = prophecyFullSentence;
+
+        //Ajout aux depots de propheties
+        _gameProphecies.Add(displayableProphecy);
+        _lastProphecies.Add(displayableProphecy);
+
     }
 
     /// <summary>
@@ -225,11 +227,29 @@ public class NarrationManager : MonoBehaviour
     /// <param name="wordB">The second theme the story bit is based on</param>
     /// <param name="positive">States if the story bit should be positive or not</param>
     /// <returns>The generated story bit</returns>
-    private string GenerateStoryBit(string wordA, string wordB, bool positive)
+    private string GenerateStoryBit(int index1, int index2, bool valence)
     {
-        // TODO everything related to the generation of the story bit, be it Cave of Qud algo or LLM prompt
-        string pos = (positive) ? "positive" : "negative";
-        return $"Placeholder {pos} story bit based on '{wordA}' and '{wordB}'";
+        //--Partie debug
+        string valenceString = valence ? "positive" : "negative";
+
+        //--Partie standard
+        //Recherche du bon tableau de propheties a charger
+        List<Prophecy>[,] prophecyMasterTable;
+        prophecyMasterTable = valence ? positiveProphecyMasterTable : negativeProphecyMasterTable;
+        //Choix  d'une prophetie aleatoire dans la liste des propheties possibles pour ce duo de themes
+        int index3 = random.Next(0, prophecyMasterTable[index1, index2].Count);
+        Debug.Log(valenceString + " prophecy for " + themesArray[index1] + " " + themesArray[index2]);
+
+        //Completion de la prophetie
+        LegoProphecy legoProphecy = prophecyMasterTable[index1, index2][index3].GetCompletedProphecy();
+        Debug.Log(legoProphecy.Sentence);
+
+        //Mise a jour des entites affectees par la prophetie
+        DebugLogEntitiesState(legoProphecy, "initial");
+        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2][index3].ProphecyUpdators);
+        DebugLogEntitiesState(legoProphecy, "final");
+
+        return legoProphecy.Sentence;
     }
 
     /// <summary>
@@ -280,8 +300,14 @@ public class NarrationManager : MonoBehaviour
         return viableEntities[random.Next(0, viableEntities.Count)];
     }
 
+    /// <summary>
+    /// Creee une entite de toute piece quand aucune entite repondant aux criteres d'un valdiateur n'a ete trouvee
+    /// </summary>
+    /// <param name="requiredType"></param>
+    /// <returns></returns>
     private StoryEntity CreateStoryEntityFromScratch(Type requiredType)
     {
+        //TODO : speicfier le constructeur pour repodnre aux criteres du validateur
         if (requiredType == typeof(StoryCharacter)) { return new StoryCharacter(); }
         else if (requiredType == typeof(StoryPlace)) { return new StoryPlace(); }
         else if (requiredType == typeof(StoryActivity)) { return new StoryActivity(); }
@@ -366,9 +392,9 @@ public class NarrationManager : MonoBehaviour
     /// <summary>
     /// Cette fonction récupere les donnees csv de propheties et les convertit en instances de propheties
     /// </summary>
-    List<Prophecy>[,] InitializeProphecies(bool tableValence,string prophecyFilePath)
+    List<Prophecy>[,] InitializeProphecies(bool tableValence, string prophecyFilePath)
     {
-        List<Prophecy>[,] prophecyMasterTable = new List<Prophecy>[themesArray.Length,themesArray.Length];
+        List<Prophecy>[,] prophecyMasterTable = new List<Prophecy>[themesArray.Length, themesArray.Length];
         //Recuperation du csv sous forme de string[]
         string[] lines = RawDataInitializationChecks(prophecyFilePath);
         if (lines != null)
@@ -411,7 +437,7 @@ public class NarrationManager : MonoBehaviour
                 prophecyMasterTable[index2, index1].Add(prophecy);
 
             }
-             
+
         }
         return prophecyMasterTable;
     }
@@ -617,7 +643,7 @@ public class NarrationManager : MonoBehaviour
         (string, object)[] activityValidator = { ("NameIs", "tondre des moutons") };
         StoryActivity job = (StoryActivity)GetFittingEntity(typeof(StoryActivity), activityValidator);
 
-        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, null,null, 30, 30);
+        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, null, null, 30, 30);
     }
     private void DebugLogEntitiesState(LegoProphecy legoProphecy, string stateName)
     {
