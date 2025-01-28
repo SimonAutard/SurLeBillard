@@ -185,7 +185,8 @@ public class PhysicsManager : MonoBehaviour
         GameObject newWhiteBall = Instantiate(whiteBallPrefab, newPosition,Quaternion.identity);
         //MaJ du conteneur des billes
         RemainingBalls.Add(newWhiteBall.GetComponent<BallRoll>());
-        EventBus.Publish(newWhiteBall);
+        Debug.Log("white ball was recreated");
+        EventBus.Publish(new EventBallWasCreated(newWhiteBall));
     }
 
     /// <summary>
@@ -217,7 +218,7 @@ public class PhysicsManager : MonoBehaviour
         GameObject newBlackBall = Instantiate(blackBallPrefab, newPosition, Quaternion.identity);
         //MaJ du conteneur des billes
         RemainingBalls.Add(newBlackBall.GetComponent<BallRoll>());
-        EventBus.Publish(newBlackBall);
+        EventBus.Publish(new EventBallWasCreated(newBlackBall));
     }
 
     /// <summary>
