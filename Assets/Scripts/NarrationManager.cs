@@ -9,6 +9,8 @@ using UnityEngine;
 public class NarrationManager : MonoBehaviour
 {
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
+    private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
+    private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
     //DEBUG 
     [SerializeField] bool debugMode;
@@ -170,30 +172,36 @@ public class NarrationManager : MonoBehaviour
 
     private void HandleCollisionSignal(EventCollisionSignal collision)
     {
-        //Recuperation des informations de collision
-        string firstBallTheme = collision._fastestBallTheme;
-        string secondBallTheme = collision._slowestBallTheme;
-        bool valence = collision._valence;
+        if (collision._fastestBall != whiteBallID && collision._slowestBall != whiteBallID)
+        {
+            //Recuperation des informations de collision
+            string firstBallTheme = collision._fastestBallTheme;
+            string secondBallTheme = collision._slowestBallTheme;
+            bool valence = collision._valence;
 
-        //Conversion des themes en indice des masterTable
-        int index1 = Array.IndexOf(themesArray, firstBallTheme);
-        int index2 = Array.IndexOf(themesArray, secondBallTheme);
+            //Conversion des themes en indice des masterTable
+            int index1 = Array.IndexOf(themesArray, firstBallTheme);
+            int index2 = Array.IndexOf(themesArray, secondBallTheme);
 
-        //Creation de la prophetie
-        string prophecyFullSentence = GenerateStoryBit(index1, index2, valence);
-        UIProphecy displayableProphecy;
-        displayableProphecy._fastestBall = firstBallTheme;
-        displayableProphecy._slowestBall = secondBallTheme;
-        displayableProphecy._positive = valence;
-        displayableProphecy._prophecy = prophecyFullSentence;
+            //Creation de la prophetie
+            string prophecyFullSentence = GenerateStoryBit(index1, index2, valence);
+            UIProphecy displayableProphecy;
+            displayableProphecy._fastestBall = firstBallTheme;
+            displayableProphecy._slowestBall = secondBallTheme;
+            displayableProphecy._positive = valence;
+            displayableProphecy._prophecy = prophecyFullSentence;
 
-        //Ajout aux depots de propheties
-        _gameProphecies.Add(displayableProphecy);
-        _lastProphecies.Add(displayableProphecy);
+            //Ajout aux depots de propheties
+            _gameProphecies.Add(displayableProphecy);
+            _lastProphecies.Add(displayableProphecy);
+        }
+        
 
     }
 
     /// <summary>
+    /// !!!WARNING!!! This isn't used anymore. The step publishing the event listened by this is skipped since the prophecies are now generated at the time of the collision
+    /// Delete this when we're sure that it won't be needed ever again
     /// Handles EventStoryUpdateRequest from the reception of the ev ent to the publishing of the delivery
     /// </summary>
     /// <param name="requestEvent">The event containing the data relative to what type of event is requested</param>
@@ -284,7 +292,7 @@ public class NarrationManager : MonoBehaviour
                         // Appeler la mï¿½thode en passant les paramï¿½tres
                         isCandidate = (bool)method.Invoke(entity, new object[1] { methodValue });
                     }
-                    else { throw new Exception("Méthode introuvable : " + methodName); }
+                    else { throw new Exception("Methode introuvable : " + methodName); }
                     // On sort de la boucle des quun critere nest pas verifie pour passer a lentite suivante parmi les candidates
                     if (!isCandidate) { break; }
                 }

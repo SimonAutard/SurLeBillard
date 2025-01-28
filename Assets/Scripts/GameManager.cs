@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
         _gameLoopSteps.Add(new NextPlayerTurn(_stepGenId++, _stepGenId));
         _gameLoopSteps.Add(new NextPlayerTurnUI(_stepGenId++, _stepGenId));
         _gameLoopSteps.Add(new ApplyRules(_stepGenId++, _stepGenId));
-        _gameLoopSteps.Add(new ProphecyGeneration(_stepGenId++, _stepGenId));
+        //_gameLoopSteps.Add(new ProphecyGeneration(_stepGenId++, _stepGenId));
         _gameLoopSteps.Add(new UIFeedback(_stepGenId++, _stepGenId));
         _stepGenId = 0;
         _gameEndSteps.Add(new EndGame(_stepGenId++, _stepGenId));
