@@ -9,8 +9,6 @@ using UnityEngine;
 public class NarrationManager : MonoBehaviour
 {
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
-    private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
-    private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
     //DEBUG 
     [SerializeField] bool debugMode;
@@ -172,6 +170,7 @@ public class NarrationManager : MonoBehaviour
 
     private void HandleCollisionSignal(EventCollisionSignal collision)
     {
+        int whiteBallID = GameStateManager.Instance.whiteBallID;
         if (collision._fastestBall != whiteBallID && collision._slowestBall != whiteBallID)
         {
             //Recuperation des informations de collision
