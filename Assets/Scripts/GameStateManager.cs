@@ -22,6 +22,8 @@ public class GameStateManager : MonoBehaviour
     //Paramètres des billes
     public int whiteBallID { get; private set; }
     public int blackBallID { get; private set; }
+    public int startingBallsCount { get; private set; } // including white & black
+
 
     // Design pattern du singleton
     private static GameStateManager _instance; // instance statique du game state manager
@@ -47,6 +49,7 @@ public class GameStateManager : MonoBehaviour
         }
         whiteBallID = 0;
         blackBallID = 4;
+        startingBallsCount = blackBallID * 2;
     }
 
     private void OnEnable()
@@ -80,14 +83,14 @@ public class GameStateManager : MonoBehaviour
     private void HandleNewGameSetupRequest(EventNewGameSetupRequest requestEvent)
     {
         // TODO : Setup initial state of the game (balls status, cheats, who plays next, etc)
-        // clearing the lists and then filling the balls in play with ids from 0 to 15 (0 is the white ball, 8 is the black ball)
+        // clearing the lists and then filling the balls in play with ids from 0 to startingBallsCount
         _ballsInPlay.Clear();
         _ballsPocketed.Clear();
         _lastCollisions.Clear();
         _gameCollisions.Clear();
         _lastPocketings.Clear();
         _gamePocketings.Clear();
-        for(int i = 0; i < 16; i++)
+        for(int i = 0; i < startingBallsCount; i++)
         {
             _ballsInPlay.Add(i);
         }
@@ -109,7 +112,7 @@ public class GameStateManager : MonoBehaviour
         _lastPocketings.Clear();
         foreach (Tuple<int, int, bool> collision in requestEvent._collisions)
         {
-            if (collision.Item1 != 0 && collision.Item2 != 0)
+            if (collision.Item1 != whiteBallID && collision.Item2 != whiteBallID)
             {
                 _lastCollisions.Add(collision);
                 _gameCollisions.Add(collision);
@@ -122,13 +125,13 @@ public class GameStateManager : MonoBehaviour
         foreach (Tuple<int, int> pocketing in requestEvent._pocketings)
         {
             // checking for white pocketing
-            if (pocketing.Item1 == 0)
+            if (pocketing.Item1 == whiteBallID)
             {
                 _currentTurnPenalties.Add(PenaltyType.WhitePocketing);
                 EventBus.Publish(new EventReplaceWhiteRequest());
             }
             // checking for black pocketing and if there is, if it's a legit one or a foul
-            else if (pocketing.Item1 == 8)
+            else if (pocketing.Item1 == blackBallID)
             {
                 bool penalty = false;
                 if (_activePlayer == _player1)
@@ -136,7 +139,7 @@ public class GameStateManager : MonoBehaviour
                     foreach (int ball in _ballsInPlay)
                     {
                         // checking if there are still balls that need to be pocketed
-                        if (ball > 0 && ball < 8)
+                        if (ball > 0 && ball < blackBallID)
                         {
                             penalty = true;
                         }
@@ -147,7 +150,7 @@ public class GameStateManager : MonoBehaviour
                     foreach (int ball in _ballsInPlay)
                     {
                         // checking if there are still balls that need to be pocketed
-                        if (ball > 8)
+                        if (ball > blackBallID)
                         {
                             penalty = true;
                         }
@@ -170,7 +173,7 @@ public class GameStateManager : MonoBehaviour
             else
             {
                 // if opponent ball pocketed
-                if ((_activePlayer == _player1 && pocketing.Item1 > 8) || (_activePlayer == _player2 && pocketing.Item1 > 0 && pocketing.Item1 < 8))
+                if ((_activePlayer == _player1 && pocketing.Item1 > blackBallID) || (_activePlayer == _player2 && pocketing.Item1 > 0 && pocketing.Item1 < blackBallID))
                 {
                     _currentTurnPenalties.Add(PenaltyType.OpponentBallPocketing);
                 }
@@ -236,12 +239,12 @@ public class GameStateManager : MonoBehaviour
         }
 
         // Placeholder win condition (autowin after n turns) for testing purpose
-        if (_turnCount > 1)
-        {
-            Debug.Log("The game will end now.");
-            _gameEnded = true;
-            _winner = ActivePlayerName.Clotho;
-        }
+        //if (_turnCount > 1)
+        //{
+        //    Debug.Log("The game will end now.");
+        //    _gameEnded = true;
+        //    _winner = ActivePlayerName.Clotho;
+        //}
 
         if (_gameEnded)
         {
@@ -285,5 +288,8 @@ public class GameStateManager : MonoBehaviour
         return _activePlayer;
     }
 
-
+    public List<int> BallsInPlay()
+    {
+        return _ballsInPlay;
+    }
 }

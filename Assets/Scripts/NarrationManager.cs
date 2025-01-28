@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using System.Globalization;
-using Unity.Android.Gradle;
+//using Unity.Android.Gradle;
 
 
 public class NarrationManager : MonoBehaviour
@@ -168,22 +168,24 @@ public class NarrationManager : MonoBehaviour
 
     private void HandleCollisionSignal(EventCollisionSignal collision)
     {
-        // TODO :
-        //  - generate prophecy based on collision
-        //  - add the prophecy to _lastProphecies
-
-        UIProphecy placeholderProphecy;
-        placeholderProphecy._fastestBall = "ball1";
-        placeholderProphecy._slowestBall = "ball2";
-        placeholderProphecy._positive = false;
-        placeholderProphecy._prophecy = "Connor fera la teuf et finira vraiment pas bien";
-        _gameProphecies.Add(placeholderProphecy);
-        _lastProphecies.Add(placeholderProphecy);
-
-        // reset _lastProphecies
+        int whiteBallID = GameStateManager.Instance.whiteBallID;
+        if (collision._fastestBall != whiteBallID && collision._slowestBall != whiteBallID)
+        {
+            UIProphecy prophecy;
+            prophecy._fastestBall = themesArray[collision._fastestBall];
+            prophecy._slowestBall = themesArray[collision._slowestBall];
+            // TODO: change to collision._isPositive or whatever when it'll be in the event
+            prophecy._positive = false;
+            // TODO: change to a call to the appropriate method when it's done
+            prophecy._prophecy = "Connor fera la teuf et finira vraiment pas bien (THIS IS PLACEHOLDER)";
+            _gameProphecies.Add(prophecy);
+            _lastProphecies.Add(prophecy);
+        }
     }
 
     /// <summary>
+    /// !!!WARNING!!! This isn't used anymore. The step publishing the event listened by this is skipped since the prophecies are now generated at the time of the collision
+    /// Delete this when we're sure that it won't be needed ever again
     /// Handles EventStoryUpdateRequest from the reception of the ev ent to the publishing of the delivery
     /// </summary>
     /// <param name="requestEvent">The event containing the data relative to what type of event is requested</param>
