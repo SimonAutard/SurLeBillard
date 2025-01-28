@@ -484,7 +484,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   canYetCollide: 1
-  ballSymbol: 
+  ballTheme: 
   _ballId: 0
   drag: 0.5
   bandSpeedReductionFactor: 0.8
@@ -527,6 +527,10 @@ PrefabInstance:
     - target: {fileID: 1011740301214862925, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_Name
       value: BilleNoire
+      objectReference: {fileID: 0}
+    - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
+      propertyPath: ballTheme
+      value: "Sant\xE9"
       objectReference: {fileID: 0}
     - target: {fileID: 3751062367256222836, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -740,6 +744,10 @@ PrefabInstance:
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballTheme
+      value: "Amiti\xE9"
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3546,6 +3554,10 @@ PrefabInstance:
       propertyPath: _ballId
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballTheme
+      value: Nature
+      objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.99
@@ -3846,6 +3858,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 971d411d002089a40bff7209d87d0c7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugMode: 0
 --- !u!114 &1484232764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4377,6 +4390,10 @@ PrefabInstance:
       propertyPath: _ballId
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballTheme
+      value: Amour
+      objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.82
@@ -4690,6 +4707,10 @@ PrefabInstance:
       propertyPath: _ballId
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballTheme
+      value: "Spiritualit\xE9"
+      objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.71
@@ -4956,6 +4977,10 @@ PrefabInstance:
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballTheme
+      value: "Carri\xE8re"
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5260,6 +5285,10 @@ PrefabInstance:
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballTheme
+      value: Finances
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
