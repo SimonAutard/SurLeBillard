@@ -464,7 +464,7 @@ Transform:
   m_GameObject: {fileID: 65426820}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.54, y: 0.5, z: -1.31}
+  m_LocalPosition: {x: 0.14, y: 0.5, z: 4.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -486,9 +486,9 @@ MonoBehaviour:
   canYetCollide: 1
   ballTheme: 
   _ballId: 0
-  drag: 0.5
-  bandSpeedReductionFactor: 0.8
-  forceFactor: 1
+  drag: 0.7
+  bandSpeedReductionFactor: 0.6
+  forceFactor: 3
 --- !u!54 &65426826
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -529,12 +529,20 @@ PrefabInstance:
       value: BilleNoire
       objectReference: {fileID: 0}
     - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
+      propertyPath: drag
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: ballTheme
       value: "Sant\xE9"
       objectReference: {fileID: 0}
+    - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
+      propertyPath: bandSpeedReductionFactor
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 3751062367256222836, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.05
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 3751062367256222836, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -542,7 +550,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3751062367256222836, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.01
+      value: 5.74
       objectReference: {fileID: 0}
     - target: {fileID: 3751062367256222836, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -742,12 +750,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: drag
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: "Amiti\xE9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: bandSpeedReductionFactor
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1673,7 +1689,6 @@ GameObject:
   - component: {fileID: 539084792}
   - component: {fileID: 539084791}
   - component: {fileID: 539084790}
-  - component: {fileID: 539084789}
   m_Layer: 0
   m_Name: Tapis
   m_TagString: Untagged
@@ -1681,28 +1696,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &539084789
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 539084788}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &539084790
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3551,12 +3544,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: drag
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Nature
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: bandSpeedReductionFactor
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4046,7 +4047,6 @@ GameObject:
   - component: {fileID: 1658921109}
   - component: {fileID: 1658921108}
   - component: {fileID: 1658921107}
-  - component: {fileID: 1658921106}
   m_Layer: 0
   m_Name: Fond
   m_TagString: Untagged
@@ -4054,28 +4054,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &1658921106
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1658921105}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1658921107
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4387,12 +4365,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: drag
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Amour
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: bandSpeedReductionFactor
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4704,12 +4690,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: drag
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: "Spiritualit\xE9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: bandSpeedReductionFactor
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4975,12 +4969,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: drag
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: "Carri\xE8re"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: bandSpeedReductionFactor
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5283,12 +5285,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: drag
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: _ballId
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Finances
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: bandSpeedReductionFactor
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
