@@ -212,7 +212,6 @@ private static UIManager _instance; // instance statique du ui manager
             //Debug.Log("*******************Popup ouverte*****************");
         }
         Debug.Log("UIManager: Requesting next step.");
-        Debug.Log("******************* next step *****************");
         prophecies.Clear();
         EventBus.Publish(new EventGameloopNextStepRequest());
 
