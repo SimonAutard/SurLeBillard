@@ -178,4 +178,11 @@ public class DialogManagement : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
     }
+
+    public void RefreshCue(GameObject newBall)
+    {
+        Cue.SetActive(true);
+        Cue.GetComponent<CueScript>().RenewOrb(newBall);
+        Cue.SetActive(false);
+    }
 }

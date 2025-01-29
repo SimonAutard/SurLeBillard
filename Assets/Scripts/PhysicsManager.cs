@@ -161,7 +161,7 @@ public class PhysicsManager : MonoBehaviour
     /// <param name="requestEvent"></param>
     private void HandleReplaceWhiteRequest(EventReplaceWhiteRequest requestEvent)
     {
-        // TODO (don't forget to check if the ball is already on the field before doing anything, just in case the event is published at the wrong time for some reason)
+        // check if whiteball is already in play before doing anything, just in case the event is published at the wrong time for some reason
         foreach (BallRoll ball in RemainingBalls) { 
             if(ball._ballId == GameStateManager.Instance.whiteBallID) { return; }
         }
@@ -218,7 +218,7 @@ public class PhysicsManager : MonoBehaviour
         GameObject newBlackBall = Instantiate(blackBallPrefab, newPosition, Quaternion.identity);
         //MaJ du conteneur des billes
         RemainingBalls.Add(newBlackBall.GetComponent<BallRoll>());
-        EventBus.Publish(new EventBallWasCreated(newBlackBall));
+        //EventBus.Publish(new EventBallWasCreated(newBlackBall));
     }
 
     /// <summary>
