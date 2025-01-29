@@ -37,6 +37,7 @@ public class WhiteBallMove : BallRoll
     /// <param name="requestEvent"></param>
     private void PushThisBall(EventApplyForceToWhiteRequest requestEvent)
     {
+        /*
         //Partie debug au cas où l'angle ne amrche pas
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
@@ -45,10 +46,10 @@ public class WhiteBallMove : BallRoll
         {
             Vector3 clickPosition = ray.GetPoint(distance);
             clickPosition.y = transform.position.y;
-        }
+        }*/
 
         // Récupère les données du coup
-        Vector3 pushVector = requestEvent._vector;
+        Vector3 pushVector = requestEvent._vector.normalized;
         float force = requestEvent._force;
 
         // Calcule la direction et la vitesse

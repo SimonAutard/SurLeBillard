@@ -486,9 +486,10 @@ MonoBehaviour:
   canYetCollide: 1
   ballTheme: 
   _ballId: 0
+  speed: 0
   drag: 0.7
-  bandSpeedReductionFactor: 0.6
-  forceFactor: 3
+  bandSpeedReductionFactor: 0.8
+  forceFactor: 10
 --- !u!54 &65426826
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -538,7 +539,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: bandSpeedReductionFactor
-      value: 0.6
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3751062367256222836, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -763,7 +764,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: bandSpeedReductionFactor
-      value: 0.6
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3557,7 +3558,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: bandSpeedReductionFactor
-      value: 0.6
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4378,7 +4379,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: bandSpeedReductionFactor
-      value: 0.6
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4703,7 +4704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: bandSpeedReductionFactor
-      value: 0.6
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4982,7 +4983,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: bandSpeedReductionFactor
-      value: 0.6
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5298,7 +5299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: bandSpeedReductionFactor
-      value: 0.6
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
