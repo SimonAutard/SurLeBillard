@@ -110,6 +110,7 @@ public class GameStateManager : MonoBehaviour
         Debug.Log($"GameStateManager: Applying rules and updating game state");
         _lastCollisions.Clear();
         _lastPocketings.Clear();
+        _currentTurnPenalties.Clear();
         foreach (Tuple<int, int, bool> collision in requestEvent._collisions)
         {
             if (collision.Item1 != whiteBallID && collision.Item2 != whiteBallID)
@@ -142,6 +143,7 @@ public class GameStateManager : MonoBehaviour
                         if (ball > 0 && ball < blackBallID)
                         {
                             penalty = true;
+                            break;
                         }
                     }
                 }
@@ -153,6 +155,7 @@ public class GameStateManager : MonoBehaviour
                         if (ball > blackBallID)
                         {
                             penalty = true;
+                            break;
                         }
                     }
                 }

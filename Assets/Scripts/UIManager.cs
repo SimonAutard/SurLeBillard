@@ -55,6 +55,7 @@ private static UIManager _instance; // instance statique du ui manager
         EventBus.Subscribe<EventFeedbackRequest>(HandleFeedbackRequest);
         EventBus.Subscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
         EventBus.Subscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
+        EventBus.Subscribe<EventBallWasCreated>(HandleNewWhiteBall);
     }
 
     private void OnDisable()
@@ -64,6 +65,7 @@ private static UIManager _instance; // instance statique du ui manager
         EventBus.Unsubscribe<EventFeedbackRequest>(HandleFeedbackRequest);
         EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
         EventBus.Unsubscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
+        EventBus.Unsubscribe<EventBallWasCreated>(HandleNewWhiteBall);
     }
 
     private void OnDestroy()
@@ -73,6 +75,7 @@ private static UIManager _instance; // instance statique du ui manager
         EventBus.Unsubscribe<EventFeedbackRequest>(HandleFeedbackRequest);
         EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(HandleNextTurnUIDisplayRequest);
         EventBus.Unsubscribe<EventEndGameRoundupRequest>(HandleEndGameRoundupRequest);
+        EventBus.Unsubscribe<EventBallWasCreated>(HandleNewWhiteBall);
     }
 
     /// <summary>
@@ -212,12 +215,14 @@ private static UIManager _instance; // instance statique du ui manager
             //Debug.Log("*******************Popup ouverte*****************");
         }
         Debug.Log("UIManager: Requesting next step.");
-        Debug.Log("******************* next step *****************");
         prophecies.Clear();
         EventBus.Publish(new EventGameloopNextStepRequest());
 
     }
-    
 
+    private void HandleNewWhiteBall(EventBallWasCreated requestEvent)
+    {
+        _dialogManagement.RefreshCue(requestEvent._ball);
+    }
 
 }

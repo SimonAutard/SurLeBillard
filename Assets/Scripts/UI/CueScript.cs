@@ -44,15 +44,15 @@ public class CueScript : MonoBehaviour
     }
     private void OnEnable()
     {
-        EventBus.Subscribe<EventBallWasCreated>(RenewOrb);
+        
     }
     private void OnDisable()
     {
-        EventBus.Unsubscribe<EventBallWasCreated>(RenewOrb);
+
     }
     private void OnDestroy()
     {
-        EventBus.Unsubscribe<EventBallWasCreated>(RenewOrb);
+        
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -151,12 +151,14 @@ public class CueScript : MonoBehaviour
         
     }
   
-    void RenewOrb(EventBallWasCreated createdBall)
+    public void RenewOrb(GameObject newBall)
     {
         Debug.Log("ui tries to connect white ball");
-        BallRoll ballRoll = createdBall._ball.GetComponent<BallRoll>();
-        if(ballRoll._ballId == 0) { orb = ballRoll.gameObject.transform; }
-        
+        //BallRoll ballRoll = createdBall._ball.GetComponent<BallRoll>();
+        //if(ballRoll._ballId == 0) { orb = ballRoll.gameObject.transform; }
+        orb = newBall.gameObject.transform;
+
+
     }
 
 
