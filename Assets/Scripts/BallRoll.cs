@@ -112,6 +112,7 @@ public class BallRoll : MonoBehaviour
     /// <param name="collider"></param>
     protected void BounceOnBand(Collider collider)
     {
+
         // Etape 1 = On calcule la normale du rebond, qui dépend de la bande
         Vector3 normalVector = collider.GetComponent<BandBehavior>().normalVector.normalized; // Vecteur normal de la bande de rebond
         //Debug.Log("normal vector of band is "+normalVector);
