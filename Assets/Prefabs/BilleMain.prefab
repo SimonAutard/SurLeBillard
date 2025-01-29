@@ -126,7 +126,9 @@ MonoBehaviour:
   canYetCollide: 1
   ballTheme: 
   _ballId: 0
-  drag: 0.7
+  speed: 0
+  dragMultiplicator: 0.05
+  dragAddition: 0.25
   bandSpeedReductionFactor: 0.6
   forceFactor: 1
 --- !u!54 &8771638792837775003

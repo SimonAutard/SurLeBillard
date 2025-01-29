@@ -12,7 +12,8 @@ public class BallRoll : MonoBehaviour
     // Variables de déplacement
     public float speed ;//{ get; protected set; } // vitesse de la bille à chaque instant
     protected Vector3 direction; // direction de la bille à chaque instant. Normalisé.
-    [SerializeField] private float drag = 0.5f; // Coef des frottements du tapis sur la bille
+    [SerializeField] private float dragMultiplicator = 0.5f; // Coef des frottements du tapis sur la bille
+    [SerializeField] private float dragAddition = 0.5f; // Coef des frottements du tapis sur la bille
     [SerializeField] private float bandSpeedReductionFactor = 0.8f; //coef d'atténuation de la vitesse par les bandes
     private float minSpeedToMove = 0.1f;
 
@@ -34,7 +35,7 @@ public class BallRoll : MonoBehaviour
         if (speed > minSpeedToMove)
         {
             transform.position += direction * speed * Time.deltaTime;
-            speed -= drag * Time.deltaTime; // les frottements sont incarnés par une réduction linéaire de la vitesse
+            speed -= (speed*dragMultiplicator + dragAddition) * Time.deltaTime; // les frottements sont incarnés par une réduction linéaire de la vitesse
         }
         // Si la vitesse est trop faible, on arrête la bille. Cela donne un critère pour terminer la phase de collisions.
         else { speed = 0; }
