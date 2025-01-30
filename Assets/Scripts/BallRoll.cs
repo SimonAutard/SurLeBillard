@@ -1,16 +1,18 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
 public class BallRoll : MonoBehaviour
 {
-    //Variables générales
+    //Variables physiques
     [SerializeField] protected float mass = 1.0f;
     public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille
+
+    //Vriables narratives
     public string ballTheme; //thème de la bille
     public int _ballId;
 
     // Variables de déplacement
-    public float speed ;//{ get; protected set; } // vitesse de la bille à chaque instant
+    public float speed;//{ get; protected set; } // vitesse de la bille à chaque instant
     protected Vector3 direction; // direction de la bille à chaque instant. Normalisé.
     [SerializeField] private float dragMultiplicator = 0.5f; // Coef des frottements du tapis sur la bille
     [SerializeField] private float dragAddition = 0.5f; // Coef des frottements du tapis sur la bille
@@ -18,14 +20,15 @@ public class BallRoll : MonoBehaviour
     private float minSpeedToMove = 0.1f;
 
     //Evenements
-    public static event Action<string,string> TwoBallsCollision; // evenement de la collision de deux billes
+    public static event Action<string, string> TwoBallsCollision; // evenement de la collision de deux billes
     public static event Action<BallRoll> BallPocketed; // evenement de destruction de la bille
+    protected bool isRealBall = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Vitese seuil sous laquelle la bille est consideree arretee
-        minSpeedToMove = PhysicsManager.Instance.minSpeedForBalls ;
+        minSpeedToMove = PhysicsManager.Instance.minSpeedForBalls;
         speed = 0;
     }
 
@@ -35,7 +38,7 @@ public class BallRoll : MonoBehaviour
         if (speed > minSpeedToMove)
         {
             transform.position += direction * speed * Time.deltaTime;
-            speed -= (speed*dragMultiplicator + dragAddition) * Time.deltaTime; // les frottements sont incarnés par une réduction linéaire de la vitesse
+            speed -= (speed * dragMultiplicator + dragAddition) * Time.deltaTime; // les frottements sont incarnés par une réduction linéaire de la vitesse
         }
         // Si la vitesse est trop faible, on arrête la bille. Cela donne un critère pour terminer la phase de collisions.
         else { speed = 0; }
@@ -52,7 +55,7 @@ public class BallRoll : MonoBehaviour
 
     protected void OnTriggerEnter(Collider collider)
     {
-        
+
         if (collider.tag == "Bandes")
         {
             //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
@@ -102,7 +105,11 @@ public class BallRoll : MonoBehaviour
 
             bool valence = GetValence();
 
-            EventBus.Publish(new EventCollisionSignal(_ballId, collider.GetComponent<BallRoll>()._ballId, ballTheme, collider.GetComponent<BallRoll>().ballTheme, valence));
+            if (isRealBall)
+            {
+                EventBus.Publish(new EventCollisionSignal(_ballId, collider.GetComponent<BallRoll>()._ballId, ballTheme, collider.GetComponent<BallRoll>().ballTheme, valence));
+            }
+
             //TwoBallsCollision?.Invoke(ballSymbol, collider.GetComponent<BallRoll>().ballSymbol);
         }
     }
@@ -121,9 +128,9 @@ public class BallRoll : MonoBehaviour
         if (normalVector != Vector3.zero)
         {
             speed = speed * bandSpeedReductionFactor;
-            direction = Vector3.Reflect( direction, normalVector).normalized;
+            direction = Vector3.Reflect(direction, normalVector).normalized;
         }
-        
+
     }
     /// <summary>
     /// Verifie si la bille a ete empochee
@@ -134,12 +141,12 @@ public class BallRoll : MonoBehaviour
         RaycastHit hit;
         Physics.Raycast(transform.position, Vector3.down, out hit);
         //Verification qu'un collider a ete touche et quil sagissait dune poche
-        if(hit.collider != null && hit.collider.gameObject.tag == "Poche")
+        if (hit.collider != null && hit.collider.gameObject.tag == "Poche")
         {
-            Debug.Log("bille "+ _ballId +" empochée");
-            EventBus.Publish(new EventPocketingSignal(this,0));
+            if (isRealBall) { EventBus.Publish(new EventPocketingSignal(this, 0)); }
             Destroy(this.gameObject);
         }
+
     }
     /// <summary>
     /// Renvoie true si la balle est dans une zone positive, false sinon
@@ -149,5 +156,10 @@ public class BallRoll : MonoBehaviour
     {
         if (transform.position.x > 0) { return true; }
         else { return false; }
+    }
+
+    public void TurnToSimulation()
+    {
+        isRealBall = false;
     }
 }
