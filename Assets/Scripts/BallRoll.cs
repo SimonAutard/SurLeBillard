@@ -13,7 +13,7 @@ public class BallRoll : MonoBehaviour
 
     // Variables de déplacement
     public float speed;//{ get; protected set; } // vitesse de la bille à chaque instant
-    protected Vector3 direction; // direction de la bille à chaque instant. Normalisé.
+    public Vector3 direction { get; protected set; } // direction de la bille à chaque instant. Normalisé.
     [SerializeField] private float dragMultiplicator = 0.5f; // Coef des frottements du tapis sur la bille
     [SerializeField] private float dragAddition = 0.5f; // Coef des frottements du tapis sur la bille
     [SerializeField] private float bandSpeedReductionFactor = 0.8f; //coef d'atténuation de la vitesse par les bandes

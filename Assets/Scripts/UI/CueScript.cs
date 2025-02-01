@@ -116,7 +116,6 @@ public class CueScript : MonoBehaviour
             //HitBall(radius, queuePosition);
             //Debug.Log(UISingleton.Instance.isReady);
             //Debug.Log(Vector3.up);
-           
         }
 
         //l'utilisateur a cliqué et la queue va vers la bille
@@ -133,6 +132,8 @@ public class CueScript : MonoBehaviour
                 CalculateForce(radius);
                 Debug.Log("UIManager: Requesting force application.");
                 EventBus.Publish(new EventApplyForceToWhiteRequest(orbVector, UISingleton.Instance.force));
+
+                SimTrajectory simTrajectory = TrajectorySimulationManager.Instance.SimulateTrajectory(UISingleton.Instance.force, orbVector);
                 gameObject.SetActive(false);
             }
         }

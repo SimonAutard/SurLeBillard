@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public struct SimTrajectory
 {
-    List<Vector3> whiteBallTraj { get; set; }
-    List<Vector3> secondBallTraj { get; set; }
+    public List<Vector3> whiteBallTraj;
+    public List<Vector3> secondBallTraj;
 }
 
 public class TrajectorySimulationManager : MonoBehaviour
@@ -18,7 +19,17 @@ public class TrajectorySimulationManager : MonoBehaviour
     //Gestion de scene
     private static UnityEngine.SceneManagement.Scene simulationScene;
     private static UnityEngine.SceneManagement.Scene physicsScene;
-    private float simulationHeight = -20;
+    private static PhysicsScene simulationPhysicsScene;
+    private float simulationHeight = 0;
+
+    //Gestion du mimic
+    GameObject[] simBandes;
+    GameObject[] simPoches ;
+    GameObject[] simBalls;
+
+    //Paramètres de simulation
+    int maxSteps = 100;
+    float timeStep;
 
     public static TrajectorySimulationManager Instance
     {
@@ -63,6 +74,12 @@ public class TrajectorySimulationManager : MonoBehaviour
 
     private void CreateSimulationScene(EventNewGameSetupRequest request)
     {
+        timeStep = Time.fixedDeltaTime;
+        physicsScene = SceneManager.GetSceneByName("PhysicsScene");
+        LoadSceneParameters param = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
+        simulationScene = SceneManager.LoadScene("SimulationScene", param);
+        simulationPhysicsScene = simulationScene.GetPhysicsScene();
+        /*
         SceneManager.LoadSceneAsync("SimulationScene", LoadSceneMode.Additive).completed += operation =>
         {
             simulationScene = SceneManager.GetSceneByName("SimulationScene");
@@ -73,10 +90,13 @@ public class TrajectorySimulationManager : MonoBehaviour
                 return;
             }
 
-
-        };
+            simulationPhysicsScene = simulationScene.GetPhysicsScene();
+        };*/
     }
 
+    /// <summary>
+    /// Vide notre simulationScene de tous ses GO
+    /// </summary>
     public void ClearSimulationScene()
     {
         //Recuperer tous les objets de la scene de simu
@@ -95,6 +115,10 @@ public class TrajectorySimulationManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Recopie tous les objets pertinents pour la physique du jeu de la vraie scene a la scene de simulation
+    /// </summary>
+    /// <param name="request"></param>
     public void MimicScene(EventNextTurnUIDisplayRequest request)
     {
         ClearSimulationScene();
@@ -104,9 +128,9 @@ public class TrajectorySimulationManager : MonoBehaviour
         GameObject[] balls = GameObject.FindGameObjectsWithTag("Bille");
         List<GameObject[]> allEnvironment = new List<GameObject[]> { bandes, poches, balls };
 
-        GameObject[] simBandes = new GameObject[bandes.Length];
-        GameObject[] simPoches = new GameObject[poches.Length];
-        GameObject[] simBalls = new GameObject[balls.Length];
+        simBandes = new GameObject[bandes.Length];
+        simPoches = new GameObject[poches.Length];
+        simBalls = new GameObject[balls.Length];
 
         SceneManager.SetActiveScene(simulationScene);
         foreach (GameObject[] environementCategory in allEnvironment)
@@ -138,11 +162,32 @@ public class TrajectorySimulationManager : MonoBehaviour
         SceneManager.SetActiveScene(physicsScene);
     }
 
+    /// <summary>
+    /// Simule les trajectories en renvoyant un struct simTrajectory
+    /// </summary>
+    /// <param name="force"></param>
+    /// <param name="direction"></param>
+    /// <returns></returns>
     public SimTrajectory SimulateTrajectory(float force, Vector3 direction)
     {
         SimTrajectory simTrajectory = new SimTrajectory();
+        GameObject whiteBall = simBalls.SingleOrDefault(item => item.GetComponent<BallRoll>()._ballId == 0);
+        BallRoll whiteBallRoll  = whiteBall.GetComponent<BallRoll>();
+        Vector3 origin = whiteBall.transform.position;
+        
+        bool hitGO = false;
+        for (int i = 0; i < maxSteps; i++)
+        {
+            Vector3 initialDirection = whiteBallRoll.direction;
+            simulationPhysicsScene.Simulate(timeStep);
+            Vector3 finalDirection = whiteBallRoll.direction;
 
+            if (initialDirection != finalDirection)
+                break;
+        }
 
+        simTrajectory.whiteBallTraj.Add(origin);
+        simTrajectory.whiteBallTraj.Add(whiteBall.transform.position);
 
         return simTrajectory;
     }
