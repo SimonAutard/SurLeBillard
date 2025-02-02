@@ -25,7 +25,7 @@ public class PhysicsManager : MonoBehaviour
 
     [SerializeField] GameObject whiteBallPrefab;
     [SerializeField] GameObject blackBallPrefab;
-    [SerializeField] float ballRadius;
+    [SerializeField] public float ballRadius { get; private set; }
 
     //Gestion du terrain
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires

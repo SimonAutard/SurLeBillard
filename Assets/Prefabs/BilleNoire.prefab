@@ -124,7 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 1
   canYetCollide: 1
-  ballTheme: 
+  ballTheme: "Sant\xE9"
   _ballId: 4
   speed: 0
   dragMultiplicator: 0.05

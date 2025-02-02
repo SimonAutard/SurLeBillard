@@ -5,6 +5,7 @@ public class BallRoll : MonoBehaviour
 {
     //Variables physiques
     [SerializeField] protected float mass = 1.0f;
+    public float ballRadius { get; protected set; } 
     public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille
 
     //Vriables narratives
@@ -29,20 +30,14 @@ public class BallRoll : MonoBehaviour
     {
         // Vitese seuil sous laquelle la bille est consideree arretee
         minSpeedToMove = PhysicsManager.Instance.minSpeedForBalls;
+        ballRadius = PhysicsManager.Instance.ballRadius;
         speed = 0;
     }
 
     void Update()
     {
-        // Si la vitesse est suffisante, on continue de faire rouelr la bille
-        if (speed > minSpeedToMove)
-        {
-            transform.position += direction * speed * Time.deltaTime;
-            speed -= (speed * dragMultiplicator + dragAddition) * Time.deltaTime; // les frottements sont incarnés par une réduction linéaire de la vitesse
-        }
-        // Si la vitesse est trop faible, on arrête la bille. Cela donne un critère pour terminer la phase de collisions.
-        else { speed = 0; }
-
+        // La bille avance ou sarrete
+        RollTheBall(Time.deltaTime);
         // Verification de la position de la bille au dessus des poches
         CheckPocketing();
     }
@@ -50,12 +45,39 @@ public class BallRoll : MonoBehaviour
     //Une fois que toutes les update du jeu ont été exécutées, lateupdate s'exécute
     protected void LateUpdate()
     {
-        canYetCollide = true; //maintenant que l'autre bille percutée a résolue sa collision, on peut reouvrir la bille locale aux collisions
+        UpdateCollisionCondition(); //maintenant que l'autre bille percutée a résolue sa collision, on peut reouvrir la bille locale aux collisions
+    }
+
+    /// <summary>
+    /// Fait avancer la bille d'un certain time step
+    /// </summary>
+    public void RollTheBall(float timestep)
+    {
+        // Si la vitesse est suffisante, on continue de faire rouelr la bille
+        if (speed > minSpeedToMove)
+        {
+            transform.position += direction * speed * timestep;
+            speed -= (speed * dragMultiplicator + dragAddition) * timestep; // les frottements sont incarnés par une réduction linéaire de la vitesse
+        }
+        // Si la vitesse est trop faible, on arrête la bille. Cela donne un critère pour terminer la phase de collisions.
+        else { speed = 0; }
+    }
+
+    /// <summary>
+    /// Autorise la bille a entrer en collision
+    /// </summary>
+    public void UpdateCollisionCondition()
+    {
+        canYetCollide = true;
     }
 
     protected void OnTriggerEnter(Collider collider)
     {
+        AnswerToCollisionWith(collider);
+    }
 
+    public void AnswerToCollisionWith(Collider collider)
+    {
         if (collider.tag == "Bandes")
         {
             //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
@@ -65,7 +87,9 @@ public class BallRoll : MonoBehaviour
         {
             BounceOnBall(collider);
         }
+
     }
+
     /// <summary>
     /// Fait rebondir la bille sur une autre bille, passée en argument
     /// </summary>
@@ -135,7 +159,7 @@ public class BallRoll : MonoBehaviour
     /// <summary>
     /// Verifie si la bille a ete empochee
     /// </summary>
-    protected virtual void CheckPocketing()
+    public virtual void CheckPocketing()
     {
         // Raycats du centre de la bille vers le bas
         RaycastHit hit;

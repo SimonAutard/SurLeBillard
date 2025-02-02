@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,25 +11,31 @@ public struct SimTrajectory
 
 public class TrajectorySimulationManager : MonoBehaviour
 {
-    // Design pattern du singleton
-    private static TrajectorySimulationManager _instance; // instance statique du game state manager
-    private static bool isInitialized = false;
+
 
     //Gestion de scene
-    private static UnityEngine.SceneManagement.Scene simulationScene;
-    private static UnityEngine.SceneManagement.Scene physicsScene;
-    private static PhysicsScene simulationPhysicsScene;
-    private float simulationHeight = 0;
+    private static UnityEngine.SceneManagement.Scene _simulationScene;
+    private static UnityEngine.SceneManagement.Scene _realScene;
+    private static PhysicsScene _simulationPhysicsScene;
+    private Vector3 offsetVector = Vector3.zero;
 
     //Gestion du mimic
-    GameObject[] simBandes;
-    GameObject[] simPoches ;
-    GameObject[] simBalls;
+    List<GameObject> simBandes;
+    List<GameObject> simPoches;
+    List<BallRoll> simBallRoll;
+    GameObject realWhiteBall;
 
     //Paramètres de simulation
-    int maxSteps = 100;
-    float timeStep;
+    int maxSteps = 20;
+    [SerializeField] CueScript cue;
 
+    //Affichage
+    [SerializeField] LineRenderer whiteBallLineRenderer;
+    [SerializeField] LineRenderer secondBallLineRenderer;
+
+    /*
+    // Design pattern du singleton
+    private static TrajectorySimulationManager _instance; // instance statique du game state manager
     public static TrajectorySimulationManager Instance
     {
         get
@@ -49,7 +54,7 @@ public class TrajectorySimulationManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
+    }*/
     private void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
@@ -72,26 +77,31 @@ public class TrajectorySimulationManager : MonoBehaviour
         EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(MimicScene);
     }
 
+    private void Update()
+    {
+        //______________DEBUG PARTIE A SUPPRIMER_____________
+        if (cue.isActiveAndEnabled)
+        {
+            float radius = cue.radius;
+            cue.CalculateForce(radius);
+            SimTrajectory simTrajectory = SimulateTrajectory(UISingleton.Instance.force, cue.GetOrbVector());
+
+        }
+        //----------------------------------------------------
+
+    }
+
     private void CreateSimulationScene(EventNewGameSetupRequest request)
     {
-        timeStep = Time.fixedDeltaTime;
-        physicsScene = SceneManager.GetSceneByName("PhysicsScene");
-        LoadSceneParameters param = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.Physics3D);
-        simulationScene = SceneManager.LoadScene("SimulationScene", param);
-        simulationPhysicsScene = simulationScene.GetPhysicsScene();
-        /*
-        SceneManager.LoadSceneAsync("SimulationScene", LoadSceneMode.Additive).completed += operation =>
-        {
-            simulationScene = SceneManager.GetSceneByName("SimulationScene");
-            physicsScene = SceneManager.GetSceneByName("PhysicsScene");
-            if (!simulationScene.IsValid())
-            {
-                Debug.LogError("SimulationScene is not valid.");
-                return;
-            }
+        _realScene = SceneManager.GetSceneByName("PhysicsScene");
 
-            simulationPhysicsScene = simulationScene.GetPhysicsScene();
-        };*/
+        _simulationScene = SceneManager.CreateScene("Simulation", new CreateSceneParameters(LocalPhysicsMode.Physics3D));
+        _simulationPhysicsScene = _simulationScene.GetPhysicsScene();
+
+        if (!_simulationPhysicsScene.IsValid())
+        {
+            Debug.LogError("SimulationPhysicsScene is not valid .");
+        }
     }
 
     /// <summary>
@@ -100,19 +110,19 @@ public class TrajectorySimulationManager : MonoBehaviour
     public void ClearSimulationScene()
     {
         //Recuperer tous les objets de la scene de simu
-        GameObject[] allobjects = simulationScene.GetRootGameObjects();
+        GameObject[] allobjects = _simulationScene.GetRootGameObjects();
         //Choisir la scene de modification
-        SceneManager.SetActiveScene(simulationScene);
+        SceneManager.SetActiveScene(_simulationScene);
+
         // Détruire tous les objets dans la scène
         foreach (GameObject obj in allobjects)
         {
-            
+
             obj.SetActive(false); // oblige de rendre inactif car l'objet ne sera pas detruit avant la fin de la frame, et dautres scripts risqquent dinteragir avec ces objets en attendant
             GameObject.Destroy(obj); // destruction
         }
         //on rend la scene au physicsmanager
-        SceneManager.SetActiveScene(physicsScene);
-
+        SceneManager.SetActiveScene(_realScene);
     }
 
     /// <summary>
@@ -121,46 +131,82 @@ public class TrajectorySimulationManager : MonoBehaviour
     /// <param name="request"></param>
     public void MimicScene(EventNextTurnUIDisplayRequest request)
     {
+        //Nettoyer la scene
         ClearSimulationScene();
 
+        //Recuperation des references dans la scene reelle
         GameObject[] bandes = GameObject.FindGameObjectsWithTag("Bandes");
         GameObject[] poches = GameObject.FindGameObjectsWithTag("Poche");
-        GameObject[] balls = GameObject.FindGameObjectsWithTag("Bille");
-        List<GameObject[]> allEnvironment = new List<GameObject[]> { bandes, poches, balls };
+        List<GameObject[]> allEnvironment = new List<GameObject[]> { bandes, poches };
 
-        simBandes = new GameObject[bandes.Length];
-        simPoches = new GameObject[poches.Length];
-        simBalls = new GameObject[balls.Length];
+        //Reinitialisation des Listes de simulation
+        simBandes = new List<GameObject>();
+        simPoches = new List<GameObject>();
 
-        SceneManager.SetActiveScene(simulationScene);
+        //Duplication de toutes les references
         foreach (GameObject[] environementCategory in allEnvironment)
         {
+            //Un atome = un objet a dupliquer
             foreach (GameObject environmentAtom in environementCategory)
             {
                 //Dupliquer lobjet
-                GameObject simGO = Instantiate(environmentAtom);
+                GameObject simGO = Instantiate(environmentAtom, environmentAtom.transform.position, environmentAtom.transform.rotation);
+                SceneManager.MoveGameObjectToScene(simGO, _simulationScene);
 
-                //retirer le mesh pour le sperf
-                simGO.GetComponent<MeshRenderer>().enabled = false;
+                //retirer le mesh pour les perf
+                simGO.GetComponent<Renderer>().enabled = false;
 
                 //deplacer lobjet loin de la camera
                 Vector3 newPosition = simGO.transform.position;
-                newPosition += Vector3.up * simulationHeight;
+                newPosition += offsetVector;
                 simGO.transform.position = newPosition;
 
                 //Ajouter l'object aux vecteurs de GO de la simu
-                if (simGO.tag == "Bandes") { simBandes[Array.IndexOf(bandes, environmentAtom)] = simGO; }
-                if (simGO.tag == "Poche") { simPoches[Array.IndexOf(poches, environmentAtom)] = simGO; }
-                if (simGO.tag == "Bille")
-                {
-                    simGO.GetComponent<BallRoll>().TurnToSimulation(); // Desactiver la bille pour tous les evenements
-                    simBalls[Array.IndexOf(balls, environmentAtom)] = simGO;
-                }
+                if (simGO.tag == "Bandes") { simBandes.Add(simGO); }
+                if (simGO.tag == "Poche") { simPoches.Add(simGO); }
             }
 
         }
-        SceneManager.SetActiveScene(physicsScene);
     }
+
+    private void MimicBalls()
+    {
+        GameObject[] balls = GameObject.FindGameObjectsWithTag("Bille");
+        simBallRoll = new List<BallRoll>();
+
+        //Un atome = un objet a dupliquer
+        foreach (GameObject obj in balls)
+        {
+            //Dupliquer lobjet
+            GameObject simGO = Instantiate(obj, obj.transform.position, obj.transform.rotation);
+            SceneManager.MoveGameObjectToScene(simGO, _simulationScene);
+
+            //retirer le mesh pour les perf
+            simGO.GetComponent<Renderer>().enabled = false;
+
+            //deplacer lobjet loin de la camera
+            Vector3 newPosition = simGO.transform.position;
+            newPosition += offsetVector;
+            simGO.transform.position = newPosition;
+
+            BallRoll ballroll = simGO.GetComponent<BallRoll>();
+            ballroll.TurnToSimulation(); // Desactiver la bille pour tous les evenements
+            simBallRoll.Add(ballroll);
+
+        }
+
+    }
+
+    private void ClearSimulationBalls()
+    {
+        foreach (BallRoll ballRoll in simBallRoll)
+        {
+            ballRoll.gameObject.SetActive(false);
+            Destroy(ballRoll.gameObject);
+        }
+        simBallRoll = new List<BallRoll>();
+    }
+
 
     /// <summary>
     /// Simule les trajectories en renvoyant un struct simTrajectory
@@ -170,26 +216,94 @@ public class TrajectorySimulationManager : MonoBehaviour
     /// <returns></returns>
     public SimTrajectory SimulateTrajectory(float force, Vector3 direction)
     {
+        //Creation du struct du resultat final
         SimTrajectory simTrajectory = new SimTrajectory();
-        GameObject whiteBall = simBalls.SingleOrDefault(item => item.GetComponent<BallRoll>()._ballId == 0);
-        BallRoll whiteBallRoll  = whiteBall.GetComponent<BallRoll>();
-        Vector3 origin = whiteBall.transform.position;
-        
-        bool hitGO = false;
-        for (int i = 0; i < maxSteps; i++)
-        {
-            Vector3 initialDirection = whiteBallRoll.direction;
-            simulationPhysicsScene.Simulate(timeStep);
-            Vector3 finalDirection = whiteBallRoll.direction;
 
-            if (initialDirection != finalDirection)
-                break;
+        //Duplication des billes
+        SceneManager.SetActiveScene(_simulationScene);
+        MimicBalls();
+
+        //recuperation d'une nouvelle bille blanche
+        WhiteBallMove whiteBallMove = (WhiteBallMove)simBallRoll.FirstOrDefault(item => item._ballId == 0);
+
+        //Lancement de la bille selon les parametres de tir actuels
+        whiteBallMove.PushThisBall(direction, force);
+
+        //Initialisation du line renderer
+        whiteBallLineRenderer.positionCount = maxSteps;
+        whiteBallLineRenderer.SetPosition(0, whiteBallMove.transform.position);
+
+        Debug.Log("start simulation");
+
+        //Simulation pour n = maxsteps
+        for (int i = 1; i < maxSteps; i++)
+        {
+            //Vecteur direction avant simu
+            Vector3 initialDirection = whiteBallMove.direction;
+            //Simulation
+
+            Debug.Log("start simulation step " + i);
+            SimulateOwnPhysicsStep(Time.fixedDeltaTime );
+            //Vecteur direction apres simu
+            Vector3 finalDirection = whiteBallMove.direction;
+
+            //Mise a jour du linerenderer a apritr de la nouvelle position de la bille blanche
+            whiteBallLineRenderer.SetPosition(i, whiteBallMove.transform.position);
+
+            //Si la direction de la bille a change, cest quon est entre en collision
+            //if (initialDirection != finalDirection) { break; } // alors on sort de la boucle
+
         }
 
-        simTrajectory.whiteBallTraj.Add(origin);
-        simTrajectory.whiteBallTraj.Add(whiteBall.transform.position);
+        //processus de destruction des billes de simulation
+        ClearSimulationBalls();
+        SceneManager.SetActiveScene(_realScene);
 
         return simTrajectory;
+    }
+
+    /// <summary>
+    /// Simulation dune etape delta time de notre propre physique
+    /// </summary>
+    /// <param name="timestep"></param>
+    void SimulateOwnPhysicsStep(float timestep)
+    {
+        //Imitation Update
+        foreach (BallRoll obj in simBallRoll)
+        {
+            //deplacement
+            obj.RollTheBall(timestep);
+            //detection de collision
+            HandleSimulatedCollisions(obj);
+            //detection dempochement
+            obj.CheckPocketing();
+        }
+        //Imitation lateUpdate
+        foreach (BallRoll obj in simBallRoll)
+        {
+            //mise a jour de la possibiltie de collision
+            obj.UpdateCollisionCondition();
+        }
+
+    }
+
+    private void HandleSimulatedCollisions(BallRoll obj)
+    {
+
+        RaycastHit[] hits = new RaycastHit[2];
+        int hitNb = _simulationPhysicsScene.SphereCast(obj.transform.position, obj.ballRadius, Vector3.down, hits);
+        List<RaycastHit> hitsList = hits.ToList();
+        hitsList.RemoveAll(item => item.collider == obj.gameObject.GetComponent<Collider>());
+        foreach (RaycastHit hit in hitsList)
+        {
+            if (hit.collider != null)
+            {
+                Debug.Log("calculating collision for : " + hit.collider.name);
+                obj.AnswerToCollisionWith(hit.collider);
+
+            }
+        }
+
     }
 
 }

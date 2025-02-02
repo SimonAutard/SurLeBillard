@@ -8,14 +8,14 @@ public class WhiteBallMove : BallRoll
     {
         // Abonnement à l'evenement de clic de la souris
         //Controller.OnMouseClicked += HandleMouseClick;
-        EventBus.Subscribe<EventApplyForceToWhiteRequest>(PushThisBall);
+        EventBus.Subscribe<EventApplyForceToWhiteRequest>(HandleApplyForceEvent);
     }
 
     void OnDisable()
     {
         //désabonnement de l'venement clic de souris, pour éviter les memory leaks
         //Controller.OnMouseClicked -= HandleMouseClick;
-        EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(PushThisBall);
+        EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(HandleApplyForceEvent);
     }
     /// <summary>
     /// Fonction de déplacement de la bille blanche reservee au debug car declenchee par clic de souris
@@ -35,7 +35,7 @@ public class WhiteBallMove : BallRoll
     /// Fonction de déplacement de la bille blanche nominale, declenchee par un event du UIManager
     /// </summary>
     /// <param name="requestEvent"></param>
-    private void PushThisBall(EventApplyForceToWhiteRequest requestEvent)
+    private void HandleApplyForceEvent(EventApplyForceToWhiteRequest requestEvent)
     {
         /*
         //Partie debug au cas où l'angle ne amrche pas
@@ -51,10 +51,13 @@ public class WhiteBallMove : BallRoll
         // Récupère les données du coup
         Vector3 pushVector = requestEvent._vector.normalized;
         float force = requestEvent._force;
+        PushThisBall(pushVector, force);
 
-        // Calcule la direction et la vitesse
-        //direction = (transform.position - clickPosition).normalized;
+    }
+    public void PushThisBall(Vector3 pushVector, float force)
+    {
         direction = pushVector;
         speed = force * forceFactor;
+
     }
 }

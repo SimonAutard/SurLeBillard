@@ -133,7 +133,6 @@ public class CueScript : MonoBehaviour
                 Debug.Log("UIManager: Requesting force application.");
                 EventBus.Publish(new EventApplyForceToWhiteRequest(orbVector, UISingleton.Instance.force));
 
-                SimTrajectory simTrajectory = TrajectorySimulationManager.Instance.SimulateTrajectory(UISingleton.Instance.force, orbVector);
                 gameObject.SetActive(false);
             }
         }
@@ -141,10 +140,10 @@ public class CueScript : MonoBehaviour
 
     }
      //convertit la valeur de la force entre 0 et 1
-    void CalculateForce(float radius)
+    public void CalculateForce(float _radius)
     {
         //on convertit la valeur du radius comprise entre 5 et 8 pour la mettre entre 0.2 et 1
-        UISingleton.Instance.force = (radius - minForce)/(maxForce - minForce) * (1f-0.2f) + 0.2f;
+        UISingleton.Instance.force = (_radius - minForce)/(maxForce - minForce) * (1f-0.2f) + 0.2f;
         orbVector.y = 0.0f;
         UISingleton.Instance.BallCuePos = orbVector;
         //Debug.Log("radius" + radius);
@@ -162,6 +161,10 @@ public class CueScript : MonoBehaviour
 
     }
 
+    public Vector3 GetOrbVector()
+    {
+        return orbVector;
+    }
 
    
 
