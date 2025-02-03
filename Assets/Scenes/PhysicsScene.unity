@@ -3009,6 +3009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937830120a9353242abff9e96592ae27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxSteps: 40
   cue: {fileID: 1399898478}
   whiteBallLineRenderer: {fileID: 1066104423}
   secondBallLineRenderer: {fileID: 0}
