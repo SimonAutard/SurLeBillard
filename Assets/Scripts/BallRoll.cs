@@ -6,7 +6,7 @@ public class BallRoll : MonoBehaviour
     //Variables physiques
     [SerializeField] protected float mass = 1.0f;
     public float ballRadius { get; protected set; } 
-    public bool canYetCollide = true; //true par d�faut, devient false pour le reste de la frame une fois qu'elle a tap� une autre bille
+    public bool canYetCollide = true; //true par d�faut, devient false pour le reste de la frame une fois qu'elle a tap� une autre bille ou une bande
 
     //Vriables narratives
     public string ballTheme; //th�me de la bille
@@ -78,7 +78,7 @@ public class BallRoll : MonoBehaviour
 
     public void AnswerToCollisionWith(Collider collider)
     {
-        if (collider.tag == "Bandes")
+        if (collider.tag == "Bandes" && canYetCollide)
         {
             //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
             BounceOnBand(collider);
