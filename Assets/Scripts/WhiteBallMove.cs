@@ -56,7 +56,7 @@ public class WhiteBallMove : BallRoll
     }
     public void PushThisBall(Vector3 pushVector, float force)
     {
-        direction = pushVector;
+        direction = pushVector.normalized;
         speed = force * forceFactor;
 
     }
