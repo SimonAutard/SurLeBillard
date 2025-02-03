@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BallRoll : MonoBehaviour
@@ -79,15 +81,21 @@ public class BallRoll : MonoBehaviour
 
     public void AnswerToCollisionWith(Collider collider)
     {
-        if (collider.tag == "Bandes" && canYetCollide)
+        if (canYetCollide)
         {
-            //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
-            BounceOnBand(collider);
+            if (collider.tag == "Bandes")
+            {
+                //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
+                BounceOnBand(collider);
+                canYetCollide = false;
+            }
+            if (collider.tag == "Bille")
+            {
+                BounceOnBall(collider);
+                canYetCollide = false;
+            }
         }
-        if (collider.tag == "Bille")
-        {
-            BounceOnBall(collider);
-        }
+
 
     }
 
@@ -126,7 +134,6 @@ public class BallRoll : MonoBehaviour
             collider.GetComponent<BallRoll>().speed = v2f.magnitude;
             collider.GetComponent<BallRoll>().direction = v2f.normalized;
 
-            canYetCollide = false;
 
             bool valence = GetValence();
 
@@ -156,7 +163,6 @@ public class BallRoll : MonoBehaviour
             direction = Vector3.Reflect(direction, normalVector).normalized;
         }
 
-        canYetCollide = false;
     }
     /// <summary>
     /// Verifie si la bille a ete empochee
@@ -187,5 +193,25 @@ public class BallRoll : MonoBehaviour
     public void TurnToSimulation()
     {
         isRealBall = false;
+    }
+
+    public void HandleSimulatedCollisions(PhysicsScene _simulationPhysicsScene )
+    {
+
+        RaycastHit[] hits = new RaycastHit[2];
+        int hitNb = _simulationPhysicsScene.SphereCast(transform.position, ballRadius, Vector3.down, hits);
+        List<RaycastHit> hitsList = hits.ToList();
+        hitsList.RemoveAll(item => item.collider == gameObject.GetComponent<Collider>());
+
+        foreach (RaycastHit hit in hitsList)
+        {
+            if (hit.collider != null)
+            {
+                Debug.Log("calculating collision for : " + hit.collider.name);
+                AnswerToCollisionWith(hit.collider);
+
+            }
+        }
+
     }
 }

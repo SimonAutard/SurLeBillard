@@ -274,7 +274,7 @@ public class TrajectorySimulationManager : MonoBehaviour
             //deplacement
             obj.RollTheBall(timestep);
             //detection de collision
-            HandleSimulatedCollisions(obj);
+            obj.HandleSimulatedCollisions(_simulationPhysicsScene);
             //detection dempochement
             obj.CheckPocketing();
         }
@@ -287,23 +287,6 @@ public class TrajectorySimulationManager : MonoBehaviour
 
     }
 
-    private void HandleSimulatedCollisions(BallRoll obj)
-    {
 
-        RaycastHit[] hits = new RaycastHit[2];
-        int hitNb = _simulationPhysicsScene.SphereCast(obj.transform.position, obj.ballRadius, Vector3.down, hits);
-        List<RaycastHit> hitsList = hits.ToList();
-        hitsList.RemoveAll(item => item.collider == obj.gameObject.GetComponent<Collider>());
-        foreach (RaycastHit hit in hitsList)
-        {
-            if (hit.collider != null)
-            {
-                Debug.Log("calculating collision for : " + hit.collider.name);
-                obj.AnswerToCollisionWith(hit.collider);
-
-            }
-        }
-
-    }
 
 }
