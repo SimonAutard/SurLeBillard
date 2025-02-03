@@ -130,7 +130,7 @@ MonoBehaviour:
   dragMultiplicator: 0.05
   dragAddition: 0.25
   bandSpeedReductionFactor: 0.6
-  forceFactor: 1
+  forceFactor: 20
 --- !u!54 &8771638792837775003
 Rigidbody:
   m_ObjectHideFlags: 0

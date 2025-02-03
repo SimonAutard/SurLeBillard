@@ -5,7 +5,7 @@ public class BallRoll : MonoBehaviour
 {
     //Variables générales
     [SerializeField] protected float mass = 1.0f;
-    public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille
+    public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille ou une bande
     public string ballTheme; //thème de la bille
     public int _ballId;
 
@@ -31,6 +31,7 @@ public class BallRoll : MonoBehaviour
 
     void Update()
     {
+
         // Si la vitesse est suffisante, on continue de faire rouelr la bille
         if (speed > minSpeedToMove)
         {
@@ -53,10 +54,11 @@ public class BallRoll : MonoBehaviour
     protected void OnTriggerEnter(Collider collider)
     {
         
-        if (collider.tag == "Bandes")
+        if (collider.tag == "Bandes" && canYetCollide)
         {
             //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
             BounceOnBand(collider);
+            canYetCollide = false;
         }
         if (collider.tag == "Bille")
         {
