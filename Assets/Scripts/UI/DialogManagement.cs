@@ -16,6 +16,11 @@ public class DialogManagement : MonoBehaviour
     [SerializeField] GameObject Cue;
     [SerializeField] Slider sliderPower;
 
+    private GameObject _leftSide;
+    private GameObject _clothoProfile;
+    private GameObject _rightSide;
+    private GameObject _atroposProfile;
+
 
 
     Dictionary<string, string> textDialog = new Dictionary<string, string>()
@@ -41,6 +46,10 @@ public class DialogManagement : MonoBehaviour
         this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
         UIManager.Instance._isClothoTurn = false;
         UIManager.Instance.AttachDialogManagement(this);
+        _leftSide = GameObject.Find("leftSide");
+        _clothoProfile = GameObject.Find("clothoProfile");
+        _rightSide = GameObject.Find("rightSide");
+        _atroposProfile = GameObject.Find("atroposProfile");
 
     }
 
@@ -65,6 +74,21 @@ public class DialogManagement : MonoBehaviour
                 Cue.SetActive(true);
                 Cue.GetComponent<CueScript>().isValidate = false;
                 sliderPower.gameObject.SetActive(true);
+            }
+
+            if (UIManager.Instance._isClothoTurn)
+            {
+                _leftSide.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
+                _clothoProfile.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
+                _rightSide.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f);
+                _atroposProfile.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f);
+            }
+            else
+            {
+                _leftSide.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f);
+                _clothoProfile.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f);
+                _rightSide.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
+                _atroposProfile.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
             }
         }
         /*if (Input.GetMouseButtonDown(0))

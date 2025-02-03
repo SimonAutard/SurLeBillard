@@ -6,18 +6,18 @@ public class BallRoll : MonoBehaviour
     //Variables physiques
     [SerializeField] protected float mass = 1.0f;
     public float ballRadius { get; protected set; } 
-    public bool canYetCollide = true; //true par défaut, devient false pour le reste de la frame une fois qu'elle a tapé une autre bille
+    public bool canYetCollide = true; //true par dï¿½faut, devient false pour le reste de la frame une fois qu'elle a tapï¿½ une autre bille
 
     //Vriables narratives
-    public string ballTheme; //thème de la bille
+    public string ballTheme; //thï¿½me de la bille
     public int _ballId;
 
-    // Variables de déplacement
-    public float speed;//{ get; protected set; } // vitesse de la bille à chaque instant
-    public Vector3 direction { get; protected set; } // direction de la bille à chaque instant. Normalisé.
+    // Variables de dï¿½placement
+    public float speed;//{ get; protected set; } // vitesse de la bille ï¿½ chaque instant
+    public Vector3 direction { get; protected set; } // direction de la bille ï¿½ chaque instant. Normalisï¿½.
     [SerializeField] private float dragMultiplicator = 0.5f; // Coef des frottements du tapis sur la bille
     [SerializeField] private float dragAddition = 0.5f; // Coef des frottements du tapis sur la bille
-    [SerializeField] private float bandSpeedReductionFactor = 0.8f; //coef d'atténuation de la vitesse par les bandes
+    [SerializeField] private float bandSpeedReductionFactor = 0.8f; //coef d'attï¿½nuation de la vitesse par les bandes
     private float minSpeedToMove = 0.1f;
 
     //Evenements
@@ -42,10 +42,10 @@ public class BallRoll : MonoBehaviour
         CheckPocketing();
     }
 
-    //Une fois que toutes les update du jeu ont été exécutées, lateupdate s'exécute
+    //Une fois que toutes les update du jeu ont ï¿½tï¿½ exï¿½cutï¿½es, lateupdate s'exï¿½cute
     protected void LateUpdate()
     {
-        UpdateCollisionCondition(); //maintenant que l'autre bille percutée a résolue sa collision, on peut reouvrir la bille locale aux collisions
+        UpdateCollisionCondition(); //maintenant que l'autre bille percutï¿½e a rï¿½solue sa collision, on peut reouvrir la bille locale aux collisions
     }
 
     /// <summary>
@@ -57,9 +57,9 @@ public class BallRoll : MonoBehaviour
         if (speed > minSpeedToMove)
         {
             transform.position += direction * speed * timestep;
-            speed -= (speed * dragMultiplicator + dragAddition) * timestep; // les frottements sont incarnés par une réduction linéaire de la vitesse
+            speed -= (speed * dragMultiplicator + dragAddition) * timestep; // les frottements sont incarnï¿½s par une rï¿½duction linï¿½aire de la vitesse
         }
-        // Si la vitesse est trop faible, on arrête la bille. Cela donne un critère pour terminer la phase de collisions.
+        // Si la vitesse est trop faible, on arrï¿½te la bille. Cela donne un critï¿½re pour terminer la phase de collisions.
         else { speed = 0; }
     }
 
@@ -82,6 +82,7 @@ public class BallRoll : MonoBehaviour
         {
             //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
             BounceOnBand(collider);
+            canYetCollide = false;
         }
         if (collider.tag == "Bille")
         {
@@ -91,7 +92,7 @@ public class BallRoll : MonoBehaviour
     }
 
     /// <summary>
-    /// Fait rebondir la bille sur une autre bille, passée en argument
+    /// Fait rebondir la bille sur une autre bille, passï¿½e en argument
     /// </summary>
     /// <param name="collider"></param>
     protected void BounceOnBall(Collider collider)
@@ -145,7 +146,7 @@ public class BallRoll : MonoBehaviour
     protected void BounceOnBand(Collider collider)
     {
 
-        // Etape 1 = On calcule la normale du rebond, qui dépend de la bande
+        // Etape 1 = On calcule la normale du rebond, qui dï¿½pend de la bande
         Vector3 normalVector = collider.GetComponent<BandBehavior>().normalVector.normalized; // Vecteur normal de la bande de rebond
         //Debug.Log("normal vector of band is "+normalVector);
         //Etape 2 = On calcule la nouvelle direction de la bille post rebond 
