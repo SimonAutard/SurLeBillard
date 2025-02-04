@@ -26,7 +26,7 @@ public class TrajectorySimulationManager : MonoBehaviour
     GameObject realWhiteBall;
 
     //Paramètres de simulation
-    int maxSteps = 20;
+    [SerializeField] int maxSteps = 20;
     [SerializeField] CueScript cue;
 
     //Affichage

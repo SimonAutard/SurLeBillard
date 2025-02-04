@@ -32,6 +32,7 @@ public class BallRoll : MonoBehaviour
         minSpeedToMove = PhysicsManager.Instance.minSpeedForBalls;
         ballRadius = PhysicsManager.Instance.ballRadius;
         speed = 0;
+
     }
 
     void Update()
@@ -82,7 +83,6 @@ public class BallRoll : MonoBehaviour
         {
             //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
             BounceOnBand(collider);
-            canYetCollide = false;
         }
         if (collider.tag == "Bille")
         {
@@ -156,6 +156,7 @@ public class BallRoll : MonoBehaviour
             direction = Vector3.Reflect(direction, normalVector).normalized;
         }
 
+        canYetCollide = false;
     }
     /// <summary>
     /// Verifie si la bille a ete empochee
