@@ -14,9 +14,10 @@ public class TrajectorySimulationManager : MonoBehaviour
 
 
     //Gestion de scene
-    private static UnityEngine.SceneManagement.Scene _simulationScene;
-    private static UnityEngine.SceneManagement.Scene _realScene;
-    private static PhysicsScene _simulationPhysicsScene;
+    private UnityEngine.SceneManagement.Scene _simulationScene;
+    private UnityEngine.SceneManagement.Scene _realScene;
+    public PhysicsScene _realPhysicsScene { get; private set; }
+    private PhysicsScene _simulationPhysicsScene;
     private Vector3 offsetVector = Vector3.zero;
 
     //Gestion du mimic
@@ -32,8 +33,9 @@ public class TrajectorySimulationManager : MonoBehaviour
     //Affichage
     [SerializeField] LineRenderer whiteBallLineRenderer;
     [SerializeField] LineRenderer secondBallLineRenderer;
+    private BallRoll secondBallTracked;
 
-    /*
+
     // Design pattern du singleton
     private static TrajectorySimulationManager _instance; // instance statique du game state manager
     public static TrajectorySimulationManager Instance
@@ -54,7 +56,7 @@ public class TrajectorySimulationManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }*/
+    }
     private void OnEnable()
     {
         // subscribe to all events that this component needs to listen to at all time
@@ -94,6 +96,7 @@ public class TrajectorySimulationManager : MonoBehaviour
     private void CreateSimulationScene(EventNewGameSetupRequest request)
     {
         _realScene = SceneManager.GetSceneByName("PhysicsScene");
+        _realPhysicsScene = _realScene.GetPhysicsScene();
 
         _simulationScene = SceneManager.CreateScene("Simulation", new CreateSceneParameters(LocalPhysicsMode.Physics3D));
         _simulationPhysicsScene = _simulationScene.GetPhysicsScene();
@@ -190,8 +193,10 @@ public class TrajectorySimulationManager : MonoBehaviour
             simGO.transform.position = newPosition;
 
             BallRoll ballroll = simGO.GetComponent<BallRoll>();
+            ballroll.InitializeBallRollParameters();
             ballroll.TurnToSimulation(); // Desactiver la bille pour tous les evenements
             simBallRoll.Add(ballroll);
+            Debug.Log(ballroll.ballRadius);
 
         }
 
@@ -229,29 +234,40 @@ public class TrajectorySimulationManager : MonoBehaviour
         //Lancement de la bille selon les parametres de tir actuels
         whiteBallMove.PushThisBall(direction, force);
 
+        //Obliteration de la seconde bille suivie
+        ClearSecondLineRenderer();
+
         //Initialisation du line renderer
         whiteBallLineRenderer.positionCount = maxSteps;
         whiteBallLineRenderer.SetPosition(0, whiteBallMove.transform.position);
+        secondBallLineRenderer.positionCount = maxSteps;
 
         Debug.Log("start simulation");
 
         //Simulation pour n = maxsteps
         for (int i = 1; i < maxSteps; i++)
         {
-            //Vecteur direction avant simu
-            Vector3 initialDirection = whiteBallMove.direction;
             //Simulation
-
             Debug.Log("start simulation step " + i);
-            SimulateOwnPhysicsStep(Time.fixedDeltaTime );
-            //Vecteur direction apres simu
-            Vector3 finalDirection = whiteBallMove.direction;
+            SimulateOwnPhysicsStep(Time.fixedDeltaTime);
 
             //Mise a jour du linerenderer a apritr de la nouvelle position de la bille blanche
             whiteBallLineRenderer.SetPosition(i, whiteBallMove.transform.position);
 
-            //Si la direction de la bille a change, cest quon est entre en collision
-            //if (initialDirection != finalDirection) { break; } // alors on sort de la boucle
+            //MaJ Linerenderer pour seconde bille
+            if (secondBallTracked != null)
+            {
+                secondBallLineRenderer.SetPosition(i, secondBallTracked.transform.position);
+                //Verification que le line avant collision est bien positionne
+                if (i > 0 && secondBallLineRenderer.GetPosition(i - 1) == Vector3.zero)
+                {
+                    //si on decouvre que cest la premiere frame ou on a collision, alors on MaJ toutes les positions anterieures du linerenderer
+                    for (int j = 0; j < i; j++)
+                    {
+                        secondBallLineRenderer.SetPosition(j, secondBallTracked.transform.position);
+                    }
+                }
+            }
 
         }
 
@@ -274,9 +290,12 @@ public class TrajectorySimulationManager : MonoBehaviour
             //deplacement
             obj.RollTheBall(timestep);
             //detection de collision
-            HandleSimulatedCollisions(obj);
+            Collider collider = obj.HandleCollisions(_simulationPhysicsScene);
             //detection dempochement
             obj.CheckPocketing();
+            if (obj._ballId == 0 && collider !=null) 
+            { HandleWhiteFirstCollision(collider); }
+
         }
         //Imitation lateUpdate
         foreach (BallRoll obj in simBallRoll)
@@ -287,23 +306,18 @@ public class TrajectorySimulationManager : MonoBehaviour
 
     }
 
-    private void HandleSimulatedCollisions(BallRoll obj)
+    void HandleWhiteFirstCollision(Collider collider)
     {
-
-        RaycastHit[] hits = new RaycastHit[2];
-        int hitNb = _simulationPhysicsScene.SphereCast(obj.transform.position, obj.ballRadius, Vector3.down, hits);
-        List<RaycastHit> hitsList = hits.ToList();
-        hitsList.RemoveAll(item => item.collider == obj.gameObject.GetComponent<Collider>());
-        foreach (RaycastHit hit in hitsList)
+        if(collider.gameObject.TryGetComponent<BallRoll>(out BallRoll ballRoll ) && secondBallTracked == null)
         {
-            if (hit.collider != null)
-            {
-                Debug.Log("calculating collision for : " + hit.collider.name);
-                obj.AnswerToCollisionWith(hit.collider);
-
-            }
+            secondBallTracked = ballRoll;
         }
-
     }
 
+    void ClearSecondLineRenderer()
+    {
+
+        secondBallTracked = null;
+        secondBallLineRenderer.positionCount = 0;
+    }
 }
