@@ -5,10 +5,14 @@ using UnityEngine;
 
 public class BallRoll : MonoBehaviour
 {
+    //Variable générale
+    PhysicsScene physicsScene;
+
     //Variables physiques
     [SerializeField] protected float mass = 1.0f;
-    public float ballRadius { get; protected set; } 
+    public float ballRadius { get; protected set; }
     public bool canYetCollide = true; //true par d�faut, devient false pour le reste de la frame une fois qu'elle a tap� une autre bille ou une bande
+    private Collider currentSuperimposedCollider;
 
     //Vriables narratives
     public string ballTheme; //th�me de la bille
@@ -30,17 +34,24 @@ public class BallRoll : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        InitializeBallRollParameters();
+    }
+
+    public void InitializeBallRollParameters()
+    {
         // Vitese seuil sous laquelle la bille est consideree arretee
         minSpeedToMove = PhysicsManager.Instance.minSpeedForBalls;
-        ballRadius = PhysicsManager.Instance.ballRadius;
+        ballRadius = GetComponent<SphereCollider>().radius;
         speed = 0;
-
+        physicsScene = TrajectorySimulationManager.Instance._realPhysicsScene;
     }
 
     void Update()
     {
         // La bille avance ou sarrete
         RollTheBall(Time.deltaTime);
+        // On gère les collisions
+        HandleCollisions(physicsScene);
         // Verification de la position de la bille au dessus des poches
         CheckPocketing();
     }
@@ -65,38 +76,79 @@ public class BallRoll : MonoBehaviour
         // Si la vitesse est trop faible, on arr�te la bille. Cela donne un crit�re pour terminer la phase de collisions.
         else { speed = 0; }
     }
+    public Collider HandleCollisions(PhysicsScene physicsScene)
+    {
+        // On recupere tous els collider superposes
+        Collider[] hits = new Collider[2];
+        int hitNb = physicsScene.OverlapSphere(transform.position, ballRadius, hits, ~0, QueryTriggerInteraction.UseGlobal);
+        List<Collider> hitsList = hits.ToList(); // transformation en liste
+        hitsList.RemoveAll(item => item == gameObject.GetComponent<Collider>()); //on retirre le collider d ela bille lui meme
+        hitsList.RemoveAll(item => item == null); //on retire les hits qui n'ont pas toruvé de collider
+
+        if (hitsList.Count == 0)
+        {
+            currentSuperimposedCollider = null;
+        }
+        else
+        {
+            Debug.Log(name + " se superpose a " + hitsList[0].name);
+            //Stockage du collider alien pour UpdateCollisionCondition
+            currentSuperimposedCollider = hitsList[0];
+            //Gestion de la collision
+            AnswerToCollisionWith(hitsList[0]);
+
+        }
+        return currentSuperimposedCollider;
+    }
 
     /// <summary>
-    /// Autorise la bille a entrer en collision
+    /// Regit las conditions sous elsquelles la bille peut percuter une autre
     /// </summary>
     public void UpdateCollisionCondition()
     {
-        canYetCollide = true;
+        if (canYetCollide)
+        {
+            if (currentSuperimposedCollider != null)
+            {
+                //Rien a faire, deja gere pendant AnswerToCollisionWith
+            }
+            else
+            { //Rien a faire, la bille pouvait percuter et na rien percute
+            }
+        }
+        else
+        {
+            if (currentSuperimposedCollider != null)
+            {
+                //Rien a faire, la bille nest pas encore sortie de lautre collider
+            }
+            else { canYetCollide = true; } // la bille est sortie de lautre collider, elle peut de nouveau percuter
+        }
     }
-
+    /*
     protected void OnTriggerEnter(Collider collider)
     {
+        currentSuperimposedCollider = collider;
         AnswerToCollisionWith(collider);
     }
-
+    */
     public void AnswerToCollisionWith(Collider collider)
     {
         if (canYetCollide)
         {
             if (collider.tag == "Bandes")
             {
-                //Debug.Log(gameObject.GetComponent<Renderer>().material.name + " percute " + collider.gameObject.name);
+                Debug.Log(name + " percute " + collider.name);
                 BounceOnBand(collider);
                 canYetCollide = false;
             }
             if (collider.tag == "Bille")
             {
+                Debug.Log(name + " percute " + collider.name);
                 BounceOnBall(collider);
                 canYetCollide = false;
             }
         }
-
-
     }
 
     /// <summary>
@@ -176,10 +228,23 @@ public class BallRoll : MonoBehaviour
         if (hit.collider != null && hit.collider.gameObject.tag == "Poche")
         {
             if (isRealBall) { EventBus.Publish(new EventPocketingSignal(this, 0)); }
+            if (!isRealBall) { ImmobilizeBallInSimulation(); }
             Destroy(this.gameObject);
         }
 
     }
+
+    /// <summary>
+    /// imite la destruction de la bille dans le cadre de la simulation
+    /// </summary>
+    void ImmobilizeBallInSimulation()
+    {
+        // Annulation de la vitesse pour que la bille reste en palce et que sa previz de trajectoire la montre immobilisee
+        speed = 0;
+        // suppression du collider pour que d'autres billes puissent rentrer dans la meme poche
+        this.GetComponent<Collider>().enabled = false;
+    }
+
     /// <summary>
     /// Renvoie true si la balle est dans une zone positive, false sinon
     /// </summary>
@@ -195,23 +260,5 @@ public class BallRoll : MonoBehaviour
         isRealBall = false;
     }
 
-    public void HandleSimulatedCollisions(PhysicsScene _simulationPhysicsScene )
-    {
 
-        RaycastHit[] hits = new RaycastHit[2];
-        int hitNb = _simulationPhysicsScene.SphereCast(transform.position, ballRadius, Vector3.down, hits);
-        List<RaycastHit> hitsList = hits.ToList();
-        hitsList.RemoveAll(item => item.collider == gameObject.GetComponent<Collider>());
-
-        foreach (RaycastHit hit in hitsList)
-        {
-            if (hit.collider != null)
-            {
-                Debug.Log("calculating collision for : " + hit.collider.name);
-                AnswerToCollisionWith(hit.collider);
-
-            }
-        }
-
-    }
 }
