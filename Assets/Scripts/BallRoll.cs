@@ -78,10 +78,15 @@ public class BallRoll : MonoBehaviour
     }
     public Collider HandleCollisions(PhysicsScene physicsScene)
     {
+        /*
         // On recupere tous els collider superposes
-        Collider[] hits = new Collider[2];
+        Collider[] hits = new Collider[10];
         int hitNb = physicsScene.OverlapSphere(transform.position, ballRadius, hits, ~0, QueryTriggerInteraction.UseGlobal);
         List<Collider> hitsList = hits.ToList(); // transformation en liste
+        */
+        List<Collider> hitsList = new List<Collider>();
+        if (isRealBall) { hitsList = PhysicsManager.Instance.FindCollidersRealScene(this); }
+        else{ hitsList = TrajectorySimulationManager.Instance.FindCollidersSimlatedScene(this); }
         hitsList.RemoveAll(item => item == gameObject.GetComponent<Collider>()); //on retirre le collider d ela bille lui meme
         hitsList.RemoveAll(item => item == null); //on retire les hits qui n'ont pas toruvé de collider
 

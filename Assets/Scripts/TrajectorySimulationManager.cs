@@ -24,6 +24,7 @@ public class TrajectorySimulationManager : MonoBehaviour
     List<GameObject> simBandes;
     List<GameObject> simPoches;
     List<BallRoll> simBallRoll;
+    GameObject[] allSimBands;
     GameObject realWhiteBall;
 
     //Paramètres de simulation
@@ -165,7 +166,10 @@ public class TrajectorySimulationManager : MonoBehaviour
                 simGO.transform.position = newPosition;
 
                 //Ajouter l'object aux vecteurs de GO de la simu
-                if (simGO.tag == "Bandes") { simBandes.Add(simGO); }
+                if (simGO.tag == "Bandes")
+                {
+                    simBandes.Add(simGO);
+                }
                 if (simGO.tag == "Poche") { simPoches.Add(simGO); }
             }
 
@@ -293,7 +297,7 @@ public class TrajectorySimulationManager : MonoBehaviour
             Collider collider = obj.HandleCollisions(_simulationPhysicsScene);
             //detection dempochement
             obj.CheckPocketing();
-            if (obj._ballId == 0 && collider !=null) 
+            if (obj._ballId == 0 && collider != null)
             { HandleWhiteFirstCollision(collider); }
 
         }
@@ -308,7 +312,7 @@ public class TrajectorySimulationManager : MonoBehaviour
 
     void HandleWhiteFirstCollision(Collider collider)
     {
-        if(collider.gameObject.TryGetComponent<BallRoll>(out BallRoll ballRoll ) && secondBallTracked == null)
+        if (collider.gameObject.TryGetComponent<BallRoll>(out BallRoll ballRoll) && secondBallTracked == null)
         {
             secondBallTracked = ballRoll;
         }
@@ -319,5 +323,10 @@ public class TrajectorySimulationManager : MonoBehaviour
 
         secondBallTracked = null;
         secondBallLineRenderer.positionCount = 0;
+    }
+
+    public List<Collider> FindCollidersSimlatedScene(BallRoll centralBall)
+    {
+        return PhysicsManager.Instance.FindCurrentCollidingItems(simBallRoll, simBandes.ToArray(), centralBall);
     }
 }

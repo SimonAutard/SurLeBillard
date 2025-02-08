@@ -32,6 +32,7 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] Vector3 leftmostWhiteLinePoint;
     [SerializeField] Vector3 rightmostWhiteLinePoint;
     [SerializeField] Vector3 tableCenter;
+    GameObject[] allBands;
     public static PhysicsManager Instance
     {
         get
@@ -58,6 +59,7 @@ public class PhysicsManager : MonoBehaviour
     {
         minSpeedForBalls = 0.1f;
         ballRadius = 0.5f;
+        allBands = GameObject.FindGameObjectsWithTag("Bandes");
     }
 
     private void Update()
@@ -250,4 +252,28 @@ public class PhysicsManager : MonoBehaviour
         RemainingBalls = ballRolls.ToList();
     }
 
+    public List<Collider> FindCollidersRealScene(BallRoll centralBall)
+    {
+        return FindCurrentCollidingItems(RemainingBalls, allBands, centralBall);
+    }
+
+    public List<Collider> FindCurrentCollidingItems(List<BallRoll> allBalls, GameObject[] allBands, BallRoll centralBall)
+    {
+        List<Collider> result = new List<Collider>();
+        float radius1 = centralBall.ballRadius;
+        float radius2;
+        foreach (BallRoll ballRoll in allBalls)
+        {
+            radius2 = ballRoll.ballRadius;
+            if ((ballRoll.transform.position - centralBall.transform.position ).magnitude <= radius1+ radius2)
+            {
+                result.Add(ballRoll.gameObject.GetComponent<Collider>());
+            }
+        }
+        Collider bandCollided = FindCollidingBand(allBalls,centralBall);
+        if(bandCollided != null) {resul
+        return result;
+        //foreach(GameObject band in allBands) {
+
+    }
 }
