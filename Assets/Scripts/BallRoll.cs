@@ -49,7 +49,7 @@ public class BallRoll : MonoBehaviour
     void Update()
     {
         // La bille avance ou sarrete
-        RollTheBall(Time.deltaTime);
+        RollTheBall(Time.fixedDeltaTime/2);
         // Verification de la position de la bille au dessus des poches
         CheckPocketing();
     }
@@ -101,6 +101,7 @@ public class BallRoll : MonoBehaviour
         //Cas ou le collider en cours de processing se trouve parmi les collider superposes
         else if (currentSuperimposedColliders.Contains(colliderInProcessing))
         {
+            Debug.Log("colliders remain untocuched, " + colliderInProcessing.name + " is still processed");
             //Dans ce cas, c'est quon na pas fini de process la collision avec lui.
             //On ne fait rien, car le process a deja ete initialise quand cet objet a ete affecte la premiere fois
         }
@@ -108,6 +109,7 @@ public class BallRoll : MonoBehaviour
         //Cela signifie quon a fini de process la collision avec ce colldier, on peut donc commencer a process une nouvelle collision
         else
         {
+
             //Mise a jour du collider en cours de process. on prend arbitrairement le premier de la liste des colliders superposes
             colliderInProcessing = currentSuperimposedColliders[0];
             //Dans le cas d'une collision bille-bille, on met egalement a jour le collider en cours de process de cette autre bille
@@ -127,13 +129,13 @@ public class BallRoll : MonoBehaviour
     {
         if (collider.tag == "Bandes")
         {
-            Debug.Log(name + " percute " + collider.name);
+            Debug.Log(name + " answers to collision with " + collider.name);
             BounceOnBand(collider);
             //canYetCollide = false;
         }
         if (collider.tag == "Bille")
         {
-            Debug.Log(name + " percute " + collider.name);
+            Debug.Log(name + " answers to collision with  " + collider.name);
             BounceOnBall(collider);
             //canYetCollide = false;
         }

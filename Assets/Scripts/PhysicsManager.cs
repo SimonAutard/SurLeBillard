@@ -12,6 +12,9 @@ public class PhysicsManager : MonoBehaviour
     private bool dispersionPhase = false;
     public float minSpeedForBalls { get; private set; }
 
+    //Paramétrage de la physique
+    public float generalTimeStep {  get; private set; } 
+
     //Gestion du gameplay 
     //Array des billes restantes
     List<BallRoll> RemainingBalls = new List<BallRoll>();
@@ -21,10 +24,8 @@ public class PhysicsManager : MonoBehaviour
     private List<Tuple<int, int>> _turnPocketings = new List<Tuple<int, int>>();
 
     //Paramétrage des billes
-
     [SerializeField] GameObject whiteBallPrefab;
     [SerializeField] GameObject blackBallPrefab;
-    public float ballRadius { get; private set; }
 
     //Gestion du terrain
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
@@ -57,8 +58,8 @@ public class PhysicsManager : MonoBehaviour
     private void Start()
     {
         minSpeedForBalls = 0.1f;
-        ballRadius = 0.5f;
         allBands = GameObject.FindGameObjectsWithTag("Bandes");
+        generalTimeStep = Time.fixedDeltaTime / 2;
     }
 
     private void Update()
@@ -182,7 +183,7 @@ public class PhysicsManager : MonoBehaviour
             //On prend un point aléatoire sur la ligne de replacement de la bille blanche
             newPosition = leftmostWhiteLinePoint + UnityEngine.Random.Range(0f, 1f) * (rightmostWhiteLinePoint - leftmostWhiteLinePoint);
             //On capsulecast vers le sol depuis cette position pour vérifier qu'on ne touche pas une autre bille ou bande
-            whiteBallReplaced = !Physics.SphereCast(newPosition, ballRadius, Vector3.down, out RaycastHit hitInfo);
+            whiteBallReplaced = !Physics.SphereCast(newPosition, whiteBallPrefab.GetComponent<SphereCollider>().radius, Vector3.down, out RaycastHit hitInfo);
             //Si on a touché, on reprend la boucle
 
         }
@@ -216,7 +217,7 @@ public class PhysicsManager : MonoBehaviour
             //On prend un point aléatoire dans la zone de replacement de la bille noire
             newPosition = new Vector3(UnityEngine.Random.Range(0, 1f), 0, UnityEngine.Random.Range(0, 1f)) + tableCenter;
             //On capsulecast vers le sol depuis cette position pour vérifier qu'on ne touche pas une autre bille ou bande
-            blackBallReplaced = !Physics.SphereCast(newPosition, ballRadius, Vector3.down, out RaycastHit hitInfo);
+            blackBallReplaced = !Physics.SphereCast(newPosition, blackBallPrefab.GetComponent<SphereCollider>().radius, Vector3.down, out RaycastHit hitInfo);
             //Si on a touché, on reprend la boucle
         }
         //instanciation de la nouvelle bille noire

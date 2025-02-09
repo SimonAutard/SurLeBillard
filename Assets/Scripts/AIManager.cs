@@ -53,7 +53,7 @@ public class AIManager : MonoBehaviour
     private void HandleAIShotRequest(EventAIShotRequest requestEvent)
     {
         Debug.Log("AIManager: Calculating Atropos shot.");
-        _nextShotForce = 1.0f;
+        _nextShotForce = 0.1f;
         _nextShotVector = Vector3.forward;
         _shotCalculated = true;
         // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
@@ -63,7 +63,7 @@ public class AIManager : MonoBehaviour
     private void HandleInitialBreakRequest(EventInitialBreakRequest requestEvent)
     {
         Debug.Log("AIManager: Calculating Initial break.");
-        _nextShotForce = 1.0f;
+        _nextShotForce = 0.1f;
         _nextShotVector = Vector3.forward;
         _shotCalculated = true;
         // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed

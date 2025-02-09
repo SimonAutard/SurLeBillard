@@ -60,6 +60,7 @@ public class TrajectorySimulationManager : MonoBehaviour
     }
     private void OnEnable()
     {
+
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventNewGameSetupRequest>(CreateSimulationScene);
         EventBus.Subscribe<EventNextTurnUIDisplayRequest>(MimicScene);
@@ -253,7 +254,7 @@ public class TrajectorySimulationManager : MonoBehaviour
         {
             //Simulation
             Debug.Log("start simulation step " + i);
-            SimulateOwnPhysicsStep(Time.fixedDeltaTime);
+            SimulateOwnPhysicsStep(PhysicsManager.Instance.generalTimeStep);
 
             //Mise a jour du linerenderer a apritr de la nouvelle position de la bille blanche
             whiteBallLineRenderer.SetPosition(i, whiteBallMove.transform.position);
