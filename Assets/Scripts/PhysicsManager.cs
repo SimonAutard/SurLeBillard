@@ -1,8 +1,7 @@
-using NUnit.Framework;
 using System;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class PhysicsManager : MonoBehaviour
 {
@@ -11,7 +10,7 @@ public class PhysicsManager : MonoBehaviour
 
     //Gestion des phases
     private bool dispersionPhase = false;
-    public float minSpeedForBalls {  get; private set; }
+    public float minSpeedForBalls { get; private set; }
 
     //Gestion du gameplay 
     //Array des billes restantes
@@ -65,13 +64,14 @@ public class PhysicsManager : MonoBehaviour
     private void Update()
     {
         // Vérification qu'on est en phase de dispersion
-        if (dispersionPhase) {
+        if (dispersionPhase)
+        {
             // Ceci revient à vérifier que toutes les billes sont arretees
             bool BallsAllMotionless = true;
-            foreach (BallRoll ball in RemainingBalls) 
+            foreach (BallRoll ball in RemainingBalls)
             {
                 // ON controle la vitesse de toutes les billes existantes
-                if(ball.speed > minSpeedForBalls)
+                if (ball.speed > minSpeedForBalls)
                 {
                     //Des qu'on trouve une bille qui n'est pas arretee, on peut arreter la vérification ici
                     BallsAllMotionless = false;
@@ -79,14 +79,15 @@ public class PhysicsManager : MonoBehaviour
                 }
             }
             // Si toutes les billes sont arretees, on leve l'evenement signalant la fin de la phase de dispersion
-            if (BallsAllMotionless) {
+            if (BallsAllMotionless)
+            {
                 dispersionPhase = false;
 
                 Debug.Log("Physics Manager: Requesting next step.");
                 EventBus.Publish(new EventGameloopNextStepRequest());
             }
         }
-        
+
     }
 
     private void OnEnable()
@@ -98,7 +99,7 @@ public class PhysicsManager : MonoBehaviour
         EventBus.Subscribe<EventReplaceBlackRequest>(HandleReplaceBlackRequest);
         EventBus.Subscribe<EventNewGameSetupRequest>(HandleNewGameSetupRequest);
         EventBus.Subscribe<EventPocketingSignal>(UnregisterBall);
-        
+
     }
 
     private void OnDisable()
@@ -155,7 +156,7 @@ public class PhysicsManager : MonoBehaviour
         //Mise a jour de la liste des billes actives
         RemainingBalls.Remove(pocketingEvent._ball);
         //Mise a jour des billes empochees ce tour
-        _turnPocketings.Add(new Tuple<int,int> (pocketingEvent._ball._ballId, pocketingEvent._pocketID));
+        _turnPocketings.Add(new Tuple<int, int>(pocketingEvent._ball._ballId, pocketingEvent._pocketID));
     }
 
     /// <summary>
@@ -165,16 +166,17 @@ public class PhysicsManager : MonoBehaviour
     private void HandleReplaceWhiteRequest(EventReplaceWhiteRequest requestEvent)
     {
         // check if whiteball is already in play before doing anything, just in case the event is published at the wrong time for some reason
-        foreach (BallRoll ball in RemainingBalls) { 
-            if(ball._ballId == GameStateManager.Instance.whiteBallID) { return; }
+        foreach (BallRoll ball in RemainingBalls)
+        {
+            if (ball._ballId == GameStateManager.Instance.whiteBallID) { return; }
         }
 
         bool whiteBallReplaced = false;
         Vector3 newPosition = Vector3.zero; // position de placement de la nouvelle bille
         int antiInifinityLoop = 0;
-        while (!whiteBallReplaced && antiInifinityLoop<10) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
+        while (!whiteBallReplaced && antiInifinityLoop < 10) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
         {
-            antiInifinityLoop++; 
+            antiInifinityLoop++;
 
             Debug.Log("Could not find suitable place for white ball, retrying...");
             //On prend un point aléatoire sur la ligne de replacement de la bille blanche
@@ -185,7 +187,7 @@ public class PhysicsManager : MonoBehaviour
 
         }
         //instanciation de la nouvelle bille blanche
-        GameObject newWhiteBall = Instantiate(whiteBallPrefab, newPosition,Quaternion.identity);
+        GameObject newWhiteBall = Instantiate(whiteBallPrefab, newPosition, Quaternion.identity);
         //MaJ du conteneur des billes
         RemainingBalls.Add(newWhiteBall.GetComponent<BallRoll>());
         Debug.Log("white ball was recreated");
@@ -207,14 +209,14 @@ public class PhysicsManager : MonoBehaviour
         bool blackBallReplaced = false;
         Vector3 newPosition = Vector3.zero; // position de placement de la nouvelle bille
         int antiInifinityLoop = 0;
-        while (!blackBallReplaced && antiInifinityLoop <10) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
+        while (!blackBallReplaced && antiInifinityLoop < 10) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
         {
             antiInifinityLoop++;
-            
+
             //On prend un point aléatoire dans la zone de replacement de la bille noire
-            newPosition = new Vector3( UnityEngine.Random.Range(0, 1f), 0, UnityEngine.Random.Range(0, 1f) ) + tableCenter;
+            newPosition = new Vector3(UnityEngine.Random.Range(0, 1f), 0, UnityEngine.Random.Range(0, 1f)) + tableCenter;
             //On capsulecast vers le sol depuis cette position pour vérifier qu'on ne touche pas une autre bille ou bande
-            blackBallReplaced = !Physics.SphereCast(newPosition, ballRadius, Vector3.down,out RaycastHit hitInfo);
+            blackBallReplaced = !Physics.SphereCast(newPosition, ballRadius, Vector3.down, out RaycastHit hitInfo);
             //Si on a touché, on reprend la boucle
         }
         //instanciation de la nouvelle bille noire
@@ -250,30 +252,106 @@ public class PhysicsManager : MonoBehaviour
     {
         BallRoll[] ballRolls = FindObjectsByType<BallRoll>(FindObjectsSortMode.None);
         RemainingBalls = ballRolls.ToList();
+        allBands = GameObject.FindGameObjectsWithTag("Bandes");
     }
 
+
+    /// <summary>
+    /// renvoie les collider superposés a une bille dans la scene reelle
+    /// </summary>
+    /// <param name="centralBall"></param>
+    /// <returns></returns>
     public List<Collider> FindCollidersRealScene(BallRoll centralBall)
     {
         return FindCurrentCollidingItems(RemainingBalls, allBands, centralBall);
     }
 
+    /// <summary>
+    /// renvoie les colliders superposés à une bille dans une scene donnee
+    /// </summary>
+    /// <param name="allBalls"></param>
+    /// <param name="allBands"></param>
+    /// <param name="centralBall"></param>
+    /// <returns></returns>
     public List<Collider> FindCurrentCollidingItems(List<BallRoll> allBalls, GameObject[] allBands, BallRoll centralBall)
     {
-        List<Collider> result = new List<Collider>();
-        float radius1 = centralBall.ballRadius;
-        float radius2;
+        List<Collider> result = new List<Collider>(); // Liste des collider trouvés
+        float radius1 = centralBall.ballRadius; //rayon de la bille centrale
+        float radius2; //rayon de la bille potentiellement superposee
         foreach (BallRoll ballRoll in allBalls)
         {
             radius2 = ballRoll.ballRadius;
-            if ((ballRoll.transform.position - centralBall.transform.position ).magnitude <= radius1+ radius2)
+            //Mesure de la distance entre les deux billes
+            if ((ballRoll.transform.position - centralBall.transform.position).magnitude <= radius1 + radius2)
             {
-                result.Add(ballRoll.gameObject.GetComponent<Collider>());
+                //Si les deux billes sont plus proches que la somme de leurs rayons, c'est quelles sont superposees
+                result.Add(ballRoll.gameObject.GetComponent<Collider>()); //On ajoute le colldier de la bille superposee aux resultats
             }
         }
-        Collider bandCollided = FindCollidingBand(allBalls,centralBall);
-        if(bandCollided != null) {resul
+        //On verifie egalement si on a trouve une bande superposee
+        Collider bandCollided = FindCollidingBand(allBands, centralBall);
+        //Si on a trouve une bande, on lajoute a la liste
+        if (bandCollided != null) { result.Add(bandCollided); }
         return result;
-        //foreach(GameObject band in allBands) {
 
+    }
+    /// <summary>
+    /// Renvoie une bande aleatoire parmi toutes les bandes superposees a la bille donnee en argument
+    /// </summary>
+    /// <param name="allBands"></param>
+    /// <param name="centralBall"></param>
+    /// <returns></returns>
+    private Collider FindCollidingBand(GameObject[] allBands, BallRoll centralBall)
+    {
+        Collider result = null; //resultats
+
+        
+        float ballradius = centralBall.ballRadius;
+        foreach (GameObject band in allBands)
+        {
+            Vector3 P1local = centralBall.transform.position - band.transform.position;
+            Vector3 P2local = Quaternion.Inverse(band.transform.rotation)*P1local;
+            Vector3 P = band.transform.position  + P2local ;
+            Vector3 dis = P - band.transform.position;
+            float xDis = Math.Abs(dis.x);
+            float zDis = Math.Abs(dis.z);
+            float xCap = band.transform.localScale.x / 2;
+            float zCap = band.transform.localScale.z / 2;
+            if (xDis > xCap + ballradius || zDis > zCap + ballradius)
+            {
+                continue;
+            }
+            else if (xDis < xCap || zDis < zCap)
+            {
+                result = band.GetComponent<Collider>();
+                break;
+            }
+            else
+            {
+                Vector3[] bandCorners = GetBandCorners(band, xCap, zCap);
+                foreach (Vector3 corner in bandCorners)
+                {
+                    if ((P - corner).magnitude < ballradius)
+                    {
+                        result = band.GetComponent<Collider>();
+                        break;
+                    }
+                }
+                if (result != null) { break; }
+            }
+
+        }
+        return result;
+    }
+
+    private Vector3[] GetBandCorners(GameObject band, float xCap, float zCap)
+    {
+        Vector3[] result = new Vector3[4];
+        Vector3 B = band.transform.position;
+        result[0] = new Vector3(xCap, 0, zCap) + B;
+        result[1] = new Vector3(-xCap, 0, zCap) + B;
+        result[2] = new Vector3(xCap, 0, -zCap) + B;
+        result[3] = new Vector3(-xCap, 0, -zCap) + B;
+        return result;
     }
 }
