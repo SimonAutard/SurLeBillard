@@ -293,19 +293,18 @@ public class TrajectorySimulationManager : MonoBehaviour
         {
             //deplacement
             obj.RollTheBall(timestep);
-            //detection de collision
-            Collider collider = obj.HandleCollisions(_simulationPhysicsScene);
             //detection dempochement
             obj.CheckPocketing();
-            if (obj._ballId == 0 && collider != null)
-            { HandleWhiteFirstCollision(collider); }
 
         }
         //Imitation lateUpdate
         foreach (BallRoll obj in simBallRoll)
         {
             //mise a jour de la possibiltie de collision
-            obj.UpdateCollisionCondition();
+            Collider collider = obj.HandleCollisions(_simulationPhysicsScene);
+            //detection de la premiere bille touchee par la bille blanche
+            if (obj._ballId == 0 && collider != null) { HandleWhiteFirstCollision(collider); }
+
         }
 
     }
@@ -325,7 +324,7 @@ public class TrajectorySimulationManager : MonoBehaviour
         secondBallLineRenderer.positionCount = 0;
     }
 
-    public List<Collider> FindCollidersSimlatedScene(BallRoll centralBall)
+    public List<Collider> FindCollidersSimulatedScene(BallRoll centralBall)
     {
         return PhysicsManager.Instance.FindCurrentCollidingItems(simBallRoll, simBandes.ToArray(), centralBall);
     }

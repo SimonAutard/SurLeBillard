@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class BallRoll : MonoBehaviour
@@ -12,7 +11,8 @@ public class BallRoll : MonoBehaviour
     [SerializeField] protected float mass = 1.0f;
     public float ballRadius { get; protected set; }
     public bool canYetCollide = true; //true par d�faut, devient false pour le reste de la frame une fois qu'elle a tap� une autre bille ou une bande
-    private Collider currentSuperimposedCollider;
+    private List<Collider> currentSuperimposedColliders = new List<Collider>();
+    private Collider colliderInProcessing;
 
     //Vriables narratives
     public string ballTheme; //th�me de la bille
@@ -50,8 +50,6 @@ public class BallRoll : MonoBehaviour
     {
         // La bille avance ou sarrete
         RollTheBall(Time.deltaTime);
-        // On gère les collisions
-        HandleCollisions(physicsScene);
         // Verification de la position de la bille au dessus des poches
         CheckPocketing();
     }
@@ -59,7 +57,9 @@ public class BallRoll : MonoBehaviour
     //Une fois que toutes les update du jeu ont �t� ex�cut�es, lateupdate s'ex�cute
     protected void LateUpdate()
     {
-        UpdateCollisionCondition(); //maintenant que l'autre bille percut�e a r�solue sa collision, on peut reouvrir la bille locale aux collisions
+        // On gère les collisions
+        HandleCollisions(physicsScene);
+
     }
 
     /// <summary>
@@ -76,84 +76,68 @@ public class BallRoll : MonoBehaviour
         // Si la vitesse est trop faible, on arr�te la bille. Cela donne un crit�re pour terminer la phase de collisions.
         else { speed = 0; }
     }
+
+    /// <summary>
+    /// Renvoie le collider dont al bille est en train de gerer la collision, si il existe. Sinon renvoie null
+    /// </summary>
+    /// <param name="physicsScene"></param>
+    /// <returns></returns>
     public Collider HandleCollisions(PhysicsScene physicsScene)
     {
-        /*
-        // On recupere tous els collider superposes
-        Collider[] hits = new Collider[10];
-        int hitNb = physicsScene.OverlapSphere(transform.position, ballRadius, hits, ~0, QueryTriggerInteraction.UseGlobal);
-        List<Collider> hitsList = hits.ToList(); // transformation en liste
-        */
-        List<Collider> hitsList = new List<Collider>();
-        if (isRealBall) { hitsList = PhysicsManager.Instance.FindCollidersRealScene(this); }
-        else{ hitsList = TrajectorySimulationManager.Instance.FindCollidersSimlatedScene(this); }
-        hitsList.RemoveAll(item => item == gameObject.GetComponent<Collider>()); //on retirre le collider d ela bille lui meme
-        hitsList.RemoveAll(item => item == null); //on retire les hits qui n'ont pas toruvé de collider
+        //recuperation des collider superposes
+        //Cas de la vraie scene
+        if (isRealBall) { currentSuperimposedColliders = PhysicsManager.Instance.FindCollidersRealScene(this); }
+        //Cas de la simulation
+        else { currentSuperimposedColliders = TrajectorySimulationManager.Instance.FindCollidersSimulatedScene(this); }
+        currentSuperimposedColliders.RemoveAll(item => item == gameObject.GetComponent<Collider>()); //on retirre le collider d ela bille lui meme
+        currentSuperimposedColliders.RemoveAll(item => item == null); //on retire les hits qui n'ont pas toruvé de collider
 
-        if (hitsList.Count == 0)
+        //Cas ou aucun collider na ete detecte
+        if (currentSuperimposedColliders.Count == 0)
         {
-            currentSuperimposedCollider = null;
+            //Dans ce cas, il ny a plus de collider en cours de processing
+            colliderInProcessing = null;
         }
+        //Cas ou le collider en cours de processing se trouve parmi les collider superposes
+        else if (currentSuperimposedColliders.Contains(colliderInProcessing))
+        {
+            //Dans ce cas, c'est quon na pas fini de process la collision avec lui.
+            //On ne fait rien, car le process a deja ete initialise quand cet objet a ete affecte la premiere fois
+        }
+        //Cas ou le collider en cours de processing ne se trouve plus parmi les collider superposes
+        //Cela signifie quon a fini de process la collision avec ce colldier, on peut donc commencer a process une nouvelle collision
         else
         {
-            Debug.Log(name + " se superpose a " + hitsList[0].name);
-            //Stockage du collider alien pour UpdateCollisionCondition
-            currentSuperimposedCollider = hitsList[0];
+            //Mise a jour du collider en cours de process. on prend arbitrairement le premier de la liste des colliders superposes
+            colliderInProcessing = currentSuperimposedColliders[0];
+            //Dans le cas d'une collision bille-bille, on met egalement a jour le collider en cours de process de cette autre bille
+            if (colliderInProcessing.gameObject.tag == "Bille") { colliderInProcessing.GetComponent<BallRoll>().ProcessThisCollider(gameObject.GetComponent<Collider>()); }
             //Gestion de la collision
-            AnswerToCollisionWith(hitsList[0]);
+            AnswerToCollisionWith(currentSuperimposedColliders[0]);
 
         }
-        return currentSuperimposedCollider;
+        return colliderInProcessing;
     }
 
     /// <summary>
-    /// Regit las conditions sous elsquelles la bille peut percuter une autre
+    /// Determine si on doit gerer une collision bille-bande ou bille-bille
     /// </summary>
-    public void UpdateCollisionCondition()
+    /// <param name="collider"></param>
+    private void AnswerToCollisionWith(Collider collider)
     {
-        if (canYetCollide)
+        if (collider.tag == "Bandes")
         {
-            if (currentSuperimposedCollider != null)
-            {
-                //Rien a faire, deja gere pendant AnswerToCollisionWith
-            }
-            else
-            { //Rien a faire, la bille pouvait percuter et na rien percute
-            }
+            Debug.Log(name + " percute " + collider.name);
+            BounceOnBand(collider);
+            //canYetCollide = false;
         }
-        else
+        if (collider.tag == "Bille")
         {
-            if (currentSuperimposedCollider != null)
-            {
-                //Rien a faire, la bille nest pas encore sortie de lautre collider
-            }
-            else { canYetCollide = true; } // la bille est sortie de lautre collider, elle peut de nouveau percuter
+            Debug.Log(name + " percute " + collider.name);
+            BounceOnBall(collider);
+            //canYetCollide = false;
         }
-    }
-    /*
-    protected void OnTriggerEnter(Collider collider)
-    {
-        currentSuperimposedCollider = collider;
-        AnswerToCollisionWith(collider);
-    }
-    */
-    public void AnswerToCollisionWith(Collider collider)
-    {
-        if (canYetCollide)
-        {
-            if (collider.tag == "Bandes")
-            {
-                Debug.Log(name + " percute " + collider.name);
-                BounceOnBand(collider);
-                canYetCollide = false;
-            }
-            if (collider.tag == "Bille")
-            {
-                Debug.Log(name + " percute " + collider.name);
-                BounceOnBall(collider);
-                canYetCollide = false;
-            }
-        }
+
     }
 
     /// <summary>
@@ -162,45 +146,44 @@ public class BallRoll : MonoBehaviour
     /// <param name="collider"></param>
     protected void BounceOnBall(Collider collider)
     {
-        if (collider.GetComponent<BallRoll>().canYetCollide)
+
+        float collidingBallMass = collider.GetComponent<BallRoll>().mass;
+        float collidingBallspeed = collider.GetComponent<BallRoll>().speed;
+        Vector3 collidingBallDirection = collider.GetComponent<BallRoll>().direction;
+
+        Vector3 normalVector = (collider.transform.position - transform.position).normalized;
+        Vector3 tangentVector = Vector3.Cross(normalVector, Vector3.up);
+
+        // Calcul des  vitesses tangentielles
+        Vector3 v1t;
+        v1t = mass * speed * Vector3.Project(direction, tangentVector);
+        Vector3 v2t;
+        v2t = collidingBallMass * collidingBallspeed * Vector3.Project(collidingBallDirection, tangentVector);
+
+        // Calcul des vitesses normales
+        Vector3 v1n;
+        v1n = collidingBallMass * collidingBallspeed * Vector3.Project(collidingBallDirection, normalVector);
+        Vector3 v2n;
+        v2n = mass * speed * Vector3.Project(direction, normalVector);
+
+        // Calcul des vitesses finales de chaque bille
+        Vector3 v1f = (v1n + v1t) / mass;
+        speed = v1f.magnitude;
+        direction = v1f.normalized;
+        Vector3 v2f = (v2n + v2t) / collidingBallMass;
+        collider.GetComponent<BallRoll>().speed = v2f.magnitude;
+        collider.GetComponent<BallRoll>().direction = v2f.normalized;
+
+        //Recupere la polarite du terrain
+        bool valence = GetValence();
+        //Si la bille est vraie, envoie un signal au narrationManager pour generer une prophetie
+        if (isRealBall)
         {
-            float collidingBallMass = collider.GetComponent<BallRoll>().mass;
-            float collidingBallspeed = collider.GetComponent<BallRoll>().speed;
-            Vector3 collidingBallDirection = collider.GetComponent<BallRoll>().direction;
-
-            Vector3 normalVector = (collider.transform.position - transform.position).normalized;
-            Vector3 tangentVector = Vector3.Cross(normalVector, Vector3.up);
-
-            // Calcul des  vitesses tangentielles
-            Vector3 v1t;
-            v1t = mass * speed * Vector3.Project(direction, tangentVector);
-            Vector3 v2t;
-            v2t = collidingBallMass * collidingBallspeed * Vector3.Project(collidingBallDirection, tangentVector);
-
-            // Calcul des vitesses normales
-            Vector3 v1n;
-            v1n = collidingBallMass * collidingBallspeed * Vector3.Project(collidingBallDirection, normalVector);
-            Vector3 v2n;
-            v2n = mass * speed * Vector3.Project(direction, normalVector);
-
-            // Calcul des vitesses finales de chaque bille
-            Vector3 v1f = (v1n + v1t) / mass;
-            speed = v1f.magnitude;
-            direction = v1f.normalized;
-            Vector3 v2f = (v2n + v2t) / collidingBallMass;
-            collider.GetComponent<BallRoll>().speed = v2f.magnitude;
-            collider.GetComponent<BallRoll>().direction = v2f.normalized;
-
-
-            bool valence = GetValence();
-
-            if (isRealBall)
-            {
-                EventBus.Publish(new EventCollisionSignal(_ballId, collider.GetComponent<BallRoll>()._ballId, ballTheme, collider.GetComponent<BallRoll>().ballTheme, valence));
-            }
-
-            //TwoBallsCollision?.Invoke(ballSymbol, collider.GetComponent<BallRoll>().ballSymbol);
+            EventBus.Publish(new EventCollisionSignal(_ballId, collider.GetComponent<BallRoll>()._ballId, ballTheme, collider.GetComponent<BallRoll>().ballTheme, valence));
         }
+
+        //TwoBallsCollision?.Invoke(ballSymbol, collider.GetComponent<BallRoll>().ballSymbol);
+
     }
 
     /// <summary>
@@ -237,6 +220,11 @@ public class BallRoll : MonoBehaviour
             Destroy(this.gameObject);
         }
 
+    }
+
+    public void ProcessThisCollider(Collider collider)
+    {
+        colliderInProcessing = collider;
     }
 
     /// <summary>

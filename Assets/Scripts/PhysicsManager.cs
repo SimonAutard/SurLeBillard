@@ -305,45 +305,64 @@ public class PhysicsManager : MonoBehaviour
     {
         Collider result = null; //resultats
 
-        
         float ballradius = centralBall.ballRadius;
+        //Verification de collision pour chque bande. Des quune bande est detectee comme superposee, on sort de la boucle, car on ne renvoie quune seule bande quoi quil arrive
         foreach (GameObject band in allBands)
         {
-            Vector3 P1local = centralBall.transform.position - band.transform.position;
-            Vector3 P2local = Quaternion.Inverse(band.transform.rotation)*P1local;
-            Vector3 P = band.transform.position  + P2local ;
+            //Comme toutes les bandes ne sont pas orientees de la meme facon, il faut dabord morpher le vecteur position de la bille dans le systeme de coordonnees de la bande
+            Vector3 P1local = centralBall.transform.position - band.transform.position; // position de la bille dans le repere de la bande post rotation
+            Vector3 P2local = Quaternion.Inverse(band.transform.rotation) * P1local; // position de la bille dans le repere de la bande pre rotation
+            Vector3 P = band.transform.position + P2local; //position de la bille dans le repere monde pre rotation
+
+            //Distance vectorielle entre la bille et la bande
             Vector3 dis = P - band.transform.position;
+            //Distances selon chaque axe
             float xDis = Math.Abs(dis.x);
             float zDis = Math.Abs(dis.z);
+            //Demi longueur et largeur de la bande
             float xCap = band.transform.localScale.x / 2;
             float zCap = band.transform.localScale.z / 2;
+            //Cas 1 : la bille est assez eloignee selon l'un des axes pour etre certainement hors de la zone de collision
             if (xDis > xCap + ballradius || zDis > zCap + ballradius)
             {
                 continue;
             }
+            //Cas 2 : la bille est assez proche selon l'un des axes pour etre certainement dans la zone de collision
             else if (xDis < xCap || zDis < zCap)
             {
-                result = band.GetComponent<Collider>();
-                break;
+                result = band.GetComponent<Collider>(); //stockage du collider de la bande
+                break; // sortie de boucle immediate car on ne garde quune seule bande quoi quil arive
             }
+            //Cas 3 : la bille est dans un des carres de cote ballRadius a lun des coins de la bande
+            //Il faut calculer la distance de la bille a ce coin pour savoir si il  ya collision
             else
             {
+                //Recuperation des coordonnes des 4 coins de la bande
                 Vector3[] bandCorners = GetBandCorners(band, xCap, zCap);
+                //Calcul de la distance pour chaque coin
                 foreach (Vector3 corner in bandCorners)
                 {
+                    //Calcul de la distance bille-coin
                     if ((P - corner).magnitude < ballradius)
-                    {
-                        result = band.GetComponent<Collider>();
-                        break;
+                    { 
+                        result = band.GetComponent<Collider>(); //stockage du collider de la bande
+                        break;// sortie de boucle immediate car on ne garde quune seule bande quoi quil arive
                     }
                 }
-                if (result != null) { break; }
+                if (result != null) { break; }// sortie de boucle immediate car on ne garde quune seule bande quoi quil arive
             }
 
         }
         return result;
     }
 
+    /// <summary>
+    /// Calcule les positions monde des 4 angles dune bande
+    /// </summary>
+    /// <param name="band"></param>
+    /// <param name="xCap"></param>
+    /// <param name="zCap"></param>
+    /// <returns></returns>
     private Vector3[] GetBandCorners(GameObject band, float xCap, float zCap)
     {
         Vector3[] result = new Vector3[4];
