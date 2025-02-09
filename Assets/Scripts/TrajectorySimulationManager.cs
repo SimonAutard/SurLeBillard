@@ -83,7 +83,6 @@ public class TrajectorySimulationManager : MonoBehaviour
 
     private void Update()
     {
-        //______________DEBUG PARTIE A SUPPRIMER_____________
         if (cue.isActiveAndEnabled)
         {
             float radius = cue.radius;
@@ -91,7 +90,6 @@ public class TrajectorySimulationManager : MonoBehaviour
             SimTrajectory simTrajectory = SimulateTrajectory(UISingleton.Instance.force, cue.GetOrbVector());
 
         }
-        //----------------------------------------------------
 
     }
 
@@ -201,7 +199,6 @@ public class TrajectorySimulationManager : MonoBehaviour
             ballroll.InitializeBallRollParameters();
             ballroll.TurnToSimulation(); // Desactiver la bille pour tous les evenements
             simBallRoll.Add(ballroll);
-            Debug.Log(ballroll.ballRadius);
 
         }
 
@@ -247,13 +244,13 @@ public class TrajectorySimulationManager : MonoBehaviour
         whiteBallLineRenderer.SetPosition(0, whiteBallMove.transform.position);
         secondBallLineRenderer.positionCount = maxSteps;
 
-        Debug.Log("start simulation");
+        //Debug.Log("start simulation");
 
         //Simulation pour n = maxsteps
         for (int i = 1; i < maxSteps; i++)
         {
             //Simulation
-            Debug.Log("start simulation step " + i);
+            //Debug.Log("start simulation step " + i);
             SimulateOwnPhysicsStep(PhysicsManager.Instance.generalTimeStep);
 
             //Mise a jour du linerenderer a apritr de la nouvelle position de la bille blanche

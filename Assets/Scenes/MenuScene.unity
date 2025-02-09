@@ -497,6 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4af7e7bcf1a8ee4d9ff7d14bd265414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeStepRatio: 0.3
   whiteBallPrefab: {fileID: 5903988277559177657, guid: e5a4f090a8fef9442af8f8d78d736e69, type: 3}
   blackBallPrefab: {fileID: 1011740301214862925, guid: f9fd455a777787445a95216799fe190a, type: 3}
   leftmostWhiteLinePoint: {x: 7.5, y: 0.5, z: 6}

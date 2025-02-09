@@ -10,9 +10,8 @@ public class BallRoll : MonoBehaviour
     //Variables physiques
     [SerializeField] protected float mass = 1.0f;
     public float ballRadius { get; protected set; }
-    public bool canYetCollide = true; //true par d�faut, devient false pour le reste de la frame une fois qu'elle a tap� une autre bille ou une bande
-    private List<Collider> currentSuperimposedColliders = new List<Collider>();
-    private Collider colliderInProcessing;
+    private List<Collider> currentSuperimposedColliders = new List<Collider>(); // Liste de tous les collider superposes a la bille pendant cette frame
+    private Collider colliderInProcessing; // collider en trai detre processe par la physique de rebond
 
     //Vriables narratives
     public string ballTheme; //th�me de la bille
@@ -49,7 +48,8 @@ public class BallRoll : MonoBehaviour
     void Update()
     {
         // La bille avance ou sarrete
-        RollTheBall(Time.fixedDeltaTime/2);
+        //RollTheBall(PhysicsManager.Instance.generalTimeStep);
+        RollTheBall(Time.deltaTime);
         // Verification de la position de la bille au dessus des poches
         CheckPocketing();
     }
@@ -99,9 +99,10 @@ public class BallRoll : MonoBehaviour
             colliderInProcessing = null;
         }
         //Cas ou le collider en cours de processing se trouve parmi les collider superposes
-        else if (currentSuperimposedColliders.Contains(colliderInProcessing))
+        else if (colliderInProcessing!=null && currentSuperimposedColliders.Contains(colliderInProcessing))
         {
-            Debug.Log("colliders remain untocuched, " + colliderInProcessing.name + " is still processed");
+            //Debug.Log(currentSuperimposedColliders[0].name+" collider remains untocuched, " + colliderInProcessing.name + " is still processed");
+
             //Dans ce cas, c'est quon na pas fini de process la collision avec lui.
             //On ne fait rien, car le process a deja ete initialise quand cet objet a ete affecte la premiere fois
         }
@@ -129,15 +130,13 @@ public class BallRoll : MonoBehaviour
     {
         if (collider.tag == "Bandes")
         {
-            Debug.Log(name + " answers to collision with " + collider.name);
+            //Debug.Log(name + " answers to collision with " + collider.name);
             BounceOnBand(collider);
-            //canYetCollide = false;
         }
         if (collider.tag == "Bille")
         {
-            Debug.Log(name + " answers to collision with  " + collider.name);
+            //Debug.Log(name + " answers to collision with  " + collider.name);
             BounceOnBall(collider);
-            //canYetCollide = false;
         }
 
     }

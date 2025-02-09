@@ -13,7 +13,8 @@ public class PhysicsManager : MonoBehaviour
     public float minSpeedForBalls { get; private set; }
 
     //Paramétrage de la physique
-    public float generalTimeStep {  get; private set; } 
+    public float generalTimeStep {  get; private set; }
+    [SerializeField] private float timeStepRatio;
 
     //Gestion du gameplay 
     //Array des billes restantes
@@ -59,7 +60,7 @@ public class PhysicsManager : MonoBehaviour
     {
         minSpeedForBalls = 0.1f;
         allBands = GameObject.FindGameObjectsWithTag("Bandes");
-        generalTimeStep = Time.fixedDeltaTime / 2;
+        generalTimeStep = Time.fixedDeltaTime * timeStepRatio ;
     }
 
     private void Update()
@@ -314,7 +315,7 @@ public class PhysicsManager : MonoBehaviour
             Vector3 P1local = centralBall.transform.position - band.transform.position; // position de la bille dans le repere de la bande post rotation
             Vector3 P2local = Quaternion.Inverse(band.transform.rotation) * P1local; // position de la bille dans le repere de la bande pre rotation
             Vector3 P = band.transform.position + P2local; //position de la bille dans le repere monde pre rotation
-
+            P.y = band.transform.position.y;
             //Distance vectorielle entre la bille et la bande
             Vector3 dis = P - band.transform.position;
             //Distances selon chaque axe
@@ -338,6 +339,7 @@ public class PhysicsManager : MonoBehaviour
             //Il faut calculer la distance de la bille a ce coin pour savoir si il  ya collision
             else
             {
+                
                 //Recuperation des coordonnes des 4 coins de la bande
                 Vector3[] bandCorners = GetBandCorners(band, xCap, zCap);
                 //Calcul de la distance pour chaque coin
@@ -345,7 +347,7 @@ public class PhysicsManager : MonoBehaviour
                 {
                     //Calcul de la distance bille-coin
                     if ((P - corner).magnitude < ballradius)
-                    { 
+                    {
                         result = band.GetComponent<Collider>(); //stockage du collider de la bande
                         break;// sortie de boucle immediate car on ne garde quune seule bande quoi quil arive
                     }
