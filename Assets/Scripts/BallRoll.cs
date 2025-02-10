@@ -45,11 +45,11 @@ public class BallRoll : MonoBehaviour
         physicsScene = TrajectorySimulationManager.Instance._realPhysicsScene;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         // La bille avance ou sarrete
         //RollTheBall(PhysicsManager.Instance.generalTimeStep);
-        RollTheBall(Time.deltaTime);
+        RollTheBall(Time.fixedDeltaTime);
         // Verification de la position de la bille au dessus des poches
         CheckPocketing();
     }
