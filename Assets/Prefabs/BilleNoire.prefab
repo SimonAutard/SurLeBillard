@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6819ac456dd89a34f9f58f5ae2572f0d, type: 2}
+  - {fileID: 2100000, guid: ac51443a4a03e3648b4b7336102f3937, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -123,7 +123,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  canYetCollide: 1
   ballTheme: "Sant\xE9"
   _ballId: 4
   speed: 0
