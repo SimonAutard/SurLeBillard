@@ -89,6 +89,10 @@ public class BallRoll : MonoBehaviour
         {
             transform.position += direction * speed * timestep;
             speed -= (speed * dragMultiplicator + dragAddition) * timestep; // les frottements sont incarn�s par une r�duction lin�aire de la vitesse
+            if (isRealBall)
+            {
+                RotateBall(timestep);
+            }
         }
         // Si la vitesse est trop faible, on arr�te la bille. Cela donne un crit�re pour terminer la phase de collisions.
         else { speed = 0; }
@@ -298,5 +302,16 @@ public class BallRoll : MonoBehaviour
         effect.Play();
         yield return new WaitForSeconds(maxLT);
         effect.Stop();
+    }
+
+    private void RotateBall(float timestep)
+    {
+        float angularSpeed = speed / ballRadius;
+        Vector3 rotationAxis = -Vector3.Cross(direction, Vector3.up).normalized;
+        rotationAxis.y = 0;
+        float movedAngle = angularSpeed * Mathf.Rad2Deg * timestep;
+
+        if (rotationAxis.y != 0) { Debug.Log("rotation axis =" + rotationAxis); }
+        transform.Rotate(rotationAxis, movedAngle, Space.World);
     }
 }
