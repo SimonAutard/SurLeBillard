@@ -64,7 +64,7 @@ public class TrajectorySimulationManager : MonoBehaviour
         // subscribe to all events that this component needs to listen to at all time
         EventBus.Subscribe<EventNewGameSetupRequest>(CreateSimulationScene);
         EventBus.Subscribe<EventNextTurnUIDisplayRequest>(MimicScene);
-
+        EventBus.Subscribe<EventApplyForceToWhiteRequest>(ClearTrajectory);
     }
 
     private void OnDisable()
@@ -72,6 +72,7 @@ public class TrajectorySimulationManager : MonoBehaviour
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
         EventBus.Unsubscribe<EventNewGameSetupRequest>(CreateSimulationScene);
         EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(MimicScene);
+        EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(ClearTrajectory);
     }
 
     private void OnDestroy()
@@ -79,6 +80,7 @@ public class TrajectorySimulationManager : MonoBehaviour
         // Unsubscribe from all events before getting destroyed to avoid memory leaks
         EventBus.Unsubscribe<EventNewGameSetupRequest>(CreateSimulationScene);
         EventBus.Unsubscribe<EventNextTurnUIDisplayRequest>(MimicScene);
+        EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(ClearTrajectory);
     }
 
     private void Update()
@@ -325,5 +327,11 @@ public class TrajectorySimulationManager : MonoBehaviour
     public List<Collider> FindCollidersSimulatedScene(BallRoll centralBall)
     {
         return PhysicsManager.Instance.FindCurrentCollidingItems(simBallRoll, simBandes.ToArray(), centralBall);
+    }
+
+    private void ClearTrajectory(EventApplyForceToWhiteRequest request)
+    {
+        whiteBallLineRenderer.positionCount = 0;
+        secondBallLineRenderer.positionCount = 0;
     }
 }
