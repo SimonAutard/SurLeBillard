@@ -471,7 +471,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 3
+      m_SerializableObject: 2.5
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -502,7 +502,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":1.2999999523162842,"y":1.0,"z":0.0}'
+      m_SerializableObject: '{"x":1.2999999523162842,"y":1.0,"z":0.20000000298023225}'
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -533,7 +533,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":-1.2999999523162842,"y":1.0,"z":0.0}'
+      m_SerializableObject: '{"x":-1.2999999523162842,"y":1.0,"z":0.20000000298023225}'
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -570,8 +570,8 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
-  - name: MainLT
-    path: MainLT
+  - name: MaxLifetime
+    path: MaxLifetime
     tooltip: 
     space: -1
     spaceable: 0
@@ -2346,7 +2346,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 3
+      m_SerializableObject: 2.5
     m_Space: -1
   m_Property:
     name: o
@@ -4385,7 +4385,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614686}
   m_ExposedName: LeftBeerInitialPos
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 2
   m_Category: 
   m_Min:
     m_Type:
@@ -4444,7 +4444,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.Position, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"position":{"x":-1.2999999523162842,"y":1.0,"z":0.0}}'
+      m_SerializableObject: '{"position":{"x":-1.2999999523162842,"y":1.0,"z":0.20000000298023225}}'
     m_Space: 0
   m_Property:
     name: o
@@ -12115,7 +12115,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615255}
   m_ExposedName: RightBeerInitialPos
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: 
   m_Min:
     m_Type:
@@ -12164,7 +12164,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.Position, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"position":{"x":1.2999999523162842,"y":1.0,"z":0.0}}'
+      m_SerializableObject: '{"position":{"x":1.2999999523162842,"y":1.0,"z":0.20000000298023225}}'
     m_Space: 0
   m_Property:
     name: o
@@ -13849,7 +13849,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615348}
   m_ExposedName: EcumeSizeFactor
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 3
   m_Category: 
   m_Min:
     m_Type:
@@ -13933,7 +13933,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615350}
   m_ExposedName: EcumeLTFactor
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 4
   m_Category: 
   m_Min:
     m_Type:
@@ -14012,9 +14012,9 @@ MonoBehaviour:
   m_InputSlots: []
   m_OutputSlots:
   - {fileID: 8926484042661615352}
-  m_ExposedName: MainLT
+  m_ExposedName: MaxLifetime
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 5
   m_Category: 
   m_Min:
     m_Type:

@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class BallRoll : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public class BallRoll : MonoBehaviour
     //Vriables narratives
     public string ballTheme; //th�me de la bille
     public int _ballId;
+    private VisualEffect effect;
 
     // Variables de d�placement
     public float speed;//{ get; protected set; } // vitesse de la bille � chaque instant
@@ -29,6 +32,20 @@ public class BallRoll : MonoBehaviour
     public static event Action<string, string> TwoBallsCollision; // evenement de la collision de deux billes
     public static event Action<BallRoll> BallPocketed; // evenement de destruction de la bille
     protected bool isRealBall = true;
+
+    private void OnEnable()
+    {
+        effect = GetComponent<VisualEffect>();
+        //si la bille est relle, on bloque le deroulé du vfx
+        if (isRealBall)
+        {
+            effect.enabled = true;
+            effect.Stop();
+        }
+        //si la bille est simulee, on na pas besoin de son fx
+        else { effect.enabled = false; }
+
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -99,7 +116,7 @@ public class BallRoll : MonoBehaviour
             colliderInProcessing = null;
         }
         //Cas ou le collider en cours de processing se trouve parmi les collider superposes
-        else if (colliderInProcessing!=null && currentSuperimposedColliders.Contains(colliderInProcessing))
+        else if (colliderInProcessing != null && currentSuperimposedColliders.Contains(colliderInProcessing))
         {
             //Debug.Log(currentSuperimposedColliders[0].name+" collider remains untocuched, " + colliderInProcessing.name + " is still processed");
 
@@ -147,10 +164,10 @@ public class BallRoll : MonoBehaviour
     /// <param name="collider"></param>
     protected void BounceOnBall(Collider collider)
     {
-
-        float collidingBallMass = collider.GetComponent<BallRoll>().mass;
-        float collidingBallspeed = collider.GetComponent<BallRoll>().speed;
-        Vector3 collidingBallDirection = collider.GetComponent<BallRoll>().direction;
+        BallRoll collidingBallRoll = collider.GetComponent<BallRoll>();
+        float collidingBallMass = collidingBallRoll.mass;
+        float collidingBallspeed = collidingBallRoll.speed;
+        Vector3 collidingBallDirection = collidingBallRoll.direction;
 
         Vector3 normalVector = (collider.transform.position - transform.position).normalized;
         Vector3 tangentVector = Vector3.Cross(normalVector, Vector3.up);
@@ -177,10 +194,20 @@ public class BallRoll : MonoBehaviour
 
         //Recupere la polarite du terrain
         bool valence = GetValence();
+
         //Si la bille est vraie, envoie un signal au narrationManager pour generer une prophetie
         if (isRealBall)
         {
-            EventBus.Publish(new EventCollisionSignal(_ballId, collider.GetComponent<BallRoll>()._ballId, ballTheme, collider.GetComponent<BallRoll>().ballTheme, valence));
+            // Verifiction quaucune des billes percutees nest la blanche
+            if (_ballId * collidingBallRoll._ballId != 0)
+            {
+                // Declencher les VFX
+                TriggerBallVFX();
+                collidingBallRoll.TriggerBallVFX();
+            }
+
+            //Generer la prophetie
+            EventBus.Publish(new EventCollisionSignal(_ballId, collidingBallRoll._ballId, ballTheme, collidingBallRoll.ballTheme, valence));
         }
 
         //TwoBallsCollision?.Invoke(ballSymbol, collider.GetComponent<BallRoll>().ballSymbol);
@@ -254,5 +281,22 @@ public class BallRoll : MonoBehaviour
         isRealBall = false;
     }
 
+    public void TriggerBallVFX()
+    {
+        //Ingnorer l'action si c'est la bille blanche
+        if (_ballId == 0) { return; }
+        //Recuperation de la durée du fx
+        float maxLT = effect.GetFloat("MaxLifetime");
+        //Lancement du vfx
+        StartCoroutine(PlayAndStopVFX(maxLT));
 
+    }
+
+    private IEnumerator PlayAndStopVFX(float maxLT)
+    {
+        effect.Reinit();
+        effect.Play();
+        yield return new WaitForSeconds(maxLT);
+        effect.Stop();
+    }
 }
