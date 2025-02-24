@@ -291,18 +291,23 @@ public class BallRoll : MonoBehaviour
 
     public void DropVFXAnchor()
     {
+        //Ingnorer l'action si c'est la bille blanche
         if (_ballId == 0) { return; }
 
-        
-        //Ingnorer l'action si c'est la bille blanche
+        //Création de l'ancre
         GameObject dummy = new GameObject("StandInVFXFor" + ballTheme);
+        //Positionnement de l'ancre
         dummy.transform.position = transform.position;
 
+        //Trabnsmission du vfx
         VisualEffect anchorEffect = dummy.AddComponent<VisualEffect>();
         anchorEffect.visualEffectAsset = effect.visualEffectAsset;
-
+        //Transmission du sorting layer
         anchorEffect.GetComponent<VFXRenderer>().sortingOrder = effect.GetComponent<VFXRenderer>().sortingOrder;
+
+        //Ajout du script d'autonomie à l'ancre
         VFXAnchor vfxAnchor = dummy.AddComponent<VFXAnchor>();
+        //Declenchement du vfx depuis 'lancre
         vfxAnchor.TriggerVFXProcess();
 
     }
