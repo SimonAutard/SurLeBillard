@@ -127,9 +127,9 @@ MonoBehaviour:
   ballTheme: "Sant\xE9"
   _ballId: 4
   speed: 0
-  dragMultiplicator: 0.05
-  dragAddition: 0.35
-  bandSpeedReductionFactor: 0.6
+  dragMultiplicator: 0.2
+  dragAddition: 0.6
+  bandSpeedReductionFactor: 0.8
 --- !u!2083052967 &5148398475703011803
 VisualEffect:
   m_ObjectHideFlags: 0

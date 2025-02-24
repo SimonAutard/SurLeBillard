@@ -123,13 +123,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  canYetCollide: 1
   ballTheme: 
   _ballId: 0
   speed: 0
-  dragMultiplicator: 0.05
-  dragAddition: 0.35
-  bandSpeedReductionFactor: 0.6
+  dragMultiplicator: 0.2
+  dragAddition: 0.6
+  bandSpeedReductionFactor: 0.8
   forceFactor: 20
 --- !u!54 &8771638792837775003
 Rigidbody:
