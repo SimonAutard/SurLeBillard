@@ -18,6 +18,9 @@ public class BallRoll : MonoBehaviour
     //Vriables narratives
     public string ballTheme; //th�me de la bille
     public int _ballId;
+
+    //Variables graphiques
+    private GameObject puppetGOPrefab;
     private VisualEffect effect;
 
     // Variables de d�placement
@@ -36,6 +39,7 @@ public class BallRoll : MonoBehaviour
     private void OnEnable()
     {
         effect = GetComponent<VisualEffect>();
+        /*
         //si la bille est relle, on bloque le deroulé du vfx
         if (isRealBall)
         {
@@ -44,7 +48,7 @@ public class BallRoll : MonoBehaviour
         }
         //si la bille est simulee, on na pas besoin de son fx
         else { effect.enabled = false; }
-
+        */
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -206,8 +210,8 @@ public class BallRoll : MonoBehaviour
             if (_ballId * collidingBallRoll._ballId != 0)
             {
                 // Declencher les VFX
-                TriggerBallVFX();
-                collidingBallRoll.TriggerBallVFX();
+                DropVFXAnchor();
+                collidingBallRoll.DropVFXAnchor();
             }
 
             //Generer la prophetie
@@ -285,33 +289,37 @@ public class BallRoll : MonoBehaviour
         isRealBall = false;
     }
 
-    public void TriggerBallVFX()
+    public void DropVFXAnchor()
     {
-        //Ingnorer l'action si c'est la bille blanche
         if (_ballId == 0) { return; }
-        //Recuperation de la durée du fx
-        float maxLT = effect.GetFloat("MaxLifetime");
-        //Lancement du vfx
-        StartCoroutine(PlayAndStopVFX(maxLT));
+
+        
+        //Ingnorer l'action si c'est la bille blanche
+        GameObject dummy = new GameObject("StandInVFXFor" + ballTheme);
+        dummy.transform.position = transform.position;
+
+        VisualEffect anchorEffect = dummy.AddComponent<VisualEffect>();
+        anchorEffect.visualEffectAsset = effect.visualEffectAsset;
+
+        anchorEffect.GetComponent<VFXRenderer>().sortingOrder = effect.GetComponent<VFXRenderer>().sortingOrder;
+        VFXAnchor vfxAnchor = dummy.AddComponent<VFXAnchor>();
+        vfxAnchor.TriggerVFXProcess();
 
     }
 
-    private IEnumerator PlayAndStopVFX(float maxLT)
-    {
-        effect.Reinit();
-        effect.Play();
-        yield return new WaitForSeconds(maxLT);
-        effect.Stop();
-    }
-
+    /// <summary>
+    /// Fait rouler la bille sur elle meme dans la direction de son déplacement
+    /// </summary>
+    /// <param name="timestep"></param>
     private void RotateBall(float timestep)
     {
+        //vitesse angulaire
         float angularSpeed = speed / ballRadius;
-        Vector3 rotationAxis = -Vector3.Cross(direction, Vector3.up).normalized;
-        rotationAxis.y = 0;
+        //quantité de de degrés avancés pedant la frame
         float movedAngle = angularSpeed * Mathf.Rad2Deg * timestep;
-
-        if (rotationAxis.y != 0) { Debug.Log("rotation axis =" + rotationAxis); }
+        //axe de rotation
+        Vector3 rotationAxis = -Vector3.Cross(direction, Vector3.up).normalized;
+        //roulement de la bille
         transform.Rotate(rotationAxis, movedAngle, Space.World);
     }
 }
