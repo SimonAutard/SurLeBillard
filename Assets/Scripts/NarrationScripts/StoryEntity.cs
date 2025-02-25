@@ -17,10 +17,11 @@ public class StoryEntity
     }
     //Methodes de validation des criteres de l'enttie pour le prophetie
     public bool NameIs(string name) { if (name == Name) return true; else return false; }
+    public bool NameIsNot(string name) { if (name != Name) return true; else return false; }
     public bool BondMin(float bondMin) { if (bondMin <= MainCharacterBond) return true; else return false; }
     public bool BondMax(float bondMax) { if (bondMax >= MainCharacterBond) return true; else return false; }
 
-    //Methodes de changement des attributs de l'tentite pour leffet de la prophetie
+    //Methodes de changement des attributs de l'entite pour leffet de la prophetie
     public void NewName(string name) {  Name = name; }
     public void BondPlus(float bondPlus) { MainCharacterBond = ValuePlus( MainCharacterBond, bondPlus,MinBond,MaxBond); }
     public void BondReverse(float boolean) { MainCharacterBond = MaxBond - MainCharacterBond; }
@@ -32,9 +33,3 @@ public class StoryEntity
         else { return baseValue + valuePlus; }
     }
 }
-/*
-public class StoryEntityValidator
-{
-    public float MainCharacterBond_min {  get; protected set; }
-    public float MainCharacterBond_max {  get; protected set; }
-}*/

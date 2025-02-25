@@ -15,6 +15,7 @@ public class StoryItem : StoryEntity
 
     //Methodes de validation des criteres de l'entite pour la prophetie
     public bool ItemTypeIs(string type) { if (ItemType == type) return true; else return false; }
+    public bool ItemTypeIsNot(string type) { if (ItemType == type) return true; else return false; }
     public bool StateMin(float stateMin) { if (stateMin <= State) return true; else return false; }
     public bool StateMax(float stateMax) { if (stateMax >= State) return true; else return false; }
 

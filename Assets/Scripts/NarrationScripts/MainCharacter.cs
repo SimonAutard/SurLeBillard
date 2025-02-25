@@ -1,5 +1,3 @@
-using UnityEngine;
-using UnityEngine.TextCore.Text;
 using System.Collections.Generic;
 public class MainCharacter : StoryEntity
 {
@@ -17,14 +15,14 @@ public class MainCharacter : StoryEntity
     private float MaxHealth = 100;
 
     public MainCharacter(string name, StoryPlace livingPlace, StoryActivity job, StoryCharacter boss, List<StoryCharacter> colleagues, StoryCharacter lover, float health, float money)
-    { 
+    {
         Name = name;
-
-        LivingPlace = livingPlace;
-        Job = job;
-        Boss = boss;
         Health = health;
         Money = money;
+        LivingPlace = livingPlace;
+        Job = job;
+        Colleagues = colleagues;
+        Boss = boss;
         Lover = lover;
     }
 
@@ -32,7 +30,17 @@ public class MainCharacter : StoryEntity
     public void HealthPlus(float healthPlus) { Health = ValuePlus(Health, healthPlus, MinHealth, MaxHealth); }
     public void MoneyPlus(float moneyPlus) { Money = ValuePlus(Money, moneyPlus, MinMoney, MaxMoney); }
     public void LivingPlaceBecomes(StoryPlace newPlace) { LivingPlace = newPlace; }
-    public void JobBecomes(StoryActivity newJob) { Job = newJob; }
-    public void BossBecomes(StoryCharacter newBoss) { Boss = newBoss; }
+    public void JobBecomes(StoryActivity newJob)
+    {
+        Job = newJob;
+        if(newJob != null) {
+            StoryCharacter newBoss = NarrationManager.Instance.ReplaceBoss(newJob, Boss);
+            BossBecomes(newBoss);
+        }
+        else { BossBecomes(null); }
+    }
+    public void BossBecomes(StoryCharacter newBoss) { Boss = newBoss; AddColleague(newBoss); }
+    public void AddColleague(StoryCharacter newColleague) { if (Colleagues.Contains(newColleague)) { return; } else { Colleagues.Add(newColleague); } }
+    public void RemoveColleague(StoryCharacter newColleague) { if (Colleagues.Contains(newColleague)) { Colleagues.Remove(newColleague); } else { return; } }
     public void LoverBecomes(StoryCharacter newLover) { Lover = newLover; }
 }

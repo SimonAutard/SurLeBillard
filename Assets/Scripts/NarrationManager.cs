@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using static UnityEngine.Rendering.VolumeComponent;
 
 
 public class NarrationManager : MonoBehaviour
@@ -12,6 +13,7 @@ public class NarrationManager : MonoBehaviour
 
     //DEBUG 
     [SerializeField] bool debugMode;
+    NarrationDebugger debugger;
 
     //Liste des thï¿½mes de billes
     private string[] themesArray = new[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
@@ -144,6 +146,11 @@ public class NarrationManager : MonoBehaviour
         Prophecy prophecy = new Prophecy(sentence, types, listval, listupd);
         prophecyMasterTable[0, 0] = prophecy;
         CreateRandomStory(Vector3.zero);*/
+        if (debugMode)
+        {
+            debugger = GetComponent<NarrationDebugger>();
+            debugger.ScanForBugs(positiveProphecyMasterTable, negativeProphecyMasterTable, MainCharacter);
+        }
     }
 
 
@@ -164,7 +171,8 @@ public class NarrationManager : MonoBehaviour
             bool valenceBool = false;
             if (valence != 0) { valenceBool = true; }
 
-            GenerateStoryBit(index1, index2, valenceBool);
+            LegoProphecy legoProphecy = WriteStoryAndMakeItTrue(index1, index2, valenceBool);
+
         }
     }
 
@@ -183,19 +191,17 @@ public class NarrationManager : MonoBehaviour
             int index2 = Array.IndexOf(themesArray, secondBallTheme);
 
             //Creation de la prophetie
-            string prophecyFullSentence = GenerateStoryBit(index1, index2, valence);
+            LegoProphecy legoProphecy = WriteStoryAndMakeItTrue(index1, index2, valence);
             UIProphecy displayableProphecy;
             displayableProphecy._fastestBall = firstBallTheme;
             displayableProphecy._slowestBall = secondBallTheme;
             displayableProphecy._positive = valence;
-            displayableProphecy._prophecy = prophecyFullSentence;
+            displayableProphecy._prophecy = legoProphecy.Sentence;
 
             //Ajout aux depots de propheties
             _gameProphecies.Add(displayableProphecy);
             _lastProphecies.Add(displayableProphecy);
         }
-        
-
     }
 
     /// <summary>
@@ -228,13 +234,13 @@ public class NarrationManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Internal method used to generate a story bit. >>> Placeholder, can be deleted once CreateRandomStory is good to go
+    /// Internal method used to generate a story bit. 
     /// </summary>
     /// <param name="wordA">The first theme the story bit is based on</param>
     /// <param name="wordB">The second theme the story bit is based on</param>
     /// <param name="positive">States if the story bit should be positive or not</param>
     /// <returns>The generated story bit</returns>
-    private string GenerateStoryBit(int index1, int index2, bool valence)
+    public LegoProphecy WriteStoryAndMakeItTrue(int index1, int index2, bool valence, int indexLigne = -1, bool makeItTrue = true)
     {
         //--Partie debug
         string valenceString = valence ? "positive" : "negative";
@@ -244,19 +250,22 @@ public class NarrationManager : MonoBehaviour
         List<Prophecy>[,] prophecyMasterTable;
         prophecyMasterTable = valence ? positiveProphecyMasterTable : negativeProphecyMasterTable;
         //Choix  d'une prophetie aleatoire dans la liste des propheties possibles pour ce duo de themes
-        int index3 = random.Next(0, prophecyMasterTable[index1, index2].Count);
+        int index3 = indexLigne == -1 ? random.Next(0, prophecyMasterTable[index1, index2].Count) : indexLigne; //Si Indexligne a été spcifiée dans la déclaration, on garde sa valeur pour index3
         Debug.Log(valenceString + " prophecy for " + themesArray[index1] + " " + themesArray[index2]);
 
         //Completion de la prophetie
         LegoProphecy legoProphecy = prophecyMasterTable[index1, index2][index3].GetCompletedProphecy();
         Debug.Log(legoProphecy.Sentence);
 
-        //Mise a jour des entites affectees par la prophetie
-        DebugLogEntitiesState(legoProphecy, "initial");
-        UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2][index3].ProphecyUpdators);
-        DebugLogEntitiesState(legoProphecy, "final");
-
-        return legoProphecy.Sentence;
+        if (makeItTrue)
+        {
+            //Mise a jour des entites affectees par la prophetie
+            if (debugMode) { debugger.DebugLogEntitiesState(legoProphecy, "initial"); }
+            UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2][index3].ProphecyUpdators);
+            if (debugMode) { debugger.DebugLogEntitiesState(legoProphecy, "final"); }
+        }
+        
+        return legoProphecy;
     }
 
     /// <summary>
@@ -368,6 +377,7 @@ public class NarrationManager : MonoBehaviour
         _lastProphecies.Clear();
     }
 
+
     /// <summary>
     /// Change létat des story entities du jeu en fonction du résultat de la prophétie
     /// </summary>
@@ -442,12 +452,11 @@ public class NarrationManager : MonoBehaviour
                 // On renseigne la prophetie aux deux intersections du tableau double entree pour la retrouver facilement
                 prophecyMasterTable[index1, index2].Add(prophecy);
                 prophecyMasterTable[index2, index1].Add(prophecy);
-
             }
-
         }
         return prophecyMasterTable;
     }
+
     /// <summary>
     /// Cette fonction renvoie un tableau de string si le rawdata est valide, null sinon
     /// </summary>
@@ -485,9 +494,7 @@ public class NarrationManager : MonoBehaviour
                 return null;
             }
             else { return lines; }
-
         }
-
     }
 
     Type[] ExtractProphecyTypes(string cell)
@@ -641,53 +648,39 @@ public class NarrationManager : MonoBehaviour
     }
     private void InitializeMainCharacter()
     {
-        (string, object)[] placeValidator = { ("NameIs", "Galway") };
+        (string, object)[] placeValidator = { ("NameIs", "à Galway") };
         StoryPlace livingPlace = (StoryPlace)GetFittingEntity(typeof(StoryPlace), placeValidator);
 
-        (string, object)[] characterValidator = { ("NameIs", "le vieux Harold") };
-        StoryCharacter boss = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterValidator);
+        (string, object)[] characterBossValidator = { ("NameIs", "la vieille Aoibheann") };
+        StoryCharacter boss = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterBossValidator);
 
         (string, object)[] activityValidator = { ("NameIs", "tondre des moutons") };
         StoryActivity job = (StoryActivity)GetFittingEntity(typeof(StoryActivity), activityValidator);
 
-        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, null, null, 30, 30);
+        List<StoryCharacter> colleagues = new List<StoryCharacter>() { boss};
+
+        (string, object)[] characterLoverValidator = { ("NameIs", "son béguin Lady Winchester") };
+        StoryCharacter lover = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterLoverValidator);
+
+        MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, colleagues, lover, 30, 30);
     }
-    private void DebugLogEntitiesState(LegoProphecy legoProphecy, string stateName)
+
+    /// <summary>
+    /// Trouve un personnage pour remplacer le boss actuel quand le job change
+    /// </summary>
+    /// <param name="newJob"></param>
+    /// <param name="currentBoss"></param>
+    /// <returns></returns>
+    public StoryCharacter ReplaceBoss(StoryActivity newJob, StoryCharacter currentBoss)
     {
-        foreach (StoryEntity entity in legoProphecy.StoryEntities)
-        {
-            if (entity is StoryCharacter storyCharacter)
-            {
-                Debug.Log("etat " + stateName + " de " + storyCharacter.Name +
-                    ": bond = " + storyCharacter.MainCharacterBond +
-                    "; Money = " + storyCharacter.Money +
-                    "; health = " + storyCharacter.Health);
+        StoryCharacter result;
+        (string, object)[] characterValidator;
+        if (currentBoss == null) { characterValidator = new (string, object)[] { ("MoneyMin", 60) }; }
+        else { characterValidator = new (string, object)[] { ("MoneyMin", 60), ("NameIsNot", currentBoss.Name) }; }
 
-            }
-            else if (entity is StoryPlace storyPlace)
-            {
-                Debug.Log("etat " + stateName + " de " + storyPlace.Name +
-                    ": bond = " + storyPlace.MainCharacterBond +
-                    "; type = " + storyPlace.PlaceType +
-                    "; state = " + storyPlace.State);
-
-            }
-            else if (entity is StoryItem storyItem)
-            {
-                Debug.Log("etat " + stateName + " de " + storyItem.Name +
-                    ": bond = " + storyItem.MainCharacterBond +
-                    "; type = " + storyItem.ItemType +
-                    "; state = " + storyItem.State);
-
-            }
-            else if (entity is StoryActivity storyActivity)
-            {
-                Debug.Log("etat " + stateName + " de " + storyActivity.Name +
-                    " : bond = " + storyActivity.MainCharacterBond +
-                    "; type = " + storyActivity.ActivityType +
-                    "; popularity = " + storyActivity.Popularity);
-
-            }
-        }
+        result = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterValidator);
+        return result;
     }
+
+
 }
