@@ -2,16 +2,18 @@ public class StoryPlace : StoryEntity
 {
     public string PlaceType { get; private set; }
     public float State { get; private set; }
+    public bool Shore { get; private set; }
     private float MinState = 0;
     private float MaxState = 100;
 
-    public StoryPlace(string name = "generic place", float mainCharacterBond = 50, string placeType = "generic type", float state = 50)
+    public StoryPlace(string name = "generic place", float mainCharacterBond = 50, string placeType = "generic type", float state = 50, bool shore = true)
     {
         Name = name;
         MainCharacterBond = mainCharacterBond;
 
         PlaceType = placeType;
         State = state;
+        Shore = shore;
     }
 
     //Methodes de validation des criteres de l'entite pour la prophetie
@@ -24,6 +26,12 @@ public class StoryPlace : StoryEntity
         {
             return (boolean == 1) ? true : false;
         }
+        else return (boolean == 1) ? false : true;
+    }
+
+    public bool IsShore(float boolean)
+    {
+        if (Shore) return (boolean == 1) ? true : false; 
         else return (boolean == 1) ? false : true;
     }
 

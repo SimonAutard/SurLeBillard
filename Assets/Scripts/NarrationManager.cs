@@ -608,7 +608,7 @@ public class NarrationManager : MonoBehaviour
                 string line = lines[i];
                 string[] cells = line.Split(';');
 
-                StoryPlace entity = new StoryPlace(cells[0], float.Parse(cells[1]), cells[2], float.Parse(cells[3]));
+                StoryPlace entity = new StoryPlace(cells[0], float.Parse(cells[1]), cells[2], float.Parse(cells[3]), Boolean.Parse(cells[4]));
 
                 allPlaces.Add(entity);
             }
@@ -648,18 +648,18 @@ public class NarrationManager : MonoBehaviour
     }
     private void InitializeMainCharacter()
     {
-        (string, object)[] placeValidator = { ("NameIs", "à Galway") };
+        (string, object)[] placeValidator = { ("NameIs", "in Galway") };
         StoryPlace livingPlace = (StoryPlace)GetFittingEntity(typeof(StoryPlace), placeValidator);
 
-        (string, object)[] characterBossValidator = { ("NameIs", "la vieille Aoibheann") };
+        (string, object)[] characterBossValidator = { ("NameIs", "old Aoibheann") };
         StoryCharacter boss = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterBossValidator);
 
-        (string, object)[] activityValidator = { ("NameIs", "tondre des moutons") };
+        (string, object)[] activityValidator = { ("NameIs", "shearing sheeps") };
         StoryActivity job = (StoryActivity)GetFittingEntity(typeof(StoryActivity), activityValidator);
 
         List<StoryCharacter> colleagues = new List<StoryCharacter>() { boss};
 
-        (string, object)[] characterLoverValidator = { ("NameIs", "son béguin Lady Winchester") };
+        (string, object)[] characterLoverValidator = { ("NameIs", "his crush Lady Winchester") };
         StoryCharacter lover = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterLoverValidator);
 
         MainCharacter = new MainCharacter("Connor", livingPlace, job, boss, colleagues, lover, 30, 30);
