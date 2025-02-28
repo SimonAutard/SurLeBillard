@@ -15,7 +15,7 @@ public class NarrationManager : MonoBehaviour
     NarrationDebugger debugger;
 
     //Liste des thï¿½mes de billes
-    private string[] themesArray = new[] { "Finances", "Santé", "Carrière", "Nature", "Amitié", "Amour", "Spiritualité" };
+    private string[] themesArray = new[] { "Finances", "Health", "Career", "Nature", "Friendship", "Love", "Spirituality" };
 
     //PROPHETIES
     //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles

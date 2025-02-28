@@ -515,7 +515,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: ballTheme
-      value: "Sant\xE9"
+      value: Health
       objectReference: {fileID: 0}
     - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: dragAddition
@@ -760,7 +760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
-      value: "Amiti\xE9"
+      value: Friendship
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
@@ -5109,7 +5109,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
-      value: Amour
+      value: Love
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
@@ -5538,7 +5538,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
-      value: "Spiritualit\xE9"
+      value: Spirituality
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
@@ -6146,7 +6146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
-      value: "Carri\xE8re"
+      value: Career
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition

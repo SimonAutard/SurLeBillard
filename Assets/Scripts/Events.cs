@@ -202,6 +202,18 @@ public class EventReplaceBlackRequest
     }
 }
 
+
+/// <summary>
+/// Signals when any ball bounces on a band of the billiard
+/// </summary>
+public class EventBounceOnBandSignal
+{
+    public EventBounceOnBandSignal()
+    {
+
+    }
+}
+
 //********************************
 //*** UIManager related events ***
 //********************************
