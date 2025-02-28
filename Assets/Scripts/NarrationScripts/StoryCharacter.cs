@@ -3,16 +3,16 @@ using System;
 public class StoryCharacter : StoryEntity
 {
     //Attributs
-    public float Health { get; private set; }
-    public float Money { get; private set; }
-    public string CharacterType { get; private set; }
+    public float Health { get; private set; } = 50;
+    public float Money { get; private set; } = 50;
+    public string CharacterType { get; private set; } = "Friend";
     private float MinHealth = 0;
     private float MaxHealth = 100;
     private float MinMoney = 0;
     private float MaxMoney = 100;
 
     //Constructeur
-    public StoryCharacter(string name = "generic character", float mainCharacterBond = 50, string characterType = "generic type", float health = 50, float money = 50)
+    public StoryCharacter(string name, float mainCharacterBond, string characterType, float health, float money) : base(name, mainCharacterBond)
     {
         Name = name;
         MainCharacterBond = mainCharacterBond;
@@ -21,6 +21,31 @@ public class StoryCharacter : StoryEntity
         Money = money;
         CharacterType = characterType;
     }
+
+    // Constructeur par validateur
+    public StoryCharacter((string, object)[] validators) : base(validators)
+    {
+        Name = "someone";
+        foreach (var validator in validators)
+        {
+            string methodName = validator.Item1; //nom de la fonction de check de lentite
+            object methodValue = validator.Item2; // valeur associee
+            if (methodName == "CharacterTypeIs") { 
+                CharacterType = (string)methodValue;
+                if (CharacterType == "Friend") Name = "an acquaintance";
+                if (CharacterType == "Family") Name = "a relative";
+                if (CharacterType == "Crush") Name = "his crush";
+            }
+            if (methodName == "HealthMin") { Health = (float)methodValue; }
+            if (methodName == "HealthMax") { Health = (float)methodValue; }
+            if (methodName == "MoneyMin") { Money = (float)methodValue; }
+            if (methodName == "MoneyMax") { Money = (float)methodValue; }
+            if (methodName == "IsBoss") { if ((float)methodValue == 1) { BecomesBoss(1); Name = "his boss"; } }
+            if (methodName == "IsColleague") { if ((float)methodValue == 1) { BecomesColleague(1); Name = "one of his colleagues"; } }
+            if (methodName == "IsLover") { if ((float)methodValue == 1) { BecomesLover(1); Name = "his lover"; } }
+        }
+    }
+
     //Methodes de validation des criteres de l'entite pour la prophetie
     public bool CharacterTypeIs(string type) { if (CharacterType == type) return true; else return false; }
     public bool HealthMin(float healthMin) { if (healthMin <= Health) return true; else return false; }
@@ -60,48 +85,3 @@ public class StoryCharacter : StoryEntity
     public void BecomesBoss(float boolean) { NarrationManager.Instance.MainCharacter.BossBecomes(boolean == 1 ? this : null); }
     public void BecomesLover(float boolean) { NarrationManager.Instance.MainCharacter.LoverBecomes(boolean == 1 ? this : null); }
 }
-/*
-public class CharacterValidator : StoryEntityValidator
-{
-    public float Health_min { get; private set; } public float Health_max { get; private set; }
-    public float Money_min { get; private set; }    public float Money_max { get; private set; }
-    public string CharacterType { get; private set; }
-    /// <summary>
-    /// les critères non renseignés seront ignorés
-    /// </summary>
-    /// <param name="mainCharacterBond_min"></param>
-    /// <param name="mainCharacterBond_max"></param>
-    /// <param name="health_min"></param>
-    /// <param name="health_max"></param>
-    /// <param name="money_min"></param>
-    /// <param name="money_max"></param>
-    /// <param name="characterType"></param>
-    public CharacterValidator(float mainCharacterBond_min = -1, float mainCharacterBond_max = -1, 
-        float health_min = -1, float health_max = -1, 
-        float money_min = -1, float money_max = -1, 
-        string characterType = "Unspecified")
-    {
-        MainCharacterBond_max = mainCharacterBond_max;
-        MainCharacterBond_min = mainCharacterBond_min;
-        Health_max = health_max;         Health_min = health_min;
-        Money_max = money_max; Money_min = money_min;
-        CharacterType = characterType;
-        
-    }
-    /// <summary>
-    /// Renvoie vrai seulement si le personnage fourni respecte tous les critères de l'instance
-    /// </summary>
-    /// <param name="character"></param>
-    /// <returns></returns>
-    public bool ValidateCharacter(Character character)
-    {
-        if (MainCharacterBond_min != -1 && MainCharacterBond_min > character.MainCharacterBond) return false;
-        if (MainCharacterBond_max != -1 && character.MainCharacterBond > MainCharacterBond_max) return false;
-        if (Health_min != -1 && Health_min > character.Health) return false;
-        if (Health_max != -1 && character.Health > Health_max) return false;
-        if (Money_min != -1 && Money_min > character.Money) return false;
-        if (Money_max !=-1 &&   character.Money > Money_max)return false;
-        if (CharacterType != "Unspecified" &&    CharacterType != character.CharacterType) return false;
-        return true;
-    }
-}*/

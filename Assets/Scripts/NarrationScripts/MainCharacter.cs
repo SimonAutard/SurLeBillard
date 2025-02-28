@@ -14,7 +14,7 @@ public class MainCharacter : StoryEntity
     private float MinHealth = 0;
     private float MaxHealth = 100;
 
-    public MainCharacter(string name, StoryPlace livingPlace, StoryActivity job, StoryCharacter boss, List<StoryCharacter> colleagues, StoryCharacter lover, float health, float money)
+    public MainCharacter(string name, StoryPlace livingPlace, StoryActivity job, StoryCharacter boss, List<StoryCharacter> colleagues, StoryCharacter lover, float health, float money) : base(name, 100)
     {
         Name = name;
         Health = health;

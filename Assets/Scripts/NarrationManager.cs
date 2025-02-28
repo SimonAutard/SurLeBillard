@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using static UnityEngine.Rendering.VolumeComponent;
 
 
 public class NarrationManager : MonoBehaviour
@@ -264,7 +263,7 @@ public class NarrationManager : MonoBehaviour
             UpdateStoryEntitiesFromProphecy(legoProphecy.StoryEntities, prophecyMasterTable[index1, index2][index3].ProphecyUpdators);
             if (debugMode) { debugger.DebugLogEntitiesState(legoProphecy, "final"); }
         }
-        
+
         return legoProphecy;
     }
 
@@ -311,7 +310,7 @@ public class NarrationManager : MonoBehaviour
         // si aucun validator n'a ete renseign� pour cette entite, alors on prend n'importe quelle entit�
         else { viableEntities = possibleEntities; }
         // si aucune entite ne remplissait les crit�res, alors on en cree une 
-        if (viableEntities.Count == 0) { viableEntities.Add(CreateStoryEntityFromScratch(requiredType)); }
+        if (viableEntities.Count == 0) { viableEntities.Add(CreateFakeEntity(requiredType, validators)); }
         // On renvoie une entite aleatoire parmi les viables
         return viableEntities[random.Next(0, viableEntities.Count)];
     }
@@ -321,14 +320,30 @@ public class NarrationManager : MonoBehaviour
     /// </summary>
     /// <param name="requiredType"></param>
     /// <returns></returns>
-    private StoryEntity CreateStoryEntityFromScratch(Type requiredType)
+    private StoryEntity CreateFakeEntity(Type requiredType, (string, object)[] validators)
     {
-        //TODO : speicfier le constructeur pour repodnre aux criteres du validateur
-        if (requiredType == typeof(StoryCharacter)) { return new StoryCharacter(); }
-        else if (requiredType == typeof(StoryPlace)) { return new StoryPlace(); }
-        else if (requiredType == typeof(StoryActivity)) { return new StoryActivity(); }
-        else if (requiredType == typeof(StoryItem)) { return new StoryItem(); }
-        else { return new StoryEntity(); }
+        StoryEntity result;
+        if (requiredType == typeof(StoryCharacter))
+        {
+            result = new StoryCharacter(validators);
+        }
+        else if (requiredType == typeof(StoryPlace))
+        {
+            result = new StoryPlace(validators);
+        }
+        else if (requiredType == typeof(StoryActivity))
+        {
+            result = new StoryActivity(validators);
+        }
+        else if (requiredType == typeof(StoryItem))
+        {
+            result = new StoryItem(validators);
+        }
+        else
+        {
+            result = new StoryEntity(validators);
+        }
+        return result;
 
     }
 
@@ -657,7 +672,7 @@ public class NarrationManager : MonoBehaviour
         (string, object)[] activityValidator = { ("NameIs", "shearing sheeps") };
         StoryActivity job = (StoryActivity)GetFittingEntity(typeof(StoryActivity), activityValidator);
 
-        List<StoryCharacter> colleagues = new List<StoryCharacter>() { boss};
+        List<StoryCharacter> colleagues = new List<StoryCharacter>() { boss };
 
         (string, object)[] characterLoverValidator = { ("NameIs", "his crush Lady Winchester") };
         StoryCharacter lover = (StoryCharacter)GetFittingEntity(typeof(StoryCharacter), characterLoverValidator);

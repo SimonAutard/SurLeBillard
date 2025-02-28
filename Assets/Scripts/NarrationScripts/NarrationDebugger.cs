@@ -17,7 +17,7 @@ public class NarrationDebugger : MonoBehaviour
                 Debug.Log("current index ="+i+ " "+j);
                 for (int k = 0; k<positiveProphecyMasterTable[i,j].Count; k++)
                 {
-                    LegoProphecy legoProphecy = NarrationManager.Instance.WriteStoryAndMakeItTrue(i, j, true,k,false);
+                    LegoProphecy legoProphecy = NarrationManager.Instance.WriteStoryAndMakeItTrue(i, j, true,k,true);
                 }
             }
         }
@@ -28,7 +28,7 @@ public class NarrationDebugger : MonoBehaviour
                 Debug.Log("current index =" + i + " " + j);
                 for (int k = 0; k < negativeProphecyMasterTable[i, j].Count; k++)
                 {
-                    LegoProphecy legoProphecy = NarrationManager.Instance.WriteStoryAndMakeItTrue(i, j, false, k, false);
+                    LegoProphecy legoProphecy = NarrationManager.Instance.WriteStoryAndMakeItTrue(i, j, false, k, true);
                 }
             }
         }
