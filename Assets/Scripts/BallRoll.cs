@@ -39,16 +39,6 @@ public class BallRoll : MonoBehaviour
     private void OnEnable()
     {
         effect = GetComponent<VisualEffect>();
-        /*
-        //si la bille est relle, on bloque le deroulé du vfx
-        if (isRealBall)
-        {
-            effect.enabled = true;
-            effect.Stop();
-        }
-        //si la bille est simulee, on na pas besoin de son fx
-        else { effect.enabled = false; }
-        */
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -70,7 +60,7 @@ public class BallRoll : MonoBehaviour
     {
         // La bille avance ou sarrete
         //RollTheBall(PhysicsManager.Instance.generalTimeStep);
-        RollTheBall(Time.fixedDeltaTime);
+        RollTheBall(Time.deltaTime);
         // Verification de la position de la bille au dessus des poches
         CheckPocketing();
     }
