@@ -237,6 +237,10 @@ public class BallRoll : MonoBehaviour
         {
             speed = speed * bandSpeedReductionFactor;
             direction = Vector3.Reflect(direction, normalVector).normalized;
+            if (isRealBall)
+            {
+                EventBus.Publish(new EventBounceOnBandSignal());
+            }
         }
 
     }
