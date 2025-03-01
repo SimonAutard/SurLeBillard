@@ -20,9 +20,9 @@ public class NarrationManager : MonoBehaviour
     //PROPHETIES
     //Tableau général des correspondances entre deux thèmes et leurs prophéties possibles
     [SerializeField] List<Prophecy>[,] positiveProphecyMasterTable;
-    private string positiveProphecyFilePath = "Assets/Scripts/RawData/NSData(PositiveProphecyRawData).csv";
+    private string positiveProphecyFilePath = "NSData(PositiveProphecyRawData).csv";
     [SerializeField] List<Prophecy>[,] negativeProphecyMasterTable;
-    private string negativeProphecyFilePath = "Assets/Scripts/RawData/NSData(NegativeProphecyRawData).csv";
+    private string negativeProphecyFilePath = "NSData(NegativeProphecyRawData).csv";
     private List<UIProphecy> _lastProphecies = new List<UIProphecy>();
     private List<UIProphecy> _gameProphecies = new List<UIProphecy>();
 
@@ -31,13 +31,13 @@ public class NarrationManager : MonoBehaviour
     public MainCharacter MainCharacter { get; private set; }
     //Listes des types d'entités
     List<StoryCharacter> allCharacters = new List<StoryCharacter>();
-    private string characterFilePath = "Assets/Scripts/RawData/NSData(StoryCharacterRawData).csv";
+    private string characterFilePath = "NSData(StoryCharacterRawData).csv";
     List<StoryPlace> allPlaces = new List<StoryPlace>();
-    private string placeFilePath = "Assets/Scripts/RawData/NSData(StoryPlaceRawData).csv";
+    private string placeFilePath = "NSData(StoryPlaceRawData).csv";
     List<StoryActivity> allStoryActivities = new List<StoryActivity>();
-    private string activityFilePath = "Assets/Scripts/RawData/NSData(StoryActivityRawData).csv";
+    private string activityFilePath = "NSData(StoryActivityRawData).csv";
     List<StoryItem> allStoryItems = new List<StoryItem>();
-    private string itemFilePath = "Assets/Scripts/RawData/NSData(StoryItemRawData).csv";
+    private string itemFilePath = "NSData(StoryItemRawData).csv";
 
     // Design pattern du singleton
     private static NarrationManager instance; // instance statique du narration manager
@@ -108,12 +108,12 @@ public class NarrationManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        positiveProphecyMasterTable = InitializeProphecies(true, positiveProphecyFilePath);
-        negativeProphecyMasterTable = InitializeProphecies(false, negativeProphecyFilePath);
-        InitializeStoryCharacters();
-        InitializeStoryPlaces();
-        InitializeStoryItems();
-        InitializeStoryActivities();
+        positiveProphecyMasterTable = InitializeProphecies(true, Path.Combine(Application.streamingAssetsPath, positiveProphecyFilePath));
+        negativeProphecyMasterTable = InitializeProphecies(false, Path.Combine(Application.streamingAssetsPath, negativeProphecyFilePath) );
+        InitializeStoryCharacters(Path.Combine(Application.streamingAssetsPath, characterFilePath));
+        InitializeStoryPlaces(Path.Combine(Application.streamingAssetsPath, placeFilePath));
+        InitializeStoryItems(Path.Combine(Application.streamingAssetsPath, itemFilePath));
+        InitializeStoryActivities(Path.Combine(Application.streamingAssetsPath, activityFilePath));
         InitializeMainCharacter();
         /*
         //initialisation entity simple pour test
@@ -593,10 +593,10 @@ public class NarrationManager : MonoBehaviour
     /**
      * FONCTIONS DE CONVERSION DU CSV EN DIFFERETNES STORY ENTITIES DU JEU
      * */
-    private void InitializeStoryCharacters()
+    private void InitializeStoryCharacters(string path)
     {
         //Extraction du csv en string
-        string[] lines = RawDataInitializationChecks(characterFilePath);
+        string[] lines = RawDataInitializationChecks(path);
         if (lines != null)
         {
             //lecture de chaque ligne du csv
@@ -613,9 +613,9 @@ public class NarrationManager : MonoBehaviour
             }
         }
     }
-    private void InitializeStoryPlaces()
+    private void InitializeStoryPlaces(string path)
     {
-        string[] lines = RawDataInitializationChecks(placeFilePath);
+        string[] lines = RawDataInitializationChecks(path);
         if (lines != null)
         {
             for (int i = 1; i < lines.Length; i++)
@@ -629,9 +629,9 @@ public class NarrationManager : MonoBehaviour
             }
         }
     }
-    private void InitializeStoryItems()
+    private void InitializeStoryItems(string path)
     {
-        string[] lines = RawDataInitializationChecks(itemFilePath);
+        string[] lines = RawDataInitializationChecks(path);
         if (lines != null)
         {
             for (int i = 1; i < lines.Length; i++)
@@ -645,9 +645,9 @@ public class NarrationManager : MonoBehaviour
             }
         }
     }
-    private void InitializeStoryActivities()
+    private void InitializeStoryActivities(string path)
     {
-        string[] lines = RawDataInitializationChecks(activityFilePath);
+        string[] lines = RawDataInitializationChecks(path);
         if (lines != null)
         {
             for (int i = 1; i < lines.Length; i++)

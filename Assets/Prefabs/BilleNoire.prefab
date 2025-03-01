@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 1
-  ballTheme: "Sant\xE9"
+  ballTheme: Health
   _ballId: 4
   speed: 0
   dragMultiplicator: 0.2

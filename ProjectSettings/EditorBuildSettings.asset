@@ -14,7 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PhysicsScene.unity
     guid: bec4e7352a67b7a4894e1be91fd8c40d
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Unused scenes/SimulationScene.unity
     guid: 26f09ae3886353c429c1564f899e5a52
   m_configObjects:
