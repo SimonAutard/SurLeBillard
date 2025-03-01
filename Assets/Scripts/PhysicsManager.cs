@@ -27,6 +27,7 @@ public class PhysicsManager : MonoBehaviour
     //Paramétrage des billes
     [SerializeField] GameObject whiteBallPrefab;
     [SerializeField] GameObject blackBallPrefab;
+    private int antiInfinityLoopUpperBound = 20;
 
     //Gestion du terrain
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
@@ -175,17 +176,18 @@ public class PhysicsManager : MonoBehaviour
 
         bool whiteBallReplaced = false;
         Vector3 newPosition = Vector3.zero; // position de placement de la nouvelle bille
-        int antiInifinityLoop = 0;
-        while (!whiteBallReplaced && antiInifinityLoop < 10) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
+        int antiInfinityLoop = 0;
+        while (!whiteBallReplaced && antiInfinityLoop < antiInfinityLoopUpperBound) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
         {
-            antiInifinityLoop++;
+            antiInfinityLoop++;
             Debug.Log("Could not find suitable place for white ball, retrying...");
 
             //On prend un point aléatoire sur la ligne de replacement de la bille blanche
             newPosition = leftmostWhiteLinePoint + UnityEngine.Random.Range(0f, 1f) * (rightmostWhiteLinePoint - leftmostWhiteLinePoint);
             //On capsulecast vers le sol depuis cette position pour vérifier qu'on ne touche pas une autre bille ou bande
-            whiteBallReplaced = !Physics.SphereCast(newPosition, whiteBallPrefab.GetComponent<SphereCollider>().radius, Vector3.down, out RaycastHit hitInfo);
-            
+            Collider[] collided  = Physics.OverlapSphere(newPosition, whiteBallPrefab.GetComponent<SphereCollider>().radius);
+            whiteBallReplaced = collided.Length==0?true:false;
+
             //Si on a touché, on reprend la boucle
 
         }
@@ -211,15 +213,16 @@ public class PhysicsManager : MonoBehaviour
 
         bool blackBallReplaced = false;
         Vector3 newPosition = Vector3.zero; // position de placement de la nouvelle bille
-        int antiInifinityLoop = 0;
-        while (!blackBallReplaced && antiInifinityLoop < 10) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
+        int antiInfinityLoop = 0;
+        while (!blackBallReplaced && antiInfinityLoop < antiInfinityLoopUpperBound) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
         {
-            antiInifinityLoop++;
+            antiInfinityLoop++;
 
             //On prend un point aléatoire dans la zone de replacement de la bille noire
             newPosition = new Vector3(UnityEngine.Random.Range(0, 1f), 0, UnityEngine.Random.Range(0, 1f)) + tableCenter;
             //On capsulecast vers le sol depuis cette position pour vérifier qu'on ne touche pas une autre bille ou bande
-            blackBallReplaced = !Physics.SphereCast(newPosition, blackBallPrefab.GetComponent<SphereCollider>().radius, Vector3.down, out RaycastHit hitInfo);
+            Collider[] collided = Physics.OverlapSphere(newPosition, blackBallPrefab.GetComponent<SphereCollider>().radius);
+            blackBallReplaced = collided.Length == 0 ? true : false;
             //Si on a touché, on reprend la boucle
         }
         //instanciation de la nouvelle bille noire
