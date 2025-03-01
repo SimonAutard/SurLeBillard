@@ -1174,7 +1174,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1411,6 +1412,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: beba08a022c722a45abe073b886049f8, type: 3}
+    - target: {fileID: 1085785968886264577, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 1129903182028995853, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -1455,6 +1460,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4639625132453098938, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 5136644348771414491, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -787
@@ -1965,7 +1974,7 @@ GameObject:
   - component: {fileID: 539084791}
   - component: {fileID: 539084790}
   m_Layer: 0
-  m_Name: Tapis_positif
+  m_Name: Tapis_negatif
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1994,7 +2003,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d3e144d6a17a30c489c0a3e2a0025069, type: 2}
+  - {fileID: 2100000, guid: a6a5741b1616c404587cc020ff114e71, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2033,8 +2042,8 @@ Transform:
   m_GameObject: {fileID: 539084788}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.88, y: 0, z: 0}
-  m_LocalScale: {x: 1.392676, y: 1, z: 1.27}
+  m_LocalPosition: {x: -6.88, y: 0.1, z: -0.0853}
+  m_LocalScale: {x: 1.392676, y: 1, z: 1.2069937}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -3520,7 +3529,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -4005,6 +4015,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.4867924
       objectReference: {fileID: 0}
+    - target: {fileID: 3687444476019987948, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 7257127628832901978, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
       propertyPath: billiardBall
       value: 
@@ -4519,6 +4533,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.21724914
       objectReference: {fileID: 0}
+    - target: {fileID: 3687444476019987948, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 7257127628832901978, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
       propertyPath: billiardBall
       value: 
@@ -4905,6 +4923,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.21724914
       objectReference: {fileID: 0}
+    - target: {fileID: 3687444476019987948, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 7257127628832901978, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
       propertyPath: billiardBall
       value: 
@@ -5032,6 +5054,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.4867924
       objectReference: {fileID: 0}
+    - target: {fileID: 3687444476019987948, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 7257127628832901978, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
       propertyPath: billiardBall
       value: 
@@ -5326,6 +5352,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.4867924
       objectReference: {fileID: 0}
+    - target: {fileID: 3687444476019987948, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 7257127628832901978, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
       propertyPath: billiardBall
       value: 
@@ -6244,12 +6274,12 @@ GameObject:
   - component: {fileID: 1933098641}
   - component: {fileID: 1933098640}
   m_Layer: 0
-  m_Name: Tapis_negatif
+  m_Name: Tapis_positif
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!23 &1933098640
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6257,7 +6287,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1933098639}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -6273,7 +6303,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9e96278656b0b0b4eb92aaf709f566c8, type: 2}
+  - {fileID: 2100000, guid: ef7de0e2af85cab42abdd03573e1c5b1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6312,8 +6342,8 @@ Transform:
   m_GameObject: {fileID: 1933098639}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.07, y: 0, z: 0}
-  m_LocalScale: {x: 1.4121412, y: 1, z: 1.27}
+  m_LocalPosition: {x: 7.0285, y: -0, z: -0.0932}
+  m_LocalScale: {x: 1.3777442, y: 1, z: 1.2046317}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -7087,6 +7117,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BallHalo bleu
       objectReference: {fileID: 0}
+    - target: {fileID: 3687444476019987948, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 7257127628832901978, guid: cc14224b2761de84f899afacdd4f28b0, type: 3}
       propertyPath: billiardBall
       value: 
