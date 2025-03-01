@@ -179,12 +179,13 @@ public class PhysicsManager : MonoBehaviour
         while (!whiteBallReplaced && antiInifinityLoop < 10) // La boucle tourne tant qu'on n'a pas trouvé un endroit convenable pour la bille blanche
         {
             antiInifinityLoop++;
-
             Debug.Log("Could not find suitable place for white ball, retrying...");
+
             //On prend un point aléatoire sur la ligne de replacement de la bille blanche
             newPosition = leftmostWhiteLinePoint + UnityEngine.Random.Range(0f, 1f) * (rightmostWhiteLinePoint - leftmostWhiteLinePoint);
             //On capsulecast vers le sol depuis cette position pour vérifier qu'on ne touche pas une autre bille ou bande
             whiteBallReplaced = !Physics.SphereCast(newPosition, whiteBallPrefab.GetComponent<SphereCollider>().radius, Vector3.down, out RaycastHit hitInfo);
+            
             //Si on a touché, on reprend la boucle
 
         }
