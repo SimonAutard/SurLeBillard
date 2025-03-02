@@ -24,7 +24,8 @@ public enum SoundType
     CollisionEdge,
     Cue,
     Pocketting,
-    Click,
+    ClickMenu,
+    ClickDialog,
     Music
 }
 
@@ -64,7 +65,8 @@ public class AudioManager : MonoBehaviour
         EventBus.Subscribe<EventCollisionSignal>(PlayBallCollisionSound);
         EventBus.Subscribe<EventBounceOnBandSignal>(PlayBounceOnBandSound);
         EventBus.Subscribe<EventPocketingSignal>(PlayPocketingSound);
-        EventBus.Subscribe<EventMenuClickSignal>(PlayClickSound);
+        EventBus.Subscribe<EventMenuClickSignal>(PlayMenuClickSound);
+        EventBus.Subscribe<EventDialogClickSignal>(PlayDialogClickSound);
     }
 
     private void OnDisable()
@@ -73,7 +75,8 @@ public class AudioManager : MonoBehaviour
         EventBus.Unsubscribe<EventCollisionSignal>(PlayBallCollisionSound);
         EventBus.Unsubscribe<EventBounceOnBandSignal>(PlayBounceOnBandSound);
         EventBus.Unsubscribe<EventPocketingSignal>(PlayPocketingSound);
-        EventBus.Unsubscribe<EventMenuClickSignal>(PlayClickSound);
+        EventBus.Unsubscribe<EventMenuClickSignal>(PlayMenuClickSound);
+        EventBus.Unsubscribe<EventDialogClickSignal>(PlayDialogClickSound);
     }
 
     private void OnDestroy()
@@ -82,7 +85,8 @@ public class AudioManager : MonoBehaviour
         EventBus.Unsubscribe<EventCollisionSignal>(PlayBallCollisionSound);
         EventBus.Unsubscribe<EventBounceOnBandSignal>(PlayBounceOnBandSound);
         EventBus.Unsubscribe<EventPocketingSignal>(PlayPocketingSound);
-        EventBus.Unsubscribe<EventMenuClickSignal>(PlayClickSound);
+        EventBus.Unsubscribe<EventMenuClickSignal>(PlayMenuClickSound);
+        EventBus.Unsubscribe<EventDialogClickSignal>(PlayDialogClickSound);
     }
 
     private void Start()
@@ -186,8 +190,13 @@ public class AudioManager : MonoBehaviour
         Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.Pocketting], 1.0f);
     }
 
-    private void PlayClickSound(EventMenuClickSignal eventSignal)
+    private void PlayMenuClickSound(EventMenuClickSignal eventSignal)
     {
-        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.Click], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.ClickMenu], 1.0f);
+    }
+
+    private void PlayDialogClickSound(EventDialogClickSignal eventSignal)
+    {
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.ClickDialog], 1.0f);
     }
 }

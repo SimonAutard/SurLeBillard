@@ -283,6 +283,17 @@ public class EventMenuClickSignal
     }
 }
 
+/// <summary>
+/// Signals when a dialog is clicked
+/// </summary>
+public class EventDialogClickSignal
+{
+    public EventDialogClickSignal()
+    {
+
+    }
+}
+
 
 //********************************
 //*** AIManager related events ***

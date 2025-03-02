@@ -59,12 +59,12 @@ public class DialogManagement : MonoBehaviour
         if (UIManager.Instance._isClothoTurn == true && Input.GetMouseButtonDown(0) && _isRound && UIManager.Instance.popupEnabled == false)
         {
             CloseFirstDialog();
-
+            EventBus.Publish(new EventDialogClickSignal());
         }
         else if (UIManager.Instance._isClothoTurn == false && Input.GetMouseButtonDown(0) && _isRound && UIManager.Instance.popupEnabled == false)
         {
             CloseFirstDialog();
-
+            EventBus.Publish(new EventDialogClickSignal());
         }
 
         if (UISingleton.Instance.isReady == true)
