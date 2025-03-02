@@ -16,6 +16,7 @@ public class CloseStory : MonoBehaviour
     // Update is called once per frame
     public void ClosePopUp()
     {
+        EventBus.Publish(new EventMenuClickSignal());
         storyPopup.gameObject.transform.GetChild(0).gameObject.SetActive(false);
         storyPopup.gameObject.transform.GetChild(1).gameObject.SetActive(false);
         storyPopup.gameObject.transform.GetChild(2).gameObject.SetActive(false);
