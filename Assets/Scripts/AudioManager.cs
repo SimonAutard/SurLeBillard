@@ -116,9 +116,9 @@ public class AudioManager : MonoBehaviour
 
     private void PlayBallCollisionSound(EventCollisionSignal eventRequest)
     {
-        if (eventRequest._slowestBallTheme != "")
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.CollisionBall], 1.0f);
+        if (eventRequest._slowestBall != 0 && eventRequest._fastestBall != 0)
         {
-            Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.CollisionBall], 1.0f);
             switch (eventRequest._fastestBallTheme)
             {
                 case "Love":
