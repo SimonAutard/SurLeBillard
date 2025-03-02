@@ -14,6 +14,7 @@ public class ShowLog : MonoBehaviour
     // Update is called once per frame
     public void ShowPopup()
     {
+        EventBus.Publish(new EventMenuClickSignal());
         popUp.SetActive(true);
     }
 }

@@ -272,6 +272,17 @@ public class EventEndGameRoundupRequest
     }
 }
 
+/// <summary>
+/// Signals when something is clicked in a menu
+/// </summary>
+public class EventMenuClickSignal
+{
+    public EventMenuClickSignal()
+    {
+
+    }
+}
+
 
 //********************************
 //*** AIManager related events ***

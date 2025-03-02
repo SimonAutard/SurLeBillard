@@ -14,6 +14,7 @@ public class CloseLog : MonoBehaviour
     // Update is called once per frame
     public void ClosePopUp()
     {
+        EventBus.Publish(new EventMenuClickSignal());
         log.SetActive(false);
     }
 }
