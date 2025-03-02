@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class AIManager : MonoBehaviour
@@ -6,6 +7,8 @@ public class AIManager : MonoBehaviour
     private float _nextShotForce;
     private Vector3 _nextShotVector;
     private bool _shotCalculated = false;
+    [SerializeField] Vector3 _breakTrajectory = new Vector3(0.25f, 0.0f, 1.0f);
+    [SerializeField] float _breakforce;
 
 
     // Design pattern du singleton
@@ -63,12 +66,18 @@ public class AIManager : MonoBehaviour
     private void HandleInitialBreakRequest(EventInitialBreakRequest requestEvent)
     {
         Debug.Log("AIManager: Calculating Initial break.");
-        _nextShotForce = 0.1f;
-        _nextShotVector = Vector3.forward;
+        _nextShotForce = _breakforce;
+        _nextShotVector = _breakTrajectory;
         _shotCalculated = true;
         // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
         // which comes down to the same thing as storing it here and letting UIManager access it when it needs to
         Debug.Log("AIManager: calling NextStep");
+        StartCoroutine(BreakShotDelay());
+    }
+
+    private IEnumerator BreakShotDelay()
+    {
+        yield return new WaitForSeconds(1.0f);
         EventBus.Publish(new EventGameloopNextStepRequest());
     }
 

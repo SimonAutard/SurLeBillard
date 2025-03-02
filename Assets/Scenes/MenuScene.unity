@@ -1061,6 +1061,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3677688346356530350, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
+      propertyPath: _breakforce
+      value: 0.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 3677688346356530350, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
+      propertyPath: _breakTrajectory.x
+      value: -0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 6203095937989330722, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
