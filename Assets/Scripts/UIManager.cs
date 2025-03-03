@@ -86,6 +86,7 @@ private static UIManager _instance; // instance statique du ui manager
         // TODO : UI related stuff if needed
         Debug.Log("UIManager : Requesting the start of a new game");
         EventBus.Publish(new EventNewGameRequest());
+        EventBus.Publish(new EventMenuClickSignal());
        
     }
 

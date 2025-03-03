@@ -24,18 +24,19 @@ public enum SoundType
     CollisionEdge,
     Cue,
     Pocketting,
-    Click,
+    ClickMenu,
+    ClickDialog,
     Music
 }
 
-[RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour
 {
     private static AudioManager _instance;
-    private AudioSource _audioSource;
+    private AudioSource[] _audioSources;
     [SerializeField] private AudioClip[] _soundList;
-    private float _fastBallSoundTiming = 0.25f;
-    private float _slowBallSoundTiming = 0.4f;
+    private float _fastBallSoundTiming = 0.15f;
+    private float _slowBallSoundTiming = 0.3f;
+    private int _nextSourceId = 0;
 
     public static AudioManager Instance
     {
@@ -63,6 +64,9 @@ public class AudioManager : MonoBehaviour
         EventBus.Subscribe<EventApplyForceToWhiteRequest>(PlayCueOnWhiteSound);
         EventBus.Subscribe<EventCollisionSignal>(PlayBallCollisionSound);
         EventBus.Subscribe<EventBounceOnBandSignal>(PlayBounceOnBandSound);
+        EventBus.Subscribe<EventPocketingSignal>(PlayPocketingSound);
+        EventBus.Subscribe<EventMenuClickSignal>(PlayMenuClickSound);
+        EventBus.Subscribe<EventDialogClickSignal>(PlayDialogClickSound);
     }
 
     private void OnDisable()
@@ -70,6 +74,9 @@ public class AudioManager : MonoBehaviour
         EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(PlayCueOnWhiteSound);
         EventBus.Unsubscribe<EventCollisionSignal>(PlayBallCollisionSound);
         EventBus.Unsubscribe<EventBounceOnBandSignal>(PlayBounceOnBandSound);
+        EventBus.Unsubscribe<EventPocketingSignal>(PlayPocketingSound);
+        EventBus.Unsubscribe<EventMenuClickSignal>(PlayMenuClickSound);
+        EventBus.Unsubscribe<EventDialogClickSignal>(PlayDialogClickSound);
     }
 
     private void OnDestroy()
@@ -77,28 +84,41 @@ public class AudioManager : MonoBehaviour
         EventBus.Unsubscribe<EventApplyForceToWhiteRequest>(PlayCueOnWhiteSound);
         EventBus.Unsubscribe<EventCollisionSignal>(PlayBallCollisionSound);
         EventBus.Unsubscribe<EventBounceOnBandSignal>(PlayBounceOnBandSound);
+        EventBus.Unsubscribe<EventPocketingSignal>(PlayPocketingSound);
+        EventBus.Unsubscribe<EventMenuClickSignal>(PlayMenuClickSound);
+        EventBus.Unsubscribe<EventDialogClickSignal>(PlayDialogClickSound);
     }
 
     private void Start()
     {
-        _audioSource = GetComponent<AudioSource>();
+        _audioSources = GetComponents<AudioSource>();
+    }
+
+    private AudioSource NextAudioSource()
+    {
+        _nextSourceId++;
+        if (_nextSourceId >= _audioSources.Length)
+        {
+            _nextSourceId = 1;
+        }
+        return _audioSources[_nextSourceId];
     }
 
     public static void PlaySound(SoundType sound, float volume = 1)
     {
-        Instance._audioSource.PlayOneShot(Instance._soundList[(int)sound], volume);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)sound], volume);
     }
 
     private void PlayCueOnWhiteSound(EventApplyForceToWhiteRequest eventRequest)
     {
-        Instance._audioSource.PlayOneShot(Instance._soundList[(int)SoundType.Cue], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.Cue], 1.0f);
     }
 
     private void PlayBallCollisionSound(EventCollisionSignal eventRequest)
     {
-        if (eventRequest._slowestBallTheme != "")
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.CollisionBall], 1.0f);
+        if (eventRequest._slowestBall != 0 && eventRequest._fastestBall != 0)
         {
-            Instance._audioSource.PlayOneShot(Instance._soundList[(int)SoundType.CollisionBall], 1.0f);
             switch (eventRequest._fastestBallTheme)
             {
                 case "Love":
@@ -157,11 +177,26 @@ public class AudioManager : MonoBehaviour
     private IEnumerator TimedCollisionSound(SoundType sound, float delay)
     {
         yield return new WaitForSeconds(delay);
-        Instance._audioSource.PlayOneShot(Instance._soundList[(int)sound], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)sound], 1.0f);
     }
 
     private void PlayBounceOnBandSound(EventBounceOnBandSignal eventSignal)
     {
-        Instance._audioSource.PlayOneShot(Instance._soundList[(int)SoundType.CollisionEdge], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.CollisionEdge], 1.0f);
+    }
+
+    private void PlayPocketingSound(EventPocketingSignal eventSignal)
+    {
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.Pocketting], 1.0f);
+    }
+
+    private void PlayMenuClickSound(EventMenuClickSignal eventSignal)
+    {
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.ClickMenu], 1.0f);
+    }
+
+    private void PlayDialogClickSound(EventDialogClickSignal eventSignal)
+    {
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.ClickDialog], 1.0f);
     }
 }
