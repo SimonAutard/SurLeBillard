@@ -113,7 +113,8 @@ private static UIManager _instance; // instance statique du ui manager
         //float force = UISingleton.Instance.force;
         Tuple<Vector3, float> placeholderBreak = AIManager.Instance.NextShotInfo();
         Vector3 BallCuePos = placeholderBreak.Item1;
-        float force = placeholderBreak.Item2;
+        //float force = placeholderBreak.Item2;
+        float force = 0.0f;
         // TODO: Handle the cue animation for the break and any dialogue or other UI event needed during that phase
         Debug.Log("UIManager: Requesting force application.");
         EventBus.Publish(new EventApplyForceToWhiteRequest(BallCuePos, force));
