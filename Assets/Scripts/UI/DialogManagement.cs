@@ -25,7 +25,7 @@ public class DialogManagement : MonoBehaviour
 
     Dictionary<string, string> textDialog = new Dictionary<string, string>()
         {
-            {"begining", "A toi de jouer !"},
+            {"begining", "Your turn!"},
             {"failure", "Mauvais coup"},
             {"victory", "Bien joué, tu as gagné"},
             {"defeat", "Dommage pour toi, son destin est scellé"}

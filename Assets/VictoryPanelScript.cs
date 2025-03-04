@@ -31,11 +31,11 @@ public class VictoryPanelScript : MonoBehaviour
         if (GameStateManager.Instance._winner == ActivePlayerName.Clotho)
         {
 
-            VictoryPan.transform.GetChild(0).GetComponent<TMP_Text>().text = "Victoire !!!!";
+            VictoryPan.transform.GetChild(0).GetComponent<TMP_Text>().text = "Victory!";
         }
         else
         {
-            VictoryPan.transform.GetChild(0).GetComponent<TMP_Text>().text = "Défaite";
+            VictoryPan.transform.GetChild(0).GetComponent<TMP_Text>().text = "Defeat...";
         }
         VictoryPan.SetActive(true);
     }
