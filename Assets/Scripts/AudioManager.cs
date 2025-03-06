@@ -36,7 +36,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip[] _soundList;
     private float _fastBallSoundTiming = 0.15f;
     private float _slowBallSoundTiming = 0.3f;
-    private int _nextSourceId = 0;
+    private int _nextSourceId = 1;
 
     public static AudioManager Instance
     {
@@ -67,6 +67,7 @@ public class AudioManager : MonoBehaviour
         EventBus.Subscribe<EventPocketingSignal>(PlayPocketingSound);
         EventBus.Subscribe<EventMenuClickSignal>(PlayMenuClickSound);
         EventBus.Subscribe<EventDialogClickSignal>(PlayDialogClickSound);
+        EventBus.Subscribe<EventNewGameRequest>(StartBackgroundMusic);
     }
 
     private void OnDisable()
@@ -77,6 +78,7 @@ public class AudioManager : MonoBehaviour
         EventBus.Unsubscribe<EventPocketingSignal>(PlayPocketingSound);
         EventBus.Unsubscribe<EventMenuClickSignal>(PlayMenuClickSound);
         EventBus.Unsubscribe<EventDialogClickSignal>(PlayDialogClickSound);
+        EventBus.Unsubscribe<EventNewGameRequest>(StartBackgroundMusic);
     }
 
     private void OnDestroy()
@@ -87,6 +89,7 @@ public class AudioManager : MonoBehaviour
         EventBus.Unsubscribe<EventPocketingSignal>(PlayPocketingSound);
         EventBus.Unsubscribe<EventMenuClickSignal>(PlayMenuClickSound);
         EventBus.Unsubscribe<EventDialogClickSignal>(PlayDialogClickSound);
+        EventBus.Unsubscribe<EventNewGameRequest>(StartBackgroundMusic);
     }
 
     private void Start()
@@ -111,36 +114,36 @@ public class AudioManager : MonoBehaviour
 
     private void PlayCueOnWhiteSound(EventApplyForceToWhiteRequest eventRequest)
     {
-        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.Cue], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.Cue], 0.4f);
     }
 
     private void PlayBallCollisionSound(EventCollisionSignal eventRequest)
     {
-        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.CollisionBall], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.CollisionBall], 0.4f);
         if (eventRequest._slowestBall != 0 && eventRequest._fastestBall != 0)
         {
             switch (eventRequest._fastestBallTheme)
             {
                 case "Love":
-                    StartCoroutine(TimedCollisionSound(SoundType.LoveShort, _fastBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.LoveShort, _fastBallSoundTiming, 0.4f));
                     break;
                 case "Finances":
-                    StartCoroutine(TimedCollisionSound(SoundType.FinancesShort, _fastBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.FinancesShort, _fastBallSoundTiming, 1.0f));
                     break;
                 case "Nature":
-                    StartCoroutine(TimedCollisionSound(SoundType.NatureShort, _fastBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.NatureShort, _fastBallSoundTiming, 0.4f));
                     break;
                 case "Health":
-                    StartCoroutine(TimedCollisionSound(SoundType.HealthShort, _fastBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.HealthShort, _fastBallSoundTiming, 0.4f));
                     break;
                 case "Spirituality":
-                    StartCoroutine(TimedCollisionSound(SoundType.SpiritualityShort, _fastBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.SpiritualityShort, _fastBallSoundTiming, 0.4f));
                     break;
                 case "Friendship":
-                    StartCoroutine(TimedCollisionSound(SoundType.FriendshipShort, _fastBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.FriendshipShort, _fastBallSoundTiming, 0.4f));
                     break;
                 case "Career":
-                    StartCoroutine(TimedCollisionSound(SoundType.CareerShort, _fastBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.CareerShort, _fastBallSoundTiming, 1.0f));
                     break;
                 default:
                     break;
@@ -148,25 +151,25 @@ public class AudioManager : MonoBehaviour
             switch (eventRequest._slowestBallTheme)
             {
                 case "Love":
-                    StartCoroutine(TimedCollisionSound(SoundType.LoveShort, _slowBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.LoveShort, _slowBallSoundTiming, 0.4f));
                     break;
                 case "Finances":
-                    StartCoroutine(TimedCollisionSound(SoundType.FinancesShort, _slowBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.FinancesShort, _slowBallSoundTiming, 1.0f));
                     break;
                 case "Nature":
-                    StartCoroutine(TimedCollisionSound(SoundType.NatureShort, _slowBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.NatureShort, _slowBallSoundTiming, 0.4f));
                     break;
                 case "Health":
-                    StartCoroutine(TimedCollisionSound(SoundType.HealthShort, _slowBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.HealthShort, _slowBallSoundTiming, 0.4f));
                     break;
                 case "Spirituality":
-                    StartCoroutine(TimedCollisionSound(SoundType.SpiritualityShort, _slowBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.SpiritualityShort, _slowBallSoundTiming, 0.4f));
                     break;
                 case "Friendship":
-                    StartCoroutine(TimedCollisionSound(SoundType.FriendshipShort, _slowBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.FriendshipShort, _slowBallSoundTiming, 0.4f));
                     break;
                 case "Career":
-                    StartCoroutine(TimedCollisionSound(SoundType.CareerShort, _slowBallSoundTiming));
+                    StartCoroutine(TimedCollisionSound(SoundType.CareerShort, _slowBallSoundTiming, 1.0f));
                     break;
                 default:
                     break;
@@ -174,10 +177,10 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private IEnumerator TimedCollisionSound(SoundType sound, float delay)
+    private IEnumerator TimedCollisionSound(SoundType sound, float delay, float volume)
     {
         yield return new WaitForSeconds(delay);
-        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)sound], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)sound], volume);
     }
 
     private void PlayBounceOnBandSound(EventBounceOnBandSignal eventSignal)
@@ -187,16 +190,23 @@ public class AudioManager : MonoBehaviour
 
     private void PlayPocketingSound(EventPocketingSignal eventSignal)
     {
-        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.Pocketting], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.Pocketting], 0.5f);
     }
 
     private void PlayMenuClickSound(EventMenuClickSignal eventSignal)
     {
-        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.ClickMenu], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.ClickMenu], 0.4f);
     }
 
     private void PlayDialogClickSound(EventDialogClickSignal eventSignal)
     {
-        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.ClickDialog], 1.0f);
+        Instance.NextAudioSource().PlayOneShot(Instance._soundList[(int)SoundType.ClickDialog], 0.18f);
+    }
+
+    private void StartBackgroundMusic(EventNewGameRequest eventRequest)
+    {
+        Instance._audioSources[0].clip = Instance._soundList[(int)SoundType.Music];
+        Instance._audioSources[0].volume = 0.5f;
+        Instance._audioSources[0].Play();
     }
 }
