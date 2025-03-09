@@ -18,6 +18,7 @@ public class GameStateManager : MonoBehaviour
     private List<Tuple<int, int, bool>> _gameCollisions = new List<Tuple<int, int, bool>>();
     private List<Tuple<int, int>> _lastPocketings = new List<Tuple<int, int>>();
     private List<Tuple<int, int>> _gamePocketings = new List<Tuple<int, int>>();
+    public bool _canReplay { get; private set; } = false;
 
     //Paramètres des billes
     public int whiteBallID { get; private set; }
@@ -108,6 +109,7 @@ public class GameStateManager : MonoBehaviour
     private void HandleRulesApplicationRequest(EventApplyRulesRequest requestEvent)
     {
         Debug.Log($"GameStateManager: Applying rules and updating game state");
+        _canReplay = false;
         _lastCollisions.Clear();
         _lastPocketings.Clear();
         _currentTurnPenalties.Clear();
@@ -134,7 +136,7 @@ public class GameStateManager : MonoBehaviour
             // checking for black pocketing and if there is, if it's a legit one or a foul
             else if (pocketing.Item1 == blackBallID)
             {
-                bool penalty = false;
+                bool blackPenalty = false;
                 if (_activePlayer == _player1)
                 {
                     foreach (int ball in _ballsInPlay)
@@ -142,7 +144,7 @@ public class GameStateManager : MonoBehaviour
                         // checking if there are still balls that need to be pocketed
                         if (ball > 0 && ball < blackBallID)
                         {
-                            penalty = true;
+                            blackPenalty = true;
                             break;
                         }
                     }
@@ -154,12 +156,12 @@ public class GameStateManager : MonoBehaviour
                         // checking if there are still balls that need to be pocketed
                         if (ball > blackBallID)
                         {
-                            penalty = true;
+                            blackPenalty = true;
                             break;
                         }
                     }
                 }
-                if (penalty)
+                if (blackPenalty)
                 {
                     _currentTurnPenalties.Add(PenaltyType.BlackPocketing);
                     EventBus.Publish(new EventReplaceBlackRequest());
@@ -190,6 +192,10 @@ public class GameStateManager : MonoBehaviour
         // don't bother applying penalty if the game has ended
         if (!_gameEnded)
         {
+            if (_lastPocketings.Count > 0 && _currentTurnPenalties.Count == 0)
+            {
+                _canReplay = true;
+            }
             // Only applying the highest penalty. No stacking.
             PenaltyType highestPenalty = PenaltyType.NoPenalty;
             foreach (PenaltyType penalty in _currentTurnPenalties)
@@ -259,12 +265,26 @@ public class GameStateManager : MonoBehaviour
             // Placeholder basic turn swapping for now
             if (_activePlayer == ActivePlayerName.Atropos)
             {
-                _activePlayer = ActivePlayerName.Clotho;
+                if (GameStateManager.Instance._canReplay)
+                {
+                    EventBus.Publish(new EventAIShotRequest());
+                }
+                else
+                {
+                    _activePlayer = ActivePlayerName.Clotho;
+                }
             }
             else
             {
-                _activePlayer = ActivePlayerName.Atropos;
-                EventBus.Publish(new EventAIShotRequest());
+                if (GameStateManager.Instance._canReplay)
+                {
+
+                }
+                else
+                {
+                    _activePlayer = ActivePlayerName.Atropos;
+                    EventBus.Publish(new EventAIShotRequest());
+                }  
             }
         }
         Debug.Log("GameStateManager: calling NextStep");
