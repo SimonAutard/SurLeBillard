@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ public class PhysicsManager : MonoBehaviour
     public float minSpeedForBalls { get; private set; }
 
     //Paramétrage de la physique
-    public float generalTimeStep {  get; private set; }
+    public float generalTimeStep { get; private set; }
     [SerializeField] private float timeStepRatio;
 
     //Gestion du gameplay 
@@ -35,6 +36,7 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] Vector3 rightmostWhiteLinePoint;
     [SerializeField] Vector3 tableCenter;
     GameObject[] allBands;
+    GameObject[] allPockets;
     public static PhysicsManager Instance
     {
         get
@@ -61,7 +63,8 @@ public class PhysicsManager : MonoBehaviour
     {
         minSpeedForBalls = 0.1f;
         allBands = GameObject.FindGameObjectsWithTag("Bandes");
-        generalTimeStep = Time.fixedDeltaTime * timeStepRatio ;
+        allPockets = GameObject.FindGameObjectsWithTag("Poche");
+        generalTimeStep = Time.fixedDeltaTime * timeStepRatio;
     }
 
     private void Update()
@@ -185,8 +188,8 @@ public class PhysicsManager : MonoBehaviour
             //On prend un point aléatoire sur la ligne de replacement de la bille blanche
             newPosition = leftmostWhiteLinePoint + UnityEngine.Random.Range(0f, 1f) * (rightmostWhiteLinePoint - leftmostWhiteLinePoint);
             //On capsulecast vers le sol depuis cette position pour vérifier qu'on ne touche pas une autre bille ou bande
-            Collider[] collided  = Physics.OverlapSphere(newPosition, whiteBallPrefab.GetComponent<SphereCollider>().radius);
-            whiteBallReplaced = collided.Length==0?true:false;
+            Collider[] collided = Physics.OverlapSphere(newPosition, whiteBallPrefab.GetComponent<SphereCollider>().radius);
+            whiteBallReplaced = collided.Length == 0 ? true : false;
 
             //Si on a touché, on reprend la boucle
 
@@ -343,7 +346,7 @@ public class PhysicsManager : MonoBehaviour
             //Il faut calculer la distance de la bille a ce coin pour savoir si il  ya collision
             else
             {
-                
+
                 //Recuperation des coordonnes des 4 coins de la bande
                 Vector3[] bandCorners = GetBandCorners(band, xCap, zCap);
                 //Calcul de la distance pour chaque coin
@@ -379,5 +382,66 @@ public class PhysicsManager : MonoBehaviour
         result[2] = new Vector3(xCap, 0, -zCap) + B;
         result[3] = new Vector3(-xCap, 0, -zCap) + B;
         return result;
+    }
+
+    public List<int> GetAllConnectedBallsID(int ballID)
+    {
+        List<BallRoll> possibleBalls = new List<BallRoll>(RemainingBalls);
+        BallRoll mainBall = possibleBalls.Find(ball => ball._ballId == ballID);
+        possibleBalls.Remove(mainBall);
+
+        List<int> result = new List<int>();
+
+        foreach(BallRoll targetBall in possibleBalls)
+        {
+            result.Add(targetBall._ballId);
+            Vector3 direction = targetBall.transform.position - mainBall.transform.position;
+            RaycastHit[] hit = Physics.SphereCastAll(mainBall.transform.position, mainBall.ballRadius, direction.normalized, direction.magnitude);
+            foreach(RaycastHit ray in hit)
+            {
+                BallRoll hitBallRoll = ray.collider.GetComponent<BallRoll>() ;
+                //NB : BUG POSSIBLE = si il y a un collider qui n'est pas celui d'un ballroll sur le chemin, il sera ignoré par la détection
+                if (hitBallRoll!= null && hitBallRoll._ballId != mainBall._ballId && hitBallRoll._ballId != targetBall._ballId)
+                {
+                    result.Remove(targetBall._ballId);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<int> GetAllConnectedPocketsID(int ballID)
+    {
+        List<int> result = new List<int>();
+
+        BallRoll mainBall = RemainingBalls.Find(ball => ball._ballId == ballID);
+        foreach (GameObject targetPocket in allPockets)
+        {
+            int i = Array.IndexOf(allPockets, targetPocket);
+            result.Add(i);
+            Vector3 direction = targetPocket.transform.position - mainBall.transform.position;
+            RaycastHit[] hit = Physics.SphereCastAll(mainBall.transform.position, mainBall.ballRadius, direction.normalized, direction.magnitude);
+            foreach (RaycastHit ray in hit)
+            {
+                BallRoll hitBallRoll = ray.collider.GetComponent<BallRoll>();
+                //NB : BUG POSSIBLE = si il y a un collider qui n'est pas celui d'un ballroll sur le chemin, il sera ignoré par la détection
+                if (hitBallRoll != null && hitBallRoll._ballId != mainBall._ballId)
+                {
+                    result.Remove(i);
+                    break;
+                }
+            }
+        }
+        return result;  
+    }
+
+    public List<BallRoll> GetRemainingBalls()
+    {
+        return RemainingBalls;
+    }
+    public GameObject[] GetPockets()
+    {
+        return allPockets;
     }
 }

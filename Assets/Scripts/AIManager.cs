@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AIManager : MonoBehaviour
@@ -76,5 +78,59 @@ public class AIManager : MonoBehaviour
     {
         _shotCalculated = false;
         return new Tuple<Vector3, float>(_nextShotVector, _nextShotForce);
+    }
+
+    private List<BallAsNode> CreateNodeData()
+    {
+        
+        GameObject[] pocketsGO = PhysicsManager.Instance.GetPockets();
+        List<PocketAsNode> allPocketsAsNodes = new List<PocketAsNode>();
+        for (int p = 0; p < pocketsGO.Length; p++) allPocketsAsNodes.Add(new PocketAsNode(p));
+
+        List<BallRoll> remainingBalls = PhysicsManager.Instance.GetRemainingBalls();
+
+        List<BallAsNode> result = new List<BallAsNode>();
+        foreach (BallRoll ball in remainingBalls)
+        {
+            BallAsNode newBallAsNode;
+
+            newBallAsNode.ballID = ball._ballId;
+
+            if (newBallAsNode.ballID > GameStateManager.Instance.blackBallID) newBallAsNode.isCorrectSide = true;
+            else newBallAsNode.isCorrectSide = false;
+
+            newBallAsNode.connectedBalls = new List<BallAsNode>();
+
+            newBallAsNode.connectedPockets = FindConnectedPockets(newBallAsNode.ballID, allPocketsAsNodes);
+
+            result.Add(newBallAsNode);
+        }
+        result = FindConnectedBalls(result);
+        return result;
+    }
+
+    private List<BallAsNode> FindConnectedBalls(List<BallAsNode> allBallsAsNodes)
+    {
+        int ballCount = allBallsAsNodes.Count;
+        for (int i = 0; i < ballCount; i++)
+        {
+            BallAsNode currentNode = allBallsAsNodes[i];
+            List<int> connectedBallsID = PhysicsManager.Instance.GetAllConnectedBallsID(currentNode.ballID);
+            foreach(int  ballID in connectedBallsID)
+            {
+                currentNode.connectedBalls.Add(allBallsAsNodes.Find(node => node.ballID == ballID));
+            }
+            allBallsAsNodes[i] = currentNode;
+        }
+        return allBallsAsNodes;
+    }
+
+    private List<PocketAsNode> FindConnectedPockets(int ballID, List<PocketAsNode> allPockets)
+    {
+        //TODO : Retirer tous els trous si ballID = 0 ou ballID = enemyBALL
+        List<int> pocketsID = PhysicsManager.Instance.GetAllConnectedPocketsID(ballID);
+        List<PocketAsNode> result = new List<PocketAsNode>();
+        foreach (int i in pocketsID) result.Add(allPockets.Find(node => node.PocketID == i));
+        return result;
     }
 }
