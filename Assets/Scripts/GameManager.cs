@@ -10,13 +10,13 @@ public class GameManager : MonoBehaviour
     private List<GameLoopStep> _gameLoopSteps = new List<GameLoopStep>();
     private List<GameLoopStep> _gameEndSteps = new List<GameLoopStep>();
     private int _stepGenId = 0;
-    [SerializeField] private bool _waitForNextStep = false;
+    private bool _waitForNextStep = false;
     private int _currentLoopStep = 0;
     private bool _gameToStart = false;
     public bool _initialisationPhase { get; private set; }
     public bool _mainPhase { get; private set; }
     public bool _endPhase { get; private set; }
-
+    [SerializeField] private bool _atroposAI = true;
 
     public static GameManager Instance
     {
@@ -197,6 +197,16 @@ public class GameManager : MonoBehaviour
             _currentLoopStep = nextStep;
         }
         return valid;
+    }
+
+    /// <summary>
+    /// Checks the intended status of Atropos AI
+    /// </summary>
+    /// <returns>true means that the AI has to be active and autoplaying with no player input,
+    /// false means that a player input has to be given for the shot to happen (as if it was Clotho's turn)</returns>
+    public bool AIStatus()
+    {
+        return _atroposAI;
     }
 
 

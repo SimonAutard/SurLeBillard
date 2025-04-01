@@ -7,6 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 using UnityEngine.Rendering;
 using static UISingleton;
 using UnityEngine.UI;
+using UnityEditor.ShaderGraph.Internal;
 //using UnityEngine.UIElements;
 
 public class CueScript : MonoBehaviour
@@ -36,6 +37,7 @@ public class CueScript : MonoBehaviour
     public bool isValidate {  get; set; }
     Vector3 queuePosition;
     bool isCollision;
+    private Coroutine _aiShotDelay = null;
 
     private void Awake()
     {
@@ -72,15 +74,21 @@ public class CueScript : MonoBehaviour
         //oriente la queue tant que l'utilisateur n'a pas clique
         if(isValidate == false /*&&  UISingleton.Instance.isReady == true*/)
         {
-            //gestion rotation en fonction de la souris
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-
-            if (groundPlane.Raycast(ray, out float distance))
+            if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus()) // if AI autoplay is active
             {
-                clickPosition = ray.GetPoint(distance);
-                clickPosition.y = 0f;
+                clickPosition = -AIManager.Instance.NextShotInfo().Item1;
             }
+            else //gestion rotation en fonction de la souris
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+
+                if (groundPlane.Raycast(ray, out float distance))
+                {
+                    clickPosition = ray.GetPoint(distance);
+                    clickPosition.y = 0f;
+                }
+            }  
 
             queuePosition = (clickPosition - orb.position).normalized * radius;
             transform.position = new Vector3 (queuePosition.x + orb.position.x, 0.5f, queuePosition.z + orb.position.z);
@@ -90,19 +98,30 @@ public class CueScript : MonoBehaviour
             transform.rotation = rotation;
             transform.rotation = Quaternion.Euler(0, -90, 0) * transform.rotation;
 
-            //gestion puissance
-            if (radius >= minForce && radius <= maxForce)
+            if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus())
             {
-                 radius += Input.GetAxis("Mouse ScrollWheel");
-                 slider.gameObject.transform.GetComponent<Slider>().value = radius;
-                
-                if (radius < minForce)
+                radius = AIManager.Instance.NextShotInfo().Item2 * (maxForce - minForce) + minForce;
+                if (_aiShotDelay == null)
                 {
-                    radius = minForce;
+                    _aiShotDelay = StartCoroutine(ShotDelay(0.75f));
                 }
-                if (radius > maxForce)
+            }
+            else
+            {
+                //gestion puissance
+                if (radius >= minForce && radius <= maxForce)
                 {
-                    radius = maxForce;
+                    radius += Input.GetAxis("Mouse ScrollWheel");
+                    slider.gameObject.transform.GetComponent<Slider>().value = radius;
+
+                    if (radius < minForce)
+                    {
+                        radius = minForce;
+                    }
+                    if (radius > maxForce)
+                    {
+                        radius = maxForce;
+                    }
                 }
             }
 
@@ -129,10 +148,17 @@ public class CueScript : MonoBehaviour
             }
             else
             {
-                CalculateForce(radius);
-                Debug.Log("UIManager: Requesting force application.");
-                EventBus.Publish(new EventApplyForceToWhiteRequest(orbVector, UISingleton.Instance.force));
-
+                if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus())
+                {
+                    EventBus.Publish(new EventApplyForceToWhiteRequest(AIManager.Instance.NextShotInfo().Item1, AIManager.Instance.NextShotInfo().Item2));
+                    _aiShotDelay = null;
+                }
+                else
+                {
+                    CalculateForce(radius);
+                    Debug.Log("UIManager: Requesting force application.");
+                    EventBus.Publish(new EventApplyForceToWhiteRequest(orbVector, UISingleton.Instance.force));
+                }
                 gameObject.SetActive(false);
             }
         }
@@ -166,6 +192,12 @@ public class CueScript : MonoBehaviour
         return orbVector;
     }
 
+    private IEnumerator ShotDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        UISingleton.Instance.isReady = false;
+        isValidate = true;
+    }
    
 
 }
