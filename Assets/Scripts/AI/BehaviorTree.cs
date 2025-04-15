@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public struct BallAsNode
 {
@@ -15,29 +16,50 @@ public struct PocketAsNode
     public PocketAsNode(int pocketID) { PocketID = pocketID; }
 }
 
-class NTree
+public struct HitParameters
 {
-    private BallAsNode NodeData;
-    private List<NTree> Children;
-    private List<NTree> Ancestry;
+    public float Force;
+    public Vector3 Direction;
+    public HitParameters(float force, Vector3 direction) { Force = force; Direction = direction; }
+}
+
+public class NTree
+{
+    public BallAsNode NodeData { get; set; }
+    public List<NTree> Children { get; set; }
+    public List<NTree> Ancestry { get; set; }
+    public int RemainingLevels { get; set; }
 
     public NTree(NTree parent, BallAsNode nodeData, int remainingLevels)
     {
+        RemainingLevels = remainingLevels;
         NodeData = nodeData;
         Ancestry = RewindAncestry(parent);
         Children = new List<NTree>();
         if (remainingLevels > 0) { DesignateChildren(remainingLevels); }
     }
 
-    public NTree GetParent()
+    public List<NTree> GetAncestry()
     {
-        return Ancestry.Last();
+        return Ancestry;
     }
 
-    public List<NTree> GetAllPockets()
+    public List<NTree> GetAllFinalNodes()
     {
-        //TODO : ECRIRE FONCTION
-        return null;
+        List<NTree> result = new List<NTree>();
+        if (Children == null)
+        {
+            result.Add(this);
+        }
+        else
+        {
+            foreach (NTree child in Children)
+            {
+                List<NTree> pseudoResult = child.GetAllFinalNodes();
+                result.Concat(pseudoResult);
+            }
+        }
+        return result;
     }
     private List<NTree> RewindAncestry(NTree parent)
     {
@@ -64,4 +86,5 @@ class NTree
             Children.Add(new NTree(this, child, remainingLevels - 1));
         }
     }
+
 }

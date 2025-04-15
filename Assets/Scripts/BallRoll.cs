@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -10,12 +9,15 @@ public class BallRoll : MonoBehaviour
     PhysicsScene physicsScene;
 
     //Variables physiques
-    [SerializeField] protected float mass = 1.0f;
+    public float mass { get; protected set; }
     public float ballRadius { get; protected set; }
     private List<Collider> currentSuperimposedColliders = new List<Collider>(); // Liste de tous les collider superposes a la bille pendant cette frame
     private Collider colliderInProcessing; // collider en trai detre processe par la physique de rebond
+    public float dragMultiplicator { get; protected set; }
+    public float dragAdditor { get; protected set; }
+    public float bandSpeedReductionFactor { get; protected set; }
 
-    //Vriables narratives
+    //Variables narratives
     public string ballTheme; //th�me de la bille
     public int _ballId;
 
@@ -26,10 +28,8 @@ public class BallRoll : MonoBehaviour
     // Variables de d�placement
     public float speed;//{ get; protected set; } // vitesse de la bille � chaque instant
     public Vector3 direction { get; protected set; } // direction de la bille � chaque instant. Normalis�.
-    [SerializeField] private float dragMultiplicator = 0.5f; // Coef des frottements du tapis sur la bille
-    [SerializeField] private float dragAddition = 0.5f; // Coef des frottements du tapis sur la bille
-    [SerializeField] private float bandSpeedReductionFactor = 0.8f; //coef d'att�nuation de la vitesse par les bandes
-    private float minSpeedToMove = 0.1f;
+
+    private float minSpeedToMove;
 
     //Evenements
     public static event Action<string, string> TwoBallsCollision; // evenement de la collision de deux billes
@@ -51,8 +51,13 @@ public class BallRoll : MonoBehaviour
     {
         // Vitese seuil sous laquelle la bille est consideree arretee
         minSpeedToMove = PhysicsManager.Instance.minSpeedForBalls;
+        dragMultiplicator = PhysicsManager.Instance.dragMultiplicator;
+        dragAdditor = PhysicsManager.Instance.dragAdditor;
+        bandSpeedReductionFactor = PhysicsManager.Instance.bandSpeedReductionFactor;
         ballRadius = GetComponent<SphereCollider>().radius;
+        mass = 1;
         speed = 0;
+
         physicsScene = TrajectorySimulationManager.Instance._realPhysicsScene;
     }
 
@@ -82,7 +87,7 @@ public class BallRoll : MonoBehaviour
         if (speed > minSpeedToMove)
         {
             transform.position += direction * speed * timestep;
-            speed -= (speed * dragMultiplicator + dragAddition) * timestep; // les frottements sont incarn�s par une r�duction lin�aire de la vitesse
+            speed -= (speed * dragMultiplicator + dragAdditor) * timestep; // les frottements sont incarn�s par une r�duction lin�aire de la vitesse
             if (isRealBall)
             {
                 RotateBall(timestep);
@@ -156,6 +161,8 @@ public class BallRoll : MonoBehaviour
 
     }
 
+    // ---ATTENTION ---
+    // Cette fonction est la référence de fonctions inverses dans PhysicsManager.cs. Si BounceOnBall est modifié, veillez a modifier en conséquence les fonctions inverses !!!!
     /// <summary>
     /// Fait rebondir la bille sur une autre bille, pass�e en argument
     /// </summary>

@@ -29,6 +29,8 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] GameObject whiteBallPrefab;
     [SerializeField] GameObject blackBallPrefab;
     private int antiInfinityLoopUpperBound = 20;
+    [SerializeField] public float dragMultiplicator { get; private set; } // Coef des frottements du tapis sur la bille
+    [SerializeField] public float dragAdditor    { get; private set; } // Coef des frottements du tapis sur la bille
 
     //Gestion du terrain
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
@@ -37,6 +39,7 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] Vector3 tableCenter;
     GameObject[] allBands;
     GameObject[] allPockets;
+    [SerializeField] public float bandSpeedReductionFactor { get; private set; } //coef d'attnuation de la vitesse par les bandes
     public static PhysicsManager Instance
     {
         get
@@ -444,4 +447,134 @@ public class PhysicsManager : MonoBehaviour
     {
         return allPockets;
     }
+
+    /// <summary>
+    /// Calcule les parametres de frappe de la bille blanche pour un empochement dans la poche donnee et la bille finale donnee
+    /// </summary>
+    /// <param name="pocketID"></param>
+    /// <param name="finalNode"></param>
+    /// <param name="hitParameters"></param>
+    /// <returns></returns>
+    public bool CalculateHitParametersForPath(int pocketID, NTree finalNode, out HitParameters hitParameters)
+    {
+        bool trajectoryIsViable = true;
+        hitParameters = new HitParameters(0,Vector3.zero);
+
+        List<NTree> ballPath = finalNode.Ancestry;
+        ballPath.Reverse(); //Renversement car le premier element est toujours la bille blanche
+
+        // initialisation de l'algo avec la poche en tant que targetBall
+        BallRoll pivotBallRoll = RemainingBalls.Find(ball => ball._ballId == finalNode.NodeData.ballID) ;
+
+        Vector3 separatingVector = allPockets[pocketID].transform.position - pivotBallRoll.transform.position;
+
+        Vector3 initialPivotSpeed = CalculateInitialSpeedToCrossDistance(pivotBallRoll, separatingVector, Vector3.zero);
+
+        BallRoll targetBallRoll = pivotBallRoll;
+        Vector3 targetSpeed = initialPivotSpeed; 
+
+
+        foreach (NTree pivotNTree in ballPath)
+        {
+            //MaJ du pivot
+            pivotBallRoll = RemainingBalls.Find(ball => ball._ballId == pivotNTree.NodeData.ballID);
+            
+            separatingVector = CalculateInAndOutSpeedVector2FromInAndOutSpeedVector1(targetBallRoll, Vector3.zero, targetSpeed, pivotBallRoll, out Vector3 inPivotSpeed, out Vector3 outPivotSpeed);
+
+            initialPivotSpeed = CalculateInitialSpeedToCrossDistance(pivotBallRoll, separatingVector, inPivotSpeed);
+            
+            //Critère d'arret
+            trajectoryIsViable = CheckForTrajectoryViability(separatingVector, pivotBallRoll);
+            if (!trajectoryIsViable) { break; }
+
+            //Changement de cible
+            targetBallRoll = pivotBallRoll;
+            targetSpeed = initialPivotSpeed;
+            
+        }
+        hitParameters = CalculateHitParametersForFirstCollision(targetSpeed);
+        if(hitParameters.Force > cueMaximalForce) { trajectoryIsViable = false; }
+        
+        return trajectoryIsViable;
+    }
+
+
+
+    private Vector3 CalculateInAndOutSpeedVector2FromInAndOutSpeedVector1(BallRoll ball1, Vector3 inSpeed1, Vector3 outSpeed1, BallRoll ball2, out Vector3 inSpeed2, out Vector3 outSpeed2) {
+
+        // Dapres BounceOnBall, outSpeed1 = m2/m1*normal_inSpeed2 + tangent_InSpeed1 et outSpeed2 = m1/m2*normal_inSpeed1 + tangent_InSpeed2
+        // Simplification en passant dans le repere de la bille 1
+        Vector3 relativeOutSpeed1 = outSpeed1 - inSpeed1;
+        // En reprenant la formule precedente, on na plus que relativeOutSpeed1 = m2/m1*relativeNormal_inSpeed2  et relativOutSpeed2 = relativeTangent_InSpeed2
+        // De ca on peut deduire deux infos
+        // A) le vecteur normal entre les billes est forcement la direction de sortie de bille 1
+        // B) la composante relative normale de inSpeed2
+
+        //Calcul des vecteurs normal et tangent
+        Vector3 normalVector = relativeOutSpeed1.normalized;
+        Vector3 tangentVector = Vector3.Cross(normalVector, Vector3.up);
+
+
+        // Calcul du point de collision de bille2 sur bille1
+        Vector3 ball2CollisionPosition = ball1.transform.position + normalVector * (ball1.ballRadius+ball2.ballRadius); 
+        Vector3 separatingVector = (ball2CollisionPosition - ball2.transform.position).normalized;
+        Vector3 inDirection2 = separatingVector.normalized;
+
+        // Calcul de la composante relative normale de inSpeed2
+        float relativeInSpeed2n = ball1.mass / ball2.mass * relativeOutSpeed1.magnitude;
+
+        // Calcul de la composante tangentielle a partir de la composante normale
+        float inSpeed2ratio = Vector3.Dot(inDirection2, tangentVector) / Vector3.Dot(inDirection2, normalVector);
+        float relativeInSpeed2t = inSpeed2ratio * relativeInSpeed2n;
+
+        // Calcul des vecteurs 2 incident et sortant relatifs
+        Vector3 relativeInSpeed2 = relativeInSpeed2t * tangentVector + relativeInSpeed2n * normalVector;
+        Vector3 relativeOutSpeed2 = relativeInSpeed2t * tangentVector;
+
+        // Passage au repere standard
+        inSpeed2 = relativeInSpeed2 + inSpeed1;
+        outSpeed2 = relativeInSpeed2 + inSpeed1;
+
+        return separatingVector;
+    }
+    
+    /// <summary>
+    /// Calcule la vitesse initiale d'une bille pour qu'elle ait encore une vitesse donnee apres avoir parcourue une distance donnee
+    /// </summary>
+    /// <param name="separatingVector"></param>
+    /// <param name="targetSpeed"></param>
+    /// <returns></returns>
+    private Vector3 CalculateInitialSpeedToCrossDistance(BallRoll ballRoll, Vector3 separatingVector, Vector3 targetSpeed)
+    {
+        float currentSpeed = targetSpeed.magnitude;
+        float distanceToCross = separatingVector.magnitude;
+        float dragAddition = ballRoll.dragAdditor;
+        float dragMultiplicator = ballRoll.dragMultiplicator;
+
+        while(distanceToCross>0)
+        {
+            distanceToCross -= currentSpeed * Time.fixedDeltaTime;
+            currentSpeed += (currentSpeed * dragMultiplicator + dragAdditor) * Time.fixedDeltaTime;
+        }
+
+        return separatingVector.normalized * currentSpeed;
+    }
+    private bool CheckForTrajectoryViability(Vector3 separatingVector, BallRoll currentBall)
+    {
+        bool pathIsBlocked = Physics.SphereCast(currentBall.transform.position, currentBall.ballRadius, separatingVector.normalized, out RaycastHit hitInfo, separatingVector.magnitude);
+        return !pathIsBlocked;
+    }
+
+    /// <summary>
+    /// Renvoie la force de queue necessaire pour que la bille frappee atteigne une certaine vitesse
+    /// </summary>
+    /// <param name="currentBallNecessarySpeed"></param>
+    /// <returns></returns>
+    private HitParameters CalculateHitParametersForFirstCollision(Vector3 targetSpeed)
+    {
+
+    }
+
+
+
 }
