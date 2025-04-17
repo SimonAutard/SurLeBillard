@@ -1,4 +1,5 @@
 using Mono.Cecil;
+using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,16 @@ public class PhysicsManager : MonoBehaviour
 
     //Gestion des phases
     private bool dispersionPhase = false;
-    public float minSpeedForBalls { get; private set; }
+    public float minSpeedForBalls { get; private set; } //Vitesse sous laquelle les billes sarretent completement
 
-    //Paramétrage de la physique
+    //Paramétrage de la physique générale
     public float generalTimeStep { get; private set; }
-    [SerializeField] private float timeStepRatio;
+    public float TimeStepRatio { get { return timeStepRatio; } private set { timeStepRatio = value; } }
+    [SerializeField] float timeStepRatio;
+    public float CueMinForce { get { return cueMinForce; } private set { cueMinForce = value; } }
+    [SerializeField] float cueMinForce;
+    public float CueMaxForce { get { return cueMaxForce; } private set { cueMaxForce = value; } }
+    [SerializeField] float cueMaxForce;
 
     //Gestion du gameplay 
     //Array des billes restantes
@@ -29,8 +35,10 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] GameObject whiteBallPrefab;
     [SerializeField] GameObject blackBallPrefab;
     private int antiInfinityLoopUpperBound = 20;
-    [SerializeField] public float dragMultiplicator { get; private set; } // Coef des frottements du tapis sur la bille
-    [SerializeField] public float dragAdditor    { get; private set; } // Coef des frottements du tapis sur la bille
+    public float DragMultiplicator { get { return dragMultiplicator; } private set { dragMultiplicator = value; } }
+    [SerializeField] float dragMultiplicator; // Coef multiplicatif des frottements du tapis sur la bille
+    public float DragAdditor { get { return dragAdditor; } private set { dragAdditor = value; } }
+    [SerializeField] float dragAdditor;// Coef additif des frottements du tapis sur la bille
 
     //Gestion du terrain
     System.Random random = new System.Random(); // instance pour les evenemnets aleatoires
@@ -39,6 +47,8 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] Vector3 tableCenter;
     GameObject[] allBands;
     GameObject[] allPockets;
+    
+    public float BandSpeedReductionFactor { get { return bandSpeedReductionFactor; } private set { bandSpeedReductionFactor = value; } }
     [SerializeField] public float bandSpeedReductionFactor { get; private set; } //coef d'attnuation de la vitesse par les bandes
     
     public static PhysicsManager Instance
@@ -494,7 +504,7 @@ public class PhysicsManager : MonoBehaviour
             
         }
         hitParameters = CalculateHitParametersForFirstCollision(targetSpeed, targetBallRoll);
-        if(hitParameters.Force > 0) { trajectoryIsViable = false; }
+        if(hitParameters.Force > cueMinForce && hitParameters.Force < cueMaxForce) { trajectoryIsViable = false; }
         
         return trajectoryIsViable;
     }

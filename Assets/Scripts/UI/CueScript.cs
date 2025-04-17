@@ -11,18 +11,16 @@ using UnityEngine.UI;
 
 public class CueScript : MonoBehaviour
 {
-    int speed = 360;
     public Transform orb;
-    public float angle;
     float distance = 0.1f;
     public float radius = 0.1f;
     [SerializeField] Slider slider;
-    Vector3 pos;
-    float horizontalInput;
+    //Distances min et max de la queue à la bille
     float minRadius = 5;
     float maxRadius = 8;
-    float minForce = 0;
-    float maxForce = 1;
+    //Force dans la queue pour la physique
+    float minForce ;
+    float maxForce;
 
     
 
@@ -58,6 +56,9 @@ public class CueScript : MonoBehaviour
         slider.gameObject.SetActive(false);
         isValidate = false;
         isCollision = false;
+        minForce = PhysicsManager.Instance.CueMinForce;
+        maxForce = PhysicsManager.Instance.CueMaxForce;
+        
 
     }
 

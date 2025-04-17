@@ -51,8 +51,8 @@ public class BallRoll : MonoBehaviour
     {
         // Vitese seuil sous laquelle la bille est consideree arretee
         minSpeedToMove = PhysicsManager.Instance.minSpeedForBalls;
-        dragMultiplicator = PhysicsManager.Instance.dragMultiplicator;
-        dragAdditor = PhysicsManager.Instance.dragAdditor;
+        dragMultiplicator = PhysicsManager.Instance.DragMultiplicator;
+        dragAdditor = PhysicsManager.Instance.DragAdditor;
         bandSpeedReductionFactor = PhysicsManager.Instance.bandSpeedReductionFactor;
         ballRadius = GetComponent<SphereCollider>().radius;
         mass = 1;
