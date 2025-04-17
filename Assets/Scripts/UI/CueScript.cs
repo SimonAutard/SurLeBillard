@@ -16,21 +16,17 @@ public class CueScript : MonoBehaviour
     public float angle;
     float distance = 0.1f;
     public float radius = 0.1f;
-    [SerializeField] Vector3 offset;
     [SerializeField] Slider slider;
-    public float downAngle;
     Vector3 pos;
     float horizontalInput;
-    int minForce = 5;
-    int maxForce = 8;
+    float minRadius = 5;
+    float maxRadius = 8;
+    float minForce = 0;
+    float maxForce = 1;
 
     
 
     private Transform pivot;
-    public float maxPower = 10f; // La distance maximale de recul de la queue
-    private float currentPower = 0f; // La puissance actuelle
-    public float powerStep = 0.1f;
-    private Vector2 initialPosition;
     Vector3 clickPosition;
     Vector3 orbVector;
     public bool isValidate {  get; set; }
@@ -91,18 +87,18 @@ public class CueScript : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, -90, 0) * transform.rotation;
 
             //gestion puissance
-            if (radius >= minForce && radius <= maxForce)
+            if (radius >= minRadius && radius <= maxRadius)
             {
                  radius += Input.GetAxis("Mouse ScrollWheel");
                  slider.gameObject.transform.GetComponent<Slider>().value = radius;
                 
-                if (radius < minForce)
+                if (radius < minRadius)
                 {
-                    radius = minForce;
+                    radius = minRadius;
                 }
-                if (radius > maxForce)
+                if (radius > maxRadius)
                 {
-                    radius = maxForce;
+                    radius = maxRadius;
                 }
             }
 
@@ -143,7 +139,7 @@ public class CueScript : MonoBehaviour
     public void CalculateForce(float _radius)
     {
         //on convertit la valeur du radius comprise entre 5 et 8 pour la mettre entre 0.2 et 1
-        UISingleton.Instance.force = (_radius - minForce)/(maxForce - minForce) * (1f-0.2f) + 0.2f;
+        UISingleton.Instance.force = (_radius - minRadius)/(maxRadius - minRadius) * (maxForce-minForce) + minForce;
         orbVector.y = 0.0f;
         UISingleton.Instance.BallCuePos = orbVector;
         //Debug.Log("radius" + radius);

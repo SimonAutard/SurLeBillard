@@ -40,6 +40,7 @@ public class PhysicsManager : MonoBehaviour
     GameObject[] allBands;
     GameObject[] allPockets;
     [SerializeField] public float bandSpeedReductionFactor { get; private set; } //coef d'attnuation de la vitesse par les bandes
+    
     public static PhysicsManager Instance
     {
         get
@@ -492,8 +493,8 @@ public class PhysicsManager : MonoBehaviour
             targetSpeed = initialPivotSpeed;
             
         }
-        hitParameters = CalculateHitParametersForFirstCollision(targetSpeed);
-        if(hitParameters.Force > cueMaximalForce) { trajectoryIsViable = false; }
+        hitParameters = CalculateHitParametersForFirstCollision(targetSpeed, targetBallRoll);
+        if(hitParameters.Force > 0) { trajectoryIsViable = false; }
         
         return trajectoryIsViable;
     }
@@ -570,9 +571,11 @@ public class PhysicsManager : MonoBehaviour
     /// </summary>
     /// <param name="currentBallNecessarySpeed"></param>
     /// <returns></returns>
-    private HitParameters CalculateHitParametersForFirstCollision(Vector3 targetSpeed)
+    private HitParameters CalculateHitParametersForFirstCollision(Vector3 targetSpeed, BallRoll whiteBallRoll)
     {
-
+        WhiteBallMove whiteBallMove = (WhiteBallMove)whiteBallRoll;
+        HitParameters hitParameters = new HitParameters(targetSpeed.magnitude/ whiteBallMove.forceFactor, targetSpeed.normalized);
+        return hitParameters;
     }
 
 
