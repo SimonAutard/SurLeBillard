@@ -1221,6 +1221,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4266224277791752747, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
       propertyPath: dragMultiplicator
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4266224277791752747, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
+      propertyPath: bandSpeedReductionFactor
       value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 4876091633077077654, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}

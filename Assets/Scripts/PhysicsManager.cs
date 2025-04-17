@@ -49,7 +49,7 @@ public class PhysicsManager : MonoBehaviour
     GameObject[] allPockets;
     
     public float BandSpeedReductionFactor { get { return bandSpeedReductionFactor; } private set { bandSpeedReductionFactor = value; } }
-    [SerializeField] public float bandSpeedReductionFactor { get; private set; } //coef d'attnuation de la vitesse par les bandes
+    [SerializeField] public float bandSpeedReductionFactor;//coef d'attnuation de la vitesse par les bandes
     
     public static PhysicsManager Instance
     {
