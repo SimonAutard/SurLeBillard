@@ -1216,6 +1216,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4266224277791752747, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
+      propertyPath: cueMinForce
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4266224277791752747, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
       propertyPath: dragAdditor
       value: 0.5
       objectReference: {fileID: 0}

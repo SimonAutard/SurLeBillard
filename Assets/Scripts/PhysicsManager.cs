@@ -76,8 +76,6 @@ public class PhysicsManager : MonoBehaviour
     private void Start()
     {
         minSpeedForBalls = 0.1f;
-        allBands = GameObject.FindGameObjectsWithTag("Bandes");
-        allPockets = GameObject.FindGameObjectsWithTag("Poche");
         generalTimeStep = Time.fixedDeltaTime * timeStepRatio;
     }
 
@@ -276,6 +274,7 @@ public class PhysicsManager : MonoBehaviour
         BallRoll[] ballRolls = FindObjectsByType<BallRoll>(FindObjectsSortMode.None);
         RemainingBalls = ballRolls.ToList();
         allBands = GameObject.FindGameObjectsWithTag("Bandes");
+        allPockets = GameObject.FindGameObjectsWithTag("Poche");
     }
 
 
@@ -433,15 +432,17 @@ public class PhysicsManager : MonoBehaviour
         foreach (GameObject targetPocket in allPockets)
         {
             int i = Array.IndexOf(allPockets, targetPocket);
+            //Ajout temporaire de la poche dans al liste des poches possibles. Si elle est invalide, on la retire plus bas
             result.Add(i);
             Vector3 direction = targetPocket.transform.position - mainBall.transform.position;
             RaycastHit[] hit = Physics.SphereCastAll(mainBall.transform.position, mainBall.ballRadius, direction.normalized, direction.magnitude);
             foreach (RaycastHit ray in hit)
             {
-                BallRoll hitBallRoll = ray.collider.GetComponent<BallRoll>();
-                //NB : BUG POSSIBLE = si il y a un collider qui n'est pas celui d'un ballroll sur le chemin, il sera ignoré par la détection
-                if (hitBallRoll != null && hitBallRoll._ballId != mainBall._ballId)
+                GameObject hitGO = ray.collider.gameObject;
+                //Si on toruve un collider qui nest ni la bille de ref, ni la poche, alors cest un obstacle sur le passage
+                if (hitGO != null && (hitGO != targetPocket && hitGO != mainBall.gameObject))
                 {
+                    //On retire cette poche de la liste des poches possibles
                     result.Remove(i);
                     break;
                 }

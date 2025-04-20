@@ -303,7 +303,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 16351866}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -463,7 +463,7 @@ Transform:
   m_GameObject: {fileID: 65426820}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.44, y: 0.5, z: 0.55}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -481,13 +481,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01b623f078b04ae4791bd17c50faa91f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 1
   ballTheme: 
   _ballId: 0
   speed: 0
-  dragMultiplicator: 0.2
-  dragAddition: 0.6
-  bandSpeedReductionFactor: 0.8
   forceFactor: 20
 --- !u!1001 &84911033
 PrefabInstance:
@@ -531,7 +527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3751062367256222836, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.61
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3751062367256222836, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -864,6 +860,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BilleMaron
       objectReference: {fileID: 0}
+    - target: {fileID: 7739401957486313241, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8390503614782218107, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -1036,7 +1036,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 254765449}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1329,7 +1329,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 364006808}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1942,7 +1942,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 473094489}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2573,7 +2573,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 615868533}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3137,7 +3137,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010701111}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3429,8 +3429,8 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: -6.12, y: 0, z: 9.21}
+  - {x: 0, y: 0, z: 2.18}
+  - {x: -13.86, y: 0, z: 5.88}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -4229,7 +4229,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240084282}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -4354,6 +4354,10 @@ PrefabInstance:
     - target: {fileID: 7739401957486313241, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_Name
       value: BilleVerte
+      objectReference: {fileID: 0}
+    - target: {fileID: 7739401957486313241, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8390503614782218107, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_Enabled
@@ -5643,7 +5647,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1754514635}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -5727,7 +5731,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.37
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5941,7 +5945,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1845400604}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -6063,7 +6067,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1885141736}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -6201,6 +6205,10 @@ PrefabInstance:
     - target: {fileID: 7739401957486313241, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_Name
       value: BilleViolette
+      objectReference: {fileID: 0}
+    - target: {fileID: 7739401957486313241, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8390503614782218107, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_Enabled
@@ -6772,7 +6780,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.710096
+      value: 12.95
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6784,31 +6792,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.20866802
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.95087594
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.1012266
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.20505059
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 25.999
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -157.241
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 173.167
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7739401957486313241, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_Name
@@ -7307,6 +7315,10 @@ PrefabInstance:
     - target: {fileID: 7739401957486313241, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_Name
       value: BilleJaune
+      objectReference: {fileID: 0}
+    - target: {fileID: 7739401957486313241, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8390503614782218107, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_Enabled

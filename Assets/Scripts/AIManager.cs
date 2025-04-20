@@ -60,6 +60,10 @@ public class AIManager : MonoBehaviour
         _nextShotForce = 0.1f;
         _nextShotVector = Vector3.forward;
         _shotCalculated = true;
+        List<BallAsNode> allBallsAsNodes = CreateNodeData();
+        HitParameters hitParameters = FindOneCorrectPath(allBallsAsNodes);
+        Debug.Log("HitParameters -> Force = " + hitParameters.Force + " and Direction = " + hitParameters.Direction);
+
         // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
         // which comes down to the same thing as storing it here and letting UIManager access it when it needs to
     }
@@ -67,7 +71,7 @@ public class AIManager : MonoBehaviour
     private void HandleInitialBreakRequest(EventInitialBreakRequest requestEvent)
     {
         Debug.Log("AIManager: Calculating Initial break.");
-        _nextShotForce = 0.1f;
+        _nextShotForce = 0.0f;
         _nextShotVector = Vector3.forward;
         _shotCalculated = true;
         // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
@@ -152,6 +156,11 @@ public class AIManager : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// Renvoie un HitParameters permettant d'empocher au moins une bille de son camp
+    /// </summary>
+    /// <param name="allBallsAsNodes"></param>
+    /// <returns></returns>
     private HitParameters FindOneCorrectPath(List<BallAsNode> allBallsAsNodes)
     {
         NTree nTree = new NTree(null, allBallsAsNodes.Find(node => node.ballID == 0), treeMaxLevels);
