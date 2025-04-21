@@ -246,13 +246,10 @@ public class BallRoll : MonoBehaviour
     /// </summary>
     public virtual void CheckPocketing()
     {
-        // Raycats du centre de la bille vers le bas
-        RaycastHit hit;
-        Physics.Raycast(transform.position, Vector3.down, out hit);
-        //Verification qu'un collider a ete touche et quil sagissait dune poche
-        if (hit.collider != null && hit.collider.gameObject.tag == "Poche")
+        int pocketIndex = PhysicsManager.Instance.GetWinningPocketIndex(this);
+        if (pocketIndex >-1)
         {
-            if (isRealBall) { EventBus.Publish(new EventPocketingSignal(this, 0)); }
+            if (isRealBall) { EventBus.Publish(new EventPocketingSignal(this, pocketIndex)); }
             if (!isRealBall) { ImmobilizeBallInSimulation(); }
             Destroy(this.gameObject);
         }

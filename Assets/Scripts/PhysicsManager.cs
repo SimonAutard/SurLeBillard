@@ -411,6 +411,26 @@ public class PhysicsManager : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// Renvoie -1 si la bille nest pas tombee, sinon renvoie lindex de la poche ou elle est tombee
+    /// </summary>
+    /// <param name="fallingBall"></param>
+    /// <returns></returns>
+    public int GetWinningPocketIndex(BallRoll fallingBall)
+    {
+        int result = -1;
+        foreach(GameObject pocket in allPockets)
+        {
+            Vector3 separatingVector = pocket.transform.position - fallingBall.transform.position;
+            if (separatingVector.magnitude < pocket.GetComponent<SphereCollider>().radius)
+            {
+                result = Array.IndexOf(allPockets, pocket);
+                break;
+            }
+        }
+        return result;
+    }
+
     public List<int> GetAllConnectedBallsID(int ballID)
     {
         List<BallRoll> possibleBalls = new List<BallRoll>(RemainingBalls);
