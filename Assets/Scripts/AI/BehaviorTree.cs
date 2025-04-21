@@ -44,19 +44,19 @@ public class NTree
         return Ancestry;
     }
 
-    public List<NTree> GetAllFinalNodes()
+    public List<NTree> GetTreeNodesConnectedToPockets()
     {
         List<NTree> result = new List<NTree>();
-        if (Children == null)
+        if (NodeData.connectedPockets.Count >0)
         {
             result.Add(this);
         }
-        else
+        if (Children.Count>0)
         {
             foreach (NTree child in Children)
             {
-                List<NTree> pseudoResult = child.GetAllFinalNodes();
-                result.Concat(pseudoResult);
+                List<NTree> childResult = child.GetTreeNodesConnectedToPockets();
+                result = result.Concat(childResult).ToList();
             }
         }
         return result;
@@ -77,10 +77,14 @@ public class NTree
     private void DesignateChildren(int remainingLevels)
     {
         List<BallAsNode> possibleChildren = new List<BallAsNode>(NodeData.connectedBalls);
-        foreach (NTree ancestor in Ancestry)
+        if (Ancestry != null)
         {
-            possibleChildren.Remove(ancestor.NodeData);
+            foreach (NTree ancestor in Ancestry)
+            {
+                possibleChildren.Remove(ancestor.NodeData);
+            }
         }
+
         foreach (BallAsNode child in possibleChildren)
         {
             Children.Add(new NTree(this, child, remainingLevels - 1));

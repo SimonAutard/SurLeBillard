@@ -453,7 +453,7 @@ public class PhysicsManager : MonoBehaviour
             foreach (RaycastHit ray in hit)
             {
                 GameObject hitGO = ray.collider.gameObject;
-                //Si on toruve un collider qui nest ni la bille de ref, ni la poche, alors cest un obstacle sur le passage
+                //Si on trouve un collider qui nest ni la bille de ref, ni la poche, alors cest un obstacle sur le passage
                 if (hitGO != null && (hitGO != targetPocket && hitGO != mainBall.gameObject))
                 {
                     //On retire cette poche de la liste des poches possibles
@@ -519,7 +519,7 @@ public class PhysicsManager : MonoBehaviour
             
         }
         hitParameters = CalculateHitParametersForFirstCollision(targetSpeed, targetBallRoll);
-        if(hitParameters.Force > cueMinForce && hitParameters.Force < cueMaxForce) { trajectoryIsViable = false; }
+        if(hitParameters.Force < cueMinForce || hitParameters.Force > cueMaxForce) { trajectoryIsViable = false; }
         
         return trajectoryIsViable;
     }

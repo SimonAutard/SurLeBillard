@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -93,9 +92,7 @@ public class AIManager : MonoBehaviour
     private List<BallAsNode> CreateNodeData()
     {
         //Cretion de la représentation des poches dans les nodes
-        GameObject[] pocketsGO = PhysicsManager.Instance.GetPockets();
-        List<PocketAsNode> allPocketsAsNodes = new List<PocketAsNode>();
-        for (int p = 0; p < pocketsGO.Length; p++) allPocketsAsNodes.Add(new PocketAsNode(p));
+        List<PocketAsNode> allPocketsAsNodes = CreatePocketsAsNodes();
 
         List<BallRoll> remainingBalls = PhysicsManager.Instance.GetRemainingBalls();
 
@@ -112,12 +109,23 @@ public class AIManager : MonoBehaviour
 
             newBallAsNode.connectedBalls = new List<BallAsNode>(); //Initialisation à vide des connectedBalls
 
-            newBallAsNode.connectedPockets = FindConnectedPockets(newBallAsNode.isCorrectSide,newBallAsNode.ballID, allPocketsAsNodes);
+            newBallAsNode.connectedPockets = FindConnectedPockets(newBallAsNode.isCorrectSide, newBallAsNode.ballID, allPocketsAsNodes);
 
             result.Add(newBallAsNode);
         }
         result = FindConnectedBalls(result); //remplissage des connected Balls
         return result;
+    }
+
+    private List<PocketAsNode> CreatePocketsAsNodes()
+    {
+        int nbPockets = PhysicsManager.Instance.GetPockets().Length;
+        List<PocketAsNode> pocketAsNodes = new List<PocketAsNode>();
+        for (int i = 0; i < nbPockets; i++)
+        {
+            pocketAsNodes.Add(new PocketAsNode(i));
+        }
+        return pocketAsNodes;
     }
 
     ///Demande au physicsManager de trouver les billes connectees puis les transforme en ballAsNode
@@ -129,7 +137,7 @@ public class AIManager : MonoBehaviour
             //Comme allBallsAsNodes es tune liste, on ne peut pas la modifier directement. Il faut extrauire lelement, le modifier seul, puis le remettre dans la liste
             BallAsNode currentNode = allBallsAsNodes[i];
             List<int> connectedBallsID = PhysicsManager.Instance.GetAllConnectedBallsID(currentNode.ballID);
-            foreach(int  ballID in connectedBallsID)
+            foreach (int ballID in connectedBallsID)
             {
                 currentNode.connectedBalls.Add(allBallsAsNodes.Find(node => node.ballID == ballID));
             }
@@ -151,7 +159,10 @@ public class AIManager : MonoBehaviour
         if (ballIsCorrectSide)
         {
             List<int> pocketsID = PhysicsManager.Instance.GetAllConnectedPocketsID(ballID);
-            foreach (int i in pocketsID) result.Add(allPockets.Find(node => node.PocketID == i));
+            foreach (int i in pocketsID)
+            {
+                result.Add(allPockets.Find(node => node.PocketID == i));
+            }
         }
         return result;
     }
@@ -164,30 +175,33 @@ public class AIManager : MonoBehaviour
     private HitParameters FindOneCorrectPath(List<BallAsNode> allBallsAsNodes)
     {
         NTree nTree = new NTree(null, allBallsAsNodes.Find(node => node.ballID == 0), treeMaxLevels);
-        List<NTree> allFinalNodes = nTree.GetAllFinalNodes();
+        List<NTree> allFinalNodes = nTree.GetTreeNodesConnectedToPockets();
 
-        HitParameters result = new HitParameters(0,Vector3.zero);
+        HitParameters result = new HitParameters(0, Vector3.zero);
         bool viablePath = false;
 
         foreach (NTree finalNode in allFinalNodes)
         {
-            List<NTree> finalNodeAncestry = finalNode.Ancestry;
-            foreach (NTree ancestor in finalNodeAncestry)
+            List<PocketAsNode> allConnectedPockets = finalNode.NodeData.connectedPockets;
+            if (allConnectedPockets != null)
             {
-                List<PocketAsNode> possiblePockets = ancestor.NodeData.connectedPockets;
-                if (possiblePockets != null)
+                foreach (PocketAsNode pocket in allConnectedPockets)
                 {
-                    foreach(PocketAsNode pocket in possiblePockets)
-                    {
-                        viablePath = PhysicsManager.Instance.CalculateHitParametersForPath(pocket.PocketID, ancestor, out HitParameters hitParameters);
-                        if (viablePath) { result = hitParameters; break; }
-
-                    }
+                    viablePath = PhysicsManager.Instance.CalculateHitParametersForPath(pocket.PocketID, finalNode, out HitParameters hitParameters);
+                    if (viablePath) { result = hitParameters; break; } //des quon a trouve un chemin viable on arrete la recherche
                 }
-                if (viablePath) { break; }
             }
             if (viablePath) { break; }
         }
+        //Cas ou aucun chemin viable na ete trouve
+        if (!viablePath) result = ImproviseHitParameters();
         return result;
     }
+
+    private HitParameters ImproviseHitParameters()
+    {
+        // NB : les valeurs actuelles servent a etre reperees facilement pour le debug, ce ne sont pas les valeurs alatories requises pour cette fonction
+        return new HitParameters(0.42f, Vector3.down);
+    }
 }
+
