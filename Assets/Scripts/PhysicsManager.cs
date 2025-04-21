@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PhysicsManager : MonoBehaviour
 {
@@ -274,9 +275,22 @@ public class PhysicsManager : MonoBehaviour
         BallRoll[] ballRolls = FindObjectsByType<BallRoll>(FindObjectsSortMode.None);
         RemainingBalls = ballRolls.ToList();
         allBands = GameObject.FindGameObjectsWithTag("Bandes");
-        allPockets = GameObject.FindGameObjectsWithTag("Poche");
+        allPockets = FindAllPockets();
+            
     }
 
+    private GameObject[] FindAllPockets()
+    {
+        
+        GameObject[] preResult = GameObject.FindGameObjectsWithTag("Poche");
+        GameObject[] result = new GameObject [preResult.Length];
+        foreach (GameObject pocket in preResult) { 
+            int index = int.Parse(pocket.name.Substring(pocket.name.Length - 1))-1;
+            result[index] = pocket;
+        }
+        return result;
+
+    }
 
     /// <summary>
     /// renvoie les collider superposés a une bille dans la scene reelle
