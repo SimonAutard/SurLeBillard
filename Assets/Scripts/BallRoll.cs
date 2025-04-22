@@ -67,7 +67,8 @@ public class BallRoll : MonoBehaviour
         //RollTheBall(PhysicsManager.Instance.generalTimeStep);
         RollTheBall(Time.deltaTime);
         // Verification de la position de la bille au dessus des poches
-        CheckPocketing();
+        if (PhysicsManager.Instance.dispersionPhase) { CheckPocketing(); }
+        
     }
 
     //Une fois que toutes les update du jeu ont �t� ex�cut�es, lateupdate s'ex�cute
@@ -75,7 +76,6 @@ public class BallRoll : MonoBehaviour
     {
         // On gère les collisions
         HandleCollisions(physicsScene);
-
     }
 
     /// <summary>
@@ -253,7 +253,6 @@ public class BallRoll : MonoBehaviour
             if (!isRealBall) { ImmobilizeBallInSimulation(); }
             Destroy(this.gameObject);
         }
-
     }
 
     public void ProcessThisCollider(Collider collider)

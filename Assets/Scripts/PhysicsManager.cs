@@ -12,7 +12,7 @@ public class PhysicsManager : MonoBehaviour
     private static PhysicsManager _instance; // instance statique du game state manager
 
     //Gestion des phases
-    private bool dispersionPhase = false;
+    public bool dispersionPhase { get; private set; } = false;
     public float minSpeedForBalls { get; private set; } //Vitesse sous laquelle les billes sarretent completement
 
     //Paramétrage de la physique générale
