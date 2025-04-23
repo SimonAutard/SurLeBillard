@@ -168,6 +168,12 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            _atroposAI = !_atroposAI;
+        }
+
     }
 
     private void HandleGameloopNextStepRequest(EventGameloopNextStepRequest requestEvent)
