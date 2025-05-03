@@ -57,8 +57,8 @@ public class AIManager : MonoBehaviour
     private void HandleAIShotRequest(EventAIShotRequest requestEvent)
     {
         Debug.Log("AIManager: Calculating Atropos shot.");
-        _nextShotForce = 0.1f;
-        _nextShotVector = Vector3.forward;
+        _nextShotForce = (float)_rand.NextDouble();
+        _nextShotVector = new Vector3((float)_rand.NextDouble(), 0.0f, (float)_rand.NextDouble());
         _shotCalculated = true;
 
         bool _colorBallPhase = GameStateManager.Instance.IsPocketingBlackFoul(ActivePlayerName.Atropos);
@@ -84,6 +84,10 @@ public class AIManager : MonoBehaviour
         EventBus.Publish(new EventGameloopNextStepRequest());
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>Item1 == vector, Item2 == force</returns>
     public Tuple<Vector3, float> NextShotInfo()
     {
         _shotCalculated = false;

@@ -1287,6 +1287,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 7573472118917764626, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
+      propertyPath: _atroposAI
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
