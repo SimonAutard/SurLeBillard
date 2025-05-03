@@ -5225,7 +5225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 625186b96fa4a7c42a9110e9730a5442, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _waitForNextStep: 0
+  _atroposAI: 1
 --- !u!1001 &1494688069
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7062,7 +7062,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.63
+      value: 5.79
       objectReference: {fileID: 0}
     - target: {fileID: 3446503780550092406, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_LocalPosition.y

@@ -57,10 +57,6 @@ public class AIManager : MonoBehaviour
     private void HandleAIShotRequest(EventAIShotRequest requestEvent)
     {
         Debug.Log("AIManager: Calculating Atropos shot.");
-        _nextShotForce = (float)_rand.NextDouble();
-        _nextShotVector = new Vector3((float)_rand.NextDouble(), 0.0f, (float)_rand.NextDouble());
-        _shotCalculated = true;
-
         bool _colorBallPhase = GameStateManager.Instance.IsPocketingBlackFoul(ActivePlayerName.Atropos);
         List<BallAsNode> allBallsAsNodes = CreateNodeData(_colorBallPhase);
         BallAsNode treeRootBallNode = allBallsAsNodes.Find(node => node.ballID == GameStateManager.Instance.whiteBallID);
@@ -70,6 +66,12 @@ public class AIManager : MonoBehaviour
 
         // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
         // which comes down to the same thing as storing it here and letting UIManager access it when it needs to
+
+
+        _nextShotForce = hitParameters.Force;
+        _nextShotVector = hitParameters.Direction;
+        _shotCalculated = true;
+
     }
 
     private void HandleInitialBreakRequest(EventInitialBreakRequest requestEvent)
