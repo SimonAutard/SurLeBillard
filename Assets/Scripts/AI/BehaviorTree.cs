@@ -68,7 +68,7 @@ public class NTree
         else if (parent.Ancestry == null) result = new List<NTree> { parent };
         else
         {
-            result = parent.Ancestry;
+            result = new List<NTree> (parent.Ancestry);
             result.Add(parent);
         }
         return result;

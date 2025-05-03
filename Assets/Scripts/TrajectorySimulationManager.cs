@@ -233,7 +233,7 @@ public class TrajectorySimulationManager : MonoBehaviour
         MimicBalls();
 
         //recuperation d'une nouvelle bille blanche
-        WhiteBallMove whiteBallMove = (WhiteBallMove)simBallRoll.FirstOrDefault(item => item._ballId == 0);
+        WhiteBallMove whiteBallMove = (WhiteBallMove)simBallRoll.FirstOrDefault(item => item._ballId == GameStateManager.Instance.whiteBallID);
 
         //Lancement de la bille selon les parametres de tir actuels
         whiteBallMove.PushThisBall(direction, force);
@@ -303,7 +303,7 @@ public class TrajectorySimulationManager : MonoBehaviour
             //mise a jour de la possibiltie de collision
             Collider collider = obj.HandleCollisions(_simulationPhysicsScene);
             //detection de la premiere bille touchee par la bille blanche
-            if (obj._ballId == 0 && collider != null) { HandleWhiteFirstCollision(collider); }
+            if (obj._ballId == GameStateManager.Instance.whiteBallID && collider != null) { HandleWhiteFirstCollision(collider); }
 
         }
 

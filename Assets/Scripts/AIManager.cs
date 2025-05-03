@@ -14,6 +14,7 @@ public class AIManager : MonoBehaviour
     // Design pattern du singleton
     private static AIManager _instance; // instance statique du ai manager
 
+
     public static AIManager Instance
     {
         get
@@ -59,8 +60,12 @@ public class AIManager : MonoBehaviour
         _nextShotForce = 0.1f;
         _nextShotVector = Vector3.forward;
         _shotCalculated = true;
-        List<BallAsNode> allBallsAsNodes = CreateNodeData();
-        HitParameters hitParameters = FindOneCorrectPath(allBallsAsNodes);
+
+        bool _colorBallPhase = GameStateManager.Instance.IsPocketingBlackFoul(ActivePlayerName.Atropos);
+        List<BallAsNode> allBallsAsNodes = CreateNodeData(_colorBallPhase);
+        BallAsNode treeRootBallNode = allBallsAsNodes.Find(node => node.ballID == GameStateManager.Instance.whiteBallID);
+
+        HitParameters hitParameters = FindOneCorrectPath(treeRootBallNode);
         Debug.Log("HitParameters -> Force = " + hitParameters.Force + " and Direction = " + hitParameters.Direction);
 
         // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
@@ -89,7 +94,7 @@ public class AIManager : MonoBehaviour
     /// Cree un nodeData pour chaque bille en jeu
     /// </summary>
     /// <returns></returns>
-    private List<BallAsNode> CreateNodeData()
+    private List<BallAsNode> CreateNodeData(bool _coloredPhase)
     {
         //Cretion de la représentation des poches dans les nodes
         List<PocketAsNode> allPocketsAsNodes = CreatePocketsAsNodes();
@@ -104,8 +109,15 @@ public class AIManager : MonoBehaviour
             newBallAsNode.ballID = ball._ballId;
 
             //Verification du camp de la bille
-            if (newBallAsNode.ballID > GameStateManager.Instance.blackBallID) newBallAsNode.isCorrectSide = true;
-            else newBallAsNode.isCorrectSide = false;
+            if (_coloredPhase)
+            {
+                if (newBallAsNode.ballID > GameStateManager.Instance.blackBallID) newBallAsNode.isCorrectSide = true;
+                else newBallAsNode.isCorrectSide = false;
+            }
+            else {
+                if (newBallAsNode.ballID == GameStateManager.Instance.blackBallID) newBallAsNode.isCorrectSide = true;
+                else newBallAsNode.isCorrectSide = false;
+            }
 
             newBallAsNode.connectedBalls = new List<BallAsNode>(); //Initialisation à vide des connectedBalls
 
@@ -172,9 +184,9 @@ public class AIManager : MonoBehaviour
     /// </summary>
     /// <param name="allBallsAsNodes"></param>
     /// <returns></returns>
-    private HitParameters FindOneCorrectPath(List<BallAsNode> allBallsAsNodes)
+    private HitParameters FindOneCorrectPath(BallAsNode treeRootBallNode)
     {
-        NTree nTree = new NTree(null, allBallsAsNodes.Find(node => node.ballID == 0), treeMaxLevels);
+        NTree nTree = new NTree(null, treeRootBallNode, treeMaxLevels);
         List<NTree> allFinalNodes = nTree.GetTreeNodesConnectedToPockets();
 
         HitParameters result = new HitParameters(0, Vector3.zero);
@@ -200,8 +212,13 @@ public class AIManager : MonoBehaviour
 
     private HitParameters ImproviseHitParameters()
     {
-        // NB : les valeurs actuelles servent a etre reperees facilement pour le debug, ce ne sont pas les valeurs alatories requises pour cette fonction
-        return new HitParameters(0.42f, Vector3.down);
+        float randomForce = UnityEngine.Random.Range(PhysicsManager.Instance.CueMinForce, PhysicsManager.Instance.CueMaxForce);
+
+        Vector3 randomDirection = new Vector3(UnityEngine.Random.Range(0, 1), UnityEngine.Random.Range(0, 1), UnityEngine.Random.Range(0, 1)).normalized;
+        Debug.Log("Atropos shoots randomly");
+        return new HitParameters(randomForce, randomDirection);
+        //return new HitParameters(0.42f, Vector3.down);
     }
+
 }
 

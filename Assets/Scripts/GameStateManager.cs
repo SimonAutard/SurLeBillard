@@ -91,10 +91,7 @@ public class GameStateManager : MonoBehaviour
         _gameCollisions.Clear();
         _lastPocketings.Clear();
         _gamePocketings.Clear();
-        for(int i = 0; i < startingBallsCount; i++)
-        {
-            _ballsInPlay.Add(i);
-        }
+        _ballsInPlay = PhysicsManager.Instance.FindAllBalls();
         _turnCount = 0;
         _gameInitialised = true;
         _gameEnded = false;
@@ -136,31 +133,8 @@ public class GameStateManager : MonoBehaviour
             // checking for black pocketing and if there is, if it's a legit one or a foul
             else if (pocketing.Item1 == blackBallID)
             {
-                bool blackPenalty = false;
-                if (_activePlayer == _player1)
-                {
-                    foreach (int ball in _ballsInPlay)
-                    {
-                        // checking if there are still balls that need to be pocketed
-                        if (ball > 0 && ball < blackBallID)
-                        {
-                            blackPenalty = true;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (int ball in _ballsInPlay)
-                    {
-                        // checking if there are still balls that need to be pocketed
-                        if (ball > blackBallID)
-                        {
-                            blackPenalty = true;
-                            break;
-                        }
-                    }
-                }
+                bool blackPenalty = IsPocketingBlackFoul(_activePlayer);
+
                 if (blackPenalty)
                 {
                     _currentTurnPenalties.Add(PenaltyType.BlackPocketing);
@@ -289,6 +263,36 @@ public class GameStateManager : MonoBehaviour
         }
         Debug.Log("GameStateManager: calling NextStep");
         EventBus.Publish(new EventGameloopNextStepRequest());
+    }
+
+    public bool IsPocketingBlackFoul(ActivePlayerName player)
+    {
+        bool result = false;
+        if (player == _player1)
+        {
+            foreach (int ball in _ballsInPlay)
+            {
+                // checking if there are still balls that need to be pocketed
+                if (ball > 0 && ball < blackBallID)
+                {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            foreach (int ball in _ballsInPlay)
+            {
+                // checking if there are still balls that need to be pocketed
+                if (ball > blackBallID)
+                {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     public bool GameHasEnded()

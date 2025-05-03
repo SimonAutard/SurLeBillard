@@ -1,10 +1,7 @@
-using Mono.Cecil;
-using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class PhysicsManager : MonoBehaviour
 {
@@ -48,10 +45,10 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] Vector3 tableCenter;
     GameObject[] allBands;
     GameObject[] allPockets;
-    
+
     public float BandSpeedReductionFactor { get { return bandSpeedReductionFactor; } private set { bandSpeedReductionFactor = value; } }
     [SerializeField] public float bandSpeedReductionFactor;//coef d'attnuation de la vitesse par les bandes
-    
+
     public static PhysicsManager Instance
     {
         get
@@ -272,20 +269,37 @@ public class PhysicsManager : MonoBehaviour
     /// <param name="requestEvent"></param>
     private void HandleNewGameSetupRequest(EventNewGameSetupRequest requestEvent)
     {
-        BallRoll[] ballRolls = FindObjectsByType<BallRoll>(FindObjectsSortMode.None);
-        RemainingBalls = ballRolls.ToList();
+        FindAllBalls();
         allBands = GameObject.FindGameObjectsWithTag("Bandes");
         allPockets = FindAllPockets();
-            
+
+    }
+
+    /// <summary>
+    /// Fonction lancée au début d'une nouvelle partie par le GameStateManager ET par le PhysicsManager dans HandleNewGameSetupRequest
+    /// </summary>
+    /// <returns></returns>
+    public List<int> FindAllBalls()
+    {
+        if (RemainingBalls.Count == 0) {
+            BallRoll[] ballRolls = FindObjectsByType<BallRoll>(FindObjectsSortMode.None);
+            RemainingBalls = ballRolls.ToList();
+        }
+        List<int> result = new List<int>();
+        foreach (BallRoll ballRoll in RemainingBalls) {
+            result.Add(ballRoll._ballId);
+        }
+        return result;
     }
 
     private GameObject[] FindAllPockets()
     {
-        
+
         GameObject[] preResult = GameObject.FindGameObjectsWithTag("Poche");
-        GameObject[] result = new GameObject [preResult.Length];
-        foreach (GameObject pocket in preResult) { 
-            int index = int.Parse(pocket.name.Substring(pocket.name.Length - 1))-1;
+        GameObject[] result = new GameObject[preResult.Length];
+        foreach (GameObject pocket in preResult)
+        {
+            int index = int.Parse(pocket.name.Substring(pocket.name.Length - 1)) - 1;
             result[index] = pocket;
         }
         return result;
@@ -419,7 +433,7 @@ public class PhysicsManager : MonoBehaviour
     public int GetWinningPocketIndex(BallRoll fallingBall)
     {
         int result = -1;
-        foreach(GameObject pocket in allPockets)
+        foreach (GameObject pocket in allPockets)
         {
             Vector3 separatingVector = pocket.transform.position - fallingBall.transform.position;
             if (separatingVector.magnitude < pocket.GetComponent<SphereCollider>().radius)
@@ -439,16 +453,16 @@ public class PhysicsManager : MonoBehaviour
 
         List<int> result = new List<int>();
 
-        foreach(BallRoll targetBall in possibleBalls)
+        foreach (BallRoll targetBall in possibleBalls)
         {
             result.Add(targetBall._ballId);
             Vector3 direction = targetBall.transform.position - mainBall.transform.position;
             RaycastHit[] hit = Physics.SphereCastAll(mainBall.transform.position, mainBall.ballRadius, direction.normalized, direction.magnitude);
-            foreach(RaycastHit ray in hit)
+            foreach (RaycastHit ray in hit)
             {
-                BallRoll hitBallRoll = ray.collider.GetComponent<BallRoll>() ;
+                BallRoll hitBallRoll = ray.collider.GetComponent<BallRoll>();
                 //NB : BUG POSSIBLE = si il y a un collider qui n'est pas celui d'un ballroll sur le chemin, il sera ignoré par la détection
-                if (hitBallRoll!= null && hitBallRoll._ballId != mainBall._ballId && hitBallRoll._ballId != targetBall._ballId)
+                if (hitBallRoll != null && hitBallRoll._ballId != mainBall._ballId && hitBallRoll._ballId != targetBall._ballId)
                 {
                     result.Remove(targetBall._ballId);
                     break;
@@ -482,7 +496,7 @@ public class PhysicsManager : MonoBehaviour
                 }
             }
         }
-        return result;  
+        return result;
     }
 
     public List<BallRoll> GetRemainingBalls()
@@ -504,49 +518,74 @@ public class PhysicsManager : MonoBehaviour
     public bool CalculateHitParametersForPath(int pocketID, NTree finalNode, out HitParameters hitParameters)
     {
         bool trajectoryIsViable = true;
-        hitParameters = new HitParameters(0,Vector3.zero);
+        hitParameters = new HitParameters(0, Vector3.zero);
 
-        List<NTree> ballPath = finalNode.Ancestry;
+        List<NTree> ballPath = new List<NTree> (finalNode.Ancestry);
         ballPath.Reverse(); //Renversement car le premier element est toujours la bille blanche
 
         // initialisation de l'algo avec la poche en tant que targetBall
-        BallRoll pivotBallRoll = RemainingBalls.Find(ball => ball._ballId == finalNode.NodeData.ballID) ;
+        BallRoll pivotBallRoll = RemainingBalls.Find(ball => ball._ballId == finalNode.NodeData.ballID);
 
         Vector3 separatingVector = allPockets[pocketID].transform.position - pivotBallRoll.transform.position;
 
         Vector3 initialPivotSpeed = CalculateInitialSpeedToCrossDistance(pivotBallRoll, separatingVector, Vector3.zero);
 
         BallRoll targetBallRoll = pivotBallRoll;
-        Vector3 targetSpeed = initialPivotSpeed; 
+        Vector3 targetSpeed = initialPivotSpeed;
 
+        //Debug.Log("separating vector to " + pocketID + " from " + pivotBallRoll.name +" is " + separatingVector);
 
         foreach (NTree pivotNTree in ballPath)
         {
             //MaJ du pivot
             pivotBallRoll = RemainingBalls.Find(ball => ball._ballId == pivotNTree.NodeData.ballID);
-            
+
             separatingVector = CalculateInAndOutSpeedVector2FromInAndOutSpeedVector1(targetBallRoll, Vector3.zero, targetSpeed, pivotBallRoll, out Vector3 inPivotSpeed, out Vector3 outPivotSpeed);
+            //Debug.Log("separating vector to "+targetBallRoll.name+" from "+pivotBallRoll.name+" is " + separatingVector);
 
             initialPivotSpeed = CalculateInitialSpeedToCrossDistance(pivotBallRoll, separatingVector, inPivotSpeed);
-            
+
             //Critère d'arret
-            trajectoryIsViable = CheckForTrajectoryViability(separatingVector, pivotBallRoll);
-            if (!trajectoryIsViable) { break; }
+            trajectoryIsViable = CheckForTrajectoryViability(separatingVector, pivotBallRoll, targetBallRoll);
+            if (!trajectoryIsViable) {
+                //Debug.Log("an obstacle was on the last ball path");
+                break; }
 
             //Changement de cible
             targetBallRoll = pivotBallRoll;
             targetSpeed = initialPivotSpeed;
-            
+
         }
-        hitParameters = CalculateHitParametersForFirstCollision(targetSpeed, targetBallRoll);
-        if(hitParameters.Force < cueMinForce || hitParameters.Force > cueMaxForce) { trajectoryIsViable = false; }
-        
+        if (trajectoryIsViable)
+        {
+            hitParameters = CalculateHitParametersForFirstCollision(targetSpeed, targetBallRoll);
+            if (hitParameters.Force < cueMinForce || hitParameters.Force > cueMaxForce) {
+                //Debug.Log("necessary force was outside authorized bounds");
+                trajectoryIsViable = false; }
+            else
+            {
+                //Fonction de debug de l'IA à supprimer
+                ShowHitParametersDebug(hitParameters,  targetBallRoll.transform.position);
+            }
+        }
+
         return trajectoryIsViable;
     }
 
+    /// <summary>
+    /// Fonction de debug de l'IA à supprimer
+    /// </summary>
+    /// <param name="hitParam"></param>
+    /// <param name="center"></param>
+    private void ShowHitParametersDebug(HitParameters hitParam, Vector3 center)
+    {
+        LineRenderer lineRenderer = GameObject.Find("DebugLineRenderer").GetComponent<LineRenderer>();
+        lineRenderer.SetPosition(0, center);
+        lineRenderer.SetPosition(1, center + hitParam.Direction*10);
+    }
 
-
-    private Vector3 CalculateInAndOutSpeedVector2FromInAndOutSpeedVector1(BallRoll ball1, Vector3 inSpeed1, Vector3 outSpeed1, BallRoll ball2, out Vector3 inSpeed2, out Vector3 outSpeed2) {
+    private Vector3 CalculateInAndOutSpeedVector2FromInAndOutSpeedVector1(BallRoll ball1, Vector3 inSpeed1, Vector3 outSpeed1, BallRoll ball2, out Vector3 inSpeed2, out Vector3 outSpeed2)
+    {
 
         // Dapres BounceOnBall, outSpeed1 = m2/m1*normal_inSpeed2 + tangent_InSpeed1 et outSpeed2 = m1/m2*normal_inSpeed1 + tangent_InSpeed2
         // Simplification en passant dans le repere de la bille 1
@@ -562,8 +601,8 @@ public class PhysicsManager : MonoBehaviour
 
 
         // Calcul du point de collision de bille2 sur bille1
-        Vector3 ball2CollisionPosition = ball1.transform.position + normalVector * (ball1.ballRadius+ball2.ballRadius); 
-        Vector3 separatingVector = (ball2CollisionPosition - ball2.transform.position).normalized;
+        Vector3 ball2CollisionPosition = ball1.transform.position - normalVector * (ball1.ballRadius + ball2.ballRadius);
+        Vector3 separatingVector = (ball2CollisionPosition - ball2.transform.position);
         Vector3 inDirection2 = separatingVector.normalized;
 
         // Calcul de la composante relative normale de inSpeed2
@@ -579,11 +618,11 @@ public class PhysicsManager : MonoBehaviour
 
         // Passage au repere standard
         inSpeed2 = relativeInSpeed2 + inSpeed1;
-        outSpeed2 = relativeInSpeed2 + inSpeed1;
+        outSpeed2 = relativeOutSpeed2 + inSpeed1;
 
         return separatingVector;
     }
-    
+
     /// <summary>
     /// Calcule la vitesse initiale d'une bille pour qu'elle ait encore une vitesse donnee apres avoir parcourue une distance donnee
     /// </summary>
@@ -597,7 +636,7 @@ public class PhysicsManager : MonoBehaviour
         float dragAddition = ballRoll.dragAdditor;
         float dragMultiplicator = ballRoll.dragMultiplicator;
 
-        while(distanceToCross>0)
+        while (distanceToCross > 0)
         {
             distanceToCross -= currentSpeed * Time.fixedDeltaTime;
             currentSpeed += (currentSpeed * dragMultiplicator + dragAdditor) * Time.fixedDeltaTime;
@@ -605,9 +644,9 @@ public class PhysicsManager : MonoBehaviour
 
         return separatingVector.normalized * currentSpeed;
     }
-    private bool CheckForTrajectoryViability(Vector3 separatingVector, BallRoll currentBall)
+    private bool CheckForTrajectoryViability(Vector3 separatingVector, BallRoll currentBall, BallRoll targetBall)
     {
-        bool pathIsBlocked = Physics.SphereCast(currentBall.transform.position, currentBall.ballRadius, separatingVector.normalized, out RaycastHit hitInfo, separatingVector.magnitude);
+        bool pathIsBlocked = Physics.SphereCast(currentBall.transform.position, currentBall.ballRadius, separatingVector.normalized, out RaycastHit hitInfo, separatingVector.magnitude*0.98f);
         return !pathIsBlocked;
     }
 
@@ -619,7 +658,7 @@ public class PhysicsManager : MonoBehaviour
     private HitParameters CalculateHitParametersForFirstCollision(Vector3 targetSpeed, BallRoll whiteBallRoll)
     {
         WhiteBallMove whiteBallMove = (WhiteBallMove)whiteBallRoll;
-        HitParameters hitParameters = new HitParameters(targetSpeed.magnitude/ whiteBallMove.forceFactor, targetSpeed.normalized);
+        HitParameters hitParameters = new HitParameters(targetSpeed.magnitude / whiteBallMove.forceFactor, targetSpeed.normalized);
         return hitParameters;
     }
 

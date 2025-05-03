@@ -7,6 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 using UnityEngine.Rendering;
 using static UISingleton;
 using UnityEngine.UI;
+using TMPro;
 //using UnityEngine.UIElements;
 
 public class CueScript : MonoBehaviour
@@ -15,6 +16,7 @@ public class CueScript : MonoBehaviour
     float distance = 0.1f;
     public float radius = 0.1f;
     [SerializeField] Slider slider;
+    [SerializeField] TMP_Text cueForceDebugText;
     //Distances min et max de la queue à la bille
     float minRadius = 5;
     float maxRadius = 8;
@@ -91,8 +93,10 @@ public class CueScript : MonoBehaviour
             if (radius >= minRadius && radius <= maxRadius)
             {
                  radius += Input.GetAxis("Mouse ScrollWheel");
-                 slider.gameObject.transform.GetComponent<Slider>().value = radius;
-                
+                 slider.value = radius;
+                cueForceDebugText.text = ((radius-5)/ 3).ToString();
+
+
                 if (radius < minRadius)
                 {
                     radius = minRadius;

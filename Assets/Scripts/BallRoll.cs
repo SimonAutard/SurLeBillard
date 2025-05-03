@@ -204,7 +204,7 @@ public class BallRoll : MonoBehaviour
         if (isRealBall)
         {
             // Verifiction quaucune des billes percutees nest la blanche
-            if (_ballId * collidingBallRoll._ballId != 0)
+            if (_ballId * collidingBallRoll._ballId != GameStateManager.Instance.whiteBallID)
             {
                 // Declencher les VFX
                 DropVFXAnchor();
@@ -289,7 +289,7 @@ public class BallRoll : MonoBehaviour
     public void DropVFXAnchor()
     {
         //Ingnorer l'action si c'est la bille blanche
-        if (_ballId == 0) { return; }
+        if (_ballId == GameStateManager.Instance.whiteBallID) { return; }
 
         //Création de l'ancre
         GameObject dummy = new GameObject("StandInVFXFor" + ballTheme);
