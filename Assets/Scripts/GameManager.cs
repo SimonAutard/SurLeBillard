@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public bool _mainPhase { get; private set; }
     public bool _endPhase { get; private set; }
     [SerializeField] private bool _atroposAI = true;
+    [SerializeField] private string _currentStepName;
 
     public static GameManager Instance
     {
@@ -109,6 +110,7 @@ public class GameManager : MonoBehaviour
             {
                 if (_currentLoopStep < _gameStartSteps.Count)
                 {
+                    _currentStepName = _gameStartSteps[_currentLoopStep].GetType().Name;
                     _gameStartSteps[_currentLoopStep].Execute();
                     _currentLoopStep = _gameStartSteps[_currentLoopStep].NextStep();
                     Debug.Log($"next step Id = {_currentLoopStep}");
@@ -133,6 +135,7 @@ public class GameManager : MonoBehaviour
             {
                 if (_currentLoopStep < _gameLoopSteps.Count)
                 {
+                    _currentStepName = _gameLoopSteps[_currentLoopStep].GetType().Name;
                     _gameLoopSteps[_currentLoopStep].Execute();
                     _currentLoopStep = _gameLoopSteps[_currentLoopStep].NextStep();
                     Debug.Log($"next step Id = {_currentLoopStep}");

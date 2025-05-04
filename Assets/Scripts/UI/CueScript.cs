@@ -92,6 +92,8 @@ public class CueScript : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, -90, 0) * transform.rotation;
 
 
+
+
             if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus())
             {
                 radius = AIManager.Instance.NextShotInfo().Item2 * (maxForce - minForce) + minForce;
@@ -121,6 +123,7 @@ public class CueScript : MonoBehaviour
                 }
 
             }
+        }
 
             //enregistre que l'utilisateur a cliqué pour tirer
             if (Input.GetMouseButtonDown(0) && UISingleton.Instance.isReady == true)
@@ -136,6 +139,7 @@ public class CueScript : MonoBehaviour
             float distanceToBall = Vector3.Distance(transform.position, orb.position);
             if (isValidate == true)
             {
+                Debug.Log($"distanceToBall = {distanceToBall}");
                 if (distanceToBall > 4)
                 {
                     //Debug.Log(radius);
@@ -157,7 +161,6 @@ public class CueScript : MonoBehaviour
                     gameObject.SetActive(false);
                 }
             }
-        }
     }
     //convertit la valeur de la force entre 0 et 1
     public void CalculateForce(float _radius)
