@@ -2774,7 +2774,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!120 &735640639
 LineRenderer:
   serializedVersion: 2
@@ -5226,6 +5226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _atroposAI: 1
+  _currentStepName: 
 --- !u!1001 &1494688069
 PrefabInstance:
   m_ObjectHideFlags: 0

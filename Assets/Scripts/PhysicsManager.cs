@@ -565,7 +565,7 @@ public class PhysicsManager : MonoBehaviour
             else
             {
                 //Fonction de debug de l'IA à supprimer
-                ShowHitParametersDebug(hitParameters,  targetBallRoll.transform.position);
+                //ShowHitParametersDebug(hitParameters,  targetBallRoll.transform.position);
             }
         }
 

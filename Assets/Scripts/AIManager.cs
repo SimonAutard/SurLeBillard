@@ -92,7 +92,7 @@ public class AIManager : MonoBehaviour
     /// <returns>Item1 == vector, Item2 == force</returns>
     public Tuple<Vector3, float> NextShotInfo()
     {
-        _shotCalculated = false;
+        if(_shotCalculated)  _shotCalculated = false;
         return new Tuple<Vector3, float>(_nextShotVector, _nextShotForce);
     }
 
@@ -220,7 +220,7 @@ public class AIManager : MonoBehaviour
     {
         float randomForce = UnityEngine.Random.Range(PhysicsManager.Instance.CueMinForce, PhysicsManager.Instance.CueMaxForce);
 
-        Vector3 randomDirection = new Vector3(UnityEngine.Random.Range(0, 1), UnityEngine.Random.Range(0, 1), UnityEngine.Random.Range(0, 1)).normalized;
+        Vector3 randomDirection = new Vector3(UnityEngine.Random.Range(0f, 1f), 0, UnityEngine.Random.Range(0f, 1f)).normalized;
         Debug.Log("Atropos shoots randomly");
         return new HitParameters(randomForce, randomDirection);
         //return new HitParameters(0.42f, Vector3.down);

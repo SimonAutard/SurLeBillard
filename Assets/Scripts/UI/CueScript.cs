@@ -67,7 +67,7 @@ public class CueScript : MonoBehaviour
         //oriente la queue tant que l'utilisateur n'a pas clique
         if (isValidate == false /*&&  UISingleton.Instance.isReady == true*/)
         {
-            if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus()) // if AI autoplay is active
+            if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus()) // if atropos turn and AI autoplay is active
             {
                 clickPosition = -AIManager.Instance.NextShotInfo().Item1;
             }
@@ -96,7 +96,7 @@ public class CueScript : MonoBehaviour
 
             if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus())
             {
-                radius = AIManager.Instance.NextShotInfo().Item2 * (maxForce - minForce) + minForce;
+                radius = AIManager.Instance.NextShotInfo().Item2 * (maxRadius - minRadius) + minRadius;
                 if (_aiShotDelay == null)
                 {
                     _aiShotDelay = StartCoroutine(ShotDelay(0.75f));
@@ -109,7 +109,7 @@ public class CueScript : MonoBehaviour
                 {
                     radius += Input.GetAxis("Mouse ScrollWheel");
                     slider.value = radius;
-                    cueForceDebugText.text = ((radius - 5) / 3).ToString();
+                    cueForceDebugText.text = ((radius - minRadius) / (maxRadius - minRadius)).ToString();
 
 
                     if (radius < minRadius)
@@ -125,42 +125,42 @@ public class CueScript : MonoBehaviour
             }
         }
 
-            //enregistre que l'utilisateur a cliqué pour tirer
-            if (Input.GetMouseButtonDown(0) && UISingleton.Instance.isReady == true)
-            {
-                UISingleton.Instance.isReady = false;
-                isValidate = true;
-                //HitBall(radius, queuePosition);
-                //Debug.Log(UISingleton.Instance.isReady);
-                //Debug.Log(Vector3.up);
-            }
+        //enregistre que l'utilisateur a cliqué pour tirer
+        if (Input.GetMouseButtonDown(0) && UISingleton.Instance.isReady == true)
+        {
+            UISingleton.Instance.isReady = false;
+            isValidate = true;
+            //HitBall(radius, queuePosition);
+            //Debug.Log(UISingleton.Instance.isReady);
+            //Debug.Log(Vector3.up);
+        }
 
-            //l'utilisateur a cliqué et la queue va vers la bille
-            float distanceToBall = Vector3.Distance(transform.position, orb.position);
-            if (isValidate == true)
+        //l'utilisateur a cliqué et la queue va vers la bille
+        float distanceToBall = Vector3.Distance(transform.position, orb.position);
+        if (isValidate == true)
+        {
+            Debug.Log($"distanceToBall = {distanceToBall}");
+            if (distanceToBall > 4)
             {
-                Debug.Log($"distanceToBall = {distanceToBall}");
-                if (distanceToBall > 4)
+                //Debug.Log(radius);
+                transform.position = Vector3.MoveTowards(transform.position, orb.position, Time.deltaTime * radius * radius);
+            }
+            else
+            {
+                if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus())
                 {
-                    //Debug.Log(radius);
-                    transform.position = Vector3.MoveTowards(transform.position, orb.position, Time.deltaTime * radius * radius);
+                    EventBus.Publish(new EventApplyForceToWhiteRequest(AIManager.Instance.NextShotInfo().Item1, AIManager.Instance.NextShotInfo().Item2));
+                    _aiShotDelay = null;
                 }
                 else
                 {
-                    if (!UIManager.Instance._isClothoTurn && GameManager.Instance.AIStatus())
-                    {
-                        EventBus.Publish(new EventApplyForceToWhiteRequest(AIManager.Instance.NextShotInfo().Item1, AIManager.Instance.NextShotInfo().Item2));
-                        _aiShotDelay = null;
-                    }
-                    else
-                    {
-                        CalculateForce(radius);
-                        Debug.Log("UIManager: Requesting force application.");
-                        EventBus.Publish(new EventApplyForceToWhiteRequest(orbVector, UISingleton.Instance.force));
-                    }
-                    gameObject.SetActive(false);
+                    CalculateForce(radius);
+                    Debug.Log("UIManager: Requesting force application.");
+                    EventBus.Publish(new EventApplyForceToWhiteRequest(orbVector, UISingleton.Instance.force));
                 }
+                gameObject.SetActive(false);
             }
+        }
     }
     //convertit la valeur de la force entre 0 et 1
     public void CalculateForce(float _radius)
