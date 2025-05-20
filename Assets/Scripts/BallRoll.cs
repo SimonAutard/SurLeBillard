@@ -7,6 +7,7 @@ public class BallRoll : MonoBehaviour
 {
     //Variable générale
     PhysicsScene physicsScene;
+    float timeStep;
 
     //Variables physiques
     public float mass { get; protected set; }
@@ -59,13 +60,14 @@ public class BallRoll : MonoBehaviour
         speed = 0;
 
         physicsScene = TrajectorySimulationManager.Instance._realPhysicsScene;
+        timeStep = PhysicsManager.Instance.generalTimeStep;
     }
 
     void FixedUpdate()
     {
         // La bille avance ou sarrete
         //RollTheBall(PhysicsManager.Instance.generalTimeStep);
-        RollTheBall(Time.deltaTime);
+        RollTheBall(timeStep);
         // Verification de la position de la bille au dessus des poches
         if (PhysicsManager.Instance.dispersionPhase) { CheckPocketing(); }
         

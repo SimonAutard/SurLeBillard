@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8610a2be6bdfb9741b9d19e94b92ffbd
+guid: 3a334e7cb5bf767419a7c48564c30a94
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Marcellus
+  - Reem Kufi
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

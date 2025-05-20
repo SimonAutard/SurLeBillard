@@ -139,7 +139,7 @@ public class CueScript : MonoBehaviour
         float distanceToBall = Vector3.Distance(transform.position, orb.position);
         if (isValidate == true)
         {
-            Debug.Log($"distanceToBall = {distanceToBall}");
+            //Debug.Log($"distanceToBall = {distanceToBall}");
             if (distanceToBall > 4)
             {
                 //Debug.Log(radius);

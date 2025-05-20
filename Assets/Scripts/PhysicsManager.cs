@@ -546,7 +546,7 @@ public class PhysicsManager : MonoBehaviour
             initialPivotSpeed = CalculateInitialSpeedToCrossDistance(pivotBallRoll, separatingVector, inPivotSpeed);
 
             //Critère d'arret
-            trajectoryIsViable = CheckForTrajectoryViability(separatingVector, pivotBallRoll, targetBallRoll);
+            trajectoryIsViable = CheckForTrajectoryViability(separatingVector, pivotBallRoll, targetBallRoll, inPivotSpeed);
             if (!trajectoryIsViable) {
                 //Debug.Log("an obstacle was on the last ball path");
                 break; }
@@ -565,7 +565,7 @@ public class PhysicsManager : MonoBehaviour
             else
             {
                 //Fonction de debug de l'IA à supprimer
-                //ShowHitParametersDebug(hitParameters,  targetBallRoll.transform.position);
+                ShowHitParametersDebug(hitParameters,  targetBallRoll.transform.position);
             }
         }
 
@@ -620,11 +620,15 @@ public class PhysicsManager : MonoBehaviour
         inSpeed2 = relativeInSpeed2 + inSpeed1;
         outSpeed2 = relativeOutSpeed2 + inSpeed1;
 
+        // THESE TWO LINES ARE FOR TESTING, REMOVE IF AI DOES RANDOM STUFF
+        //Vector3 fakeBall2CollisionPosition = ball1.transform.position - normalVector * (ball1.ballRadius + ball2.ballRadius - relativeInSpeed2n * generalTimeStep/2);
+        //separatingVector = (fakeBall2CollisionPosition - ball2.transform.position);
+
         return separatingVector;
     }
 
     /// <summary>
-    /// Calcule la vitesse initiale d'une bille pour qu'elle ait encore une vitesse donnee apres avoir parcourue une distance donnee
+    /// Calcule la vitesse initiale d'une bille pour qu'elle ait encore une vitesse donnee apres avoir parcourue une distance donnee. Ne regarde pas la diretion des vecteurs, seulement la norme
     /// </summary>
     /// <param name="separatingVector"></param>
     /// <param name="targetSpeed"></param>
@@ -638,16 +642,35 @@ public class PhysicsManager : MonoBehaviour
 
         while (distanceToCross > 0)
         {
-            distanceToCross -= currentSpeed * Time.fixedDeltaTime;
-            currentSpeed += (currentSpeed * dragMultiplicator + dragAdditor) * Time.fixedDeltaTime;
+            distanceToCross -= currentSpeed * generalTimeStep;
+            currentSpeed += (currentSpeed * dragMultiplicator + dragAdditor) * generalTimeStep;
         }
 
         return separatingVector.normalized * currentSpeed;
     }
-    private bool CheckForTrajectoryViability(Vector3 separatingVector, BallRoll currentBall, BallRoll targetBall)
+
+    /// <summary>
+    /// Verifie que le chemin est libre entre la bille pivot et la bille cible
+    /// </summary>
+    /// <param name="separatingVector"></param>
+    /// <param name="currentBall"></param>
+    /// <param name="targetBall"></param>
+    /// <param name="inSpeed"></param>
+    /// <returns></returns>
+    private bool CheckForTrajectoryViability(Vector3 separatingVector, BallRoll currentBall, BallRoll targetBall, Vector3 inSpeed)
     {
-        bool pathIsBlocked = Physics.SphereCast(currentBall.transform.position, currentBall.ballRadius, separatingVector.normalized, out RaycastHit hitInfo, separatingVector.magnitude*0.98f);
-        return !pathIsBlocked;
+        RaycastHit[] blockingItems = Physics.SphereCastAll(currentBall.transform.position, currentBall.ballRadius, separatingVector.normalized, separatingVector.magnitude);
+        if (blockingItems.Length < 2)
+        {
+            Debug.Log("Le sphereCast de vérification de viabilité de trajectoire na pas repéré la bille cible etla bille pivot");
+            return true;
+        }
+        else if(blockingItems.Length > 2) return false;
+        else
+        {
+            if (Vector3.Dot(separatingVector, inSpeed) > 0) { return true; }
+            else return false;
+        }
     }
 
     /// <summary>
@@ -655,13 +678,11 @@ public class PhysicsManager : MonoBehaviour
     /// </summary>
     /// <param name="currentBallNecessarySpeed"></param>
     /// <returns></returns>
-    private HitParameters CalculateHitParametersForFirstCollision(Vector3 targetSpeed, BallRoll whiteBallRoll)
+    public HitParameters CalculateHitParametersForFirstCollision(Vector3 targetSpeed, BallRoll whiteBallRoll)
     {
         WhiteBallMove whiteBallMove = (WhiteBallMove)whiteBallRoll;
-        HitParameters hitParameters = new HitParameters(targetSpeed.magnitude / whiteBallMove.forceFactor, targetSpeed.normalized);
+        //Facteur de 1.1 pour s'assurer que la bille rentre
+        HitParameters hitParameters = new HitParameters(targetSpeed.magnitude / whiteBallMove.forceFactor * 1.1f, targetSpeed.normalized);
         return hitParameters;
     }
-
-
-
 }

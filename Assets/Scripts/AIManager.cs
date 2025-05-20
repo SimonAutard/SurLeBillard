@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 
 public class AIManager : MonoBehaviour
 {
@@ -212,18 +213,43 @@ public class AIManager : MonoBehaviour
             if (viablePath) { break; }
         }
         //Cas ou aucun chemin viable na ete trouve
-        if (!viablePath) result = ImproviseHitParameters();
+        if (!viablePath) result = ImproviseHitParameters(nTree);
         return result;
     }
 
-    private HitParameters ImproviseHitParameters()
+    private HitParameters ImproviseHitParameters(NTree nTree)
+    {
+        HitParameters result = new HitParameters();
+        List<NTree> children = nTree.Children;
+        foreach(NTree child in children)
+        {
+            if (child.NodeData.isCorrectSide)
+            {
+                List<BallRoll> remainingBalls = PhysicsManager.Instance.GetRemainingBalls();
+                BallRoll white = remainingBalls.Find(ball => ball._ballId == nTree.NodeData.ballID);
+                BallRoll targetBall = remainingBalls.Find(ball => ball._ballId == child.NodeData.ballID);
+
+                result = PhysicsManager.Instance.CalculateHitParametersForFirstCollision(targetBall.transform.position - white.transform.position, white);
+                result.Force = PhysicsManager.Instance.CueMaxForce;
+                break;
+            }
+        }
+        //Si la bille blanche ne peut pas frapper une bille du camp Atropos, on tire au pif car on na pas d'heuristique
+        if(result.Force == 0)
+        {
+            result = GetFullRandomHitParameters();
+        }
+
+        return result;
+    }
+
+    private HitParameters GetFullRandomHitParameters()
     {
         float randomForce = UnityEngine.Random.Range(PhysicsManager.Instance.CueMinForce, PhysicsManager.Instance.CueMaxForce);
 
         Vector3 randomDirection = new Vector3(UnityEngine.Random.Range(0f, 1f), 0, UnityEngine.Random.Range(0f, 1f)).normalized;
         Debug.Log("Atropos shoots randomly");
         return new HitParameters(randomForce, randomDirection);
-        //return new HitParameters(0.42f, Vector3.down);
     }
 
 }
