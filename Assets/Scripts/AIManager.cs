@@ -138,13 +138,7 @@ public class AIManager : MonoBehaviour
 
     private List<PocketAsNode> CreatePocketsAsNodes()
     {
-        int nbPockets = PhysicsManager.Instance.GetPockets().Length;
-        List<PocketAsNode> pocketAsNodes = new List<PocketAsNode>();
-        for (int i = 0; i < nbPockets; i++)
-        {
-            pocketAsNodes.Add(new PocketAsNode(i));
-        }
-        return pocketAsNodes;
+        return PhysicsManager.Instance.CreatePocketsAsNodes();
     }
 
     ///Demande au physicsManager de trouver les billes connectees puis les transforme en ballAsNode
@@ -177,11 +171,7 @@ public class AIManager : MonoBehaviour
         //Si on ne veut pas empocher cette bille, on ne lui met aucune connectedPocket
         if (ballIsCorrectSide)
         {
-            List<int> pocketsID = PhysicsManager.Instance.GetAllConnectedPocketsID(ballID);
-            foreach (int i in pocketsID)
-            {
-                result.Add(allPockets.Find(node => node.PocketID == i));
-            }
+            result = PhysicsManager.Instance.GetAllConnectedPocketsID(ballID);
         }
         return result;
     }

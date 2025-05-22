@@ -45,6 +45,7 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] Vector3 tableCenter;
     GameObject[] allBands;
     GameObject[] allPockets;
+    List<PocketAsNode> allPocketsAsNodes;
 
     public float BandSpeedReductionFactor { get { return bandSpeedReductionFactor; } private set { bandSpeedReductionFactor = value; } }
     [SerializeField] public float bandSpeedReductionFactor;//coef d'attnuation de la vitesse par les bandes
@@ -445,6 +446,18 @@ public class PhysicsManager : MonoBehaviour
         return result;
     }
 
+    public List<PocketAsNode> CreatePocketsAsNodes()
+    {
+        int nbPockets = allPockets.Length;
+        allPocketsAsNodes = new List<PocketAsNode>();
+        for (int i = 0; i < nbPockets; i++)
+        {
+            Vector3 optimalPos = allPockets[i].transform.position + allPockets[i].GetComponent<PocketBehavior>().normalVector.normalized * allPockets[i].GetComponent<SphereCollider>().radius;
+            allPocketsAsNodes.Add(new PocketAsNode(i, optimalPos));
+        }
+        return allPocketsAsNodes;
+    }
+
     public List<int> GetAllConnectedBallsID(int ballID)
     {
         List<BallRoll> possibleBalls = new List<BallRoll>(RemainingBalls);
@@ -472,29 +485,16 @@ public class PhysicsManager : MonoBehaviour
         return result;
     }
 
-    public List<int> GetAllConnectedPocketsID(int ballID)
+    public List<PocketAsNode> GetAllConnectedPocketsID(int ballID)
     {
-        List<int> result = new List<int>();
-
+        List<PocketAsNode> result = new List<PocketAsNode>();
         BallRoll mainBall = RemainingBalls.Find(ball => ball._ballId == ballID);
-        foreach (GameObject targetPocket in allPockets)
+
+        foreach (PocketAsNode targetPocket in allPocketsAsNodes)
         {
-            int i = Array.IndexOf(allPockets, targetPocket);
-            //Ajout temporaire de la poche dans al liste des poches possibles. Si elle est invalide, on la retire plus bas
-            result.Add(i);
-            Vector3 direction = targetPocket.transform.position - mainBall.transform.position;
+            Vector3 direction = targetPocket.PocketOptimalPosition - mainBall.transform.position;
             RaycastHit[] hit = Physics.SphereCastAll(mainBall.transform.position, mainBall.ballRadius, direction.normalized, direction.magnitude);
-            foreach (RaycastHit ray in hit)
-            {
-                GameObject hitGO = ray.collider.gameObject;
-                //Si on trouve un collider qui nest ni la bille de ref, ni la poche, alors cest un obstacle sur le passage
-                if (hitGO != null && (hitGO != targetPocket && hitGO != mainBall.gameObject))
-                {
-                    //On retire cette poche de la liste des poches possibles
-                    result.Remove(i);
-                    break;
-                }
-            }
+            if (hit.Length == 2) { result.Add(targetPocket); }
         }
         return result;
     }
@@ -621,8 +621,8 @@ public class PhysicsManager : MonoBehaviour
         outSpeed2 = relativeOutSpeed2 + inSpeed1;
 
         // THESE TWO LINES ARE FOR TESTING, REMOVE IF AI DOES RANDOM STUFF
-        //Vector3 fakeBall2CollisionPosition = ball1.transform.position - normalVector * (ball1.ballRadius + ball2.ballRadius - relativeInSpeed2n * generalTimeStep/2);
-        //separatingVector = (fakeBall2CollisionPosition - ball2.transform.position);
+        Vector3 fakeBall2CollisionPosition = ball1.transform.position - normalVector * (ball1.ballRadius + ball2.ballRadius - inSpeed2.magnitude * generalTimeStep/2);
+        separatingVector = (fakeBall2CollisionPosition - ball2.transform.position);
 
         return separatingVector;
     }

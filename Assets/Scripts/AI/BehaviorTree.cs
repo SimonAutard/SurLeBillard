@@ -13,7 +13,8 @@ public struct BallAsNode
 public struct PocketAsNode
 {
     public int PocketID;
-    public PocketAsNode(int pocketID) { PocketID = pocketID; }
+    public Vector3 PocketOptimalPosition;
+    public PocketAsNode(int pocketID,Vector3 pocketOptimalPosition) { PocketID = pocketID; PocketOptimalPosition = pocketOptimalPosition; }
 }
 
 public struct HitParameters
