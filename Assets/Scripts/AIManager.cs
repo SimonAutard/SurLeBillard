@@ -12,6 +12,9 @@ public class AIManager : MonoBehaviour
     // Configuration de l'arbre de décision
     [SerializeField] int treeMaxLevels;
 
+    // Configuration de la qualité de l'IA
+    [SerializeField] float fumbleChance;
+
     // Design pattern du singleton
     private static AIManager _instance; // instance statique du ai manager
 
@@ -63,6 +66,7 @@ public class AIManager : MonoBehaviour
         BallAsNode treeRootBallNode = allBallsAsNodes.Find(node => node.ballID == GameStateManager.Instance.whiteBallID);
 
         HitParameters hitParameters = FindOneCorrectPath(treeRootBallNode);
+        hitParameters = TinkerHitParameters(hitParameters);
         Debug.Log("HitParameters -> Force = " + hitParameters.Force + " and Direction = " + hitParameters.Direction);
 
         // No direct publish of this shot data because AIManager doesn't know if it's needed right now. In practice, the event would be caught by UIManager and the data stored until needed
@@ -211,6 +215,7 @@ public class AIManager : MonoBehaviour
     {
         HitParameters result = new HitParameters();
         List<NTree> children = nTree.Children;
+        // On essaye de trouve rune bille du bon camp, a priori coincee, pour taper a fond dedans pour la déloger
         foreach(NTree child in children)
         {
             if (child.NodeData.isCorrectSide)
@@ -240,6 +245,32 @@ public class AIManager : MonoBehaviour
         Vector3 randomDirection = new Vector3(UnityEngine.Random.Range(0f, 1f), 0, UnityEngine.Random.Range(0f, 1f)).normalized;
         Debug.Log("Atropos shoots randomly");
         return new HitParameters(randomForce, randomDirection);
+    }
+
+    /// <summary>
+    /// Checks if this shot will be tinkered, and if yes, cahgnes either force or direction to make it miss
+    /// </summary>
+    /// <param name="hitParameters"></param>
+    /// <returns></returns>
+    private HitParameters TinkerHitParameters(HitParameters hitParameters)
+    {
+        float gacha = UnityEngine.Random.Range(0f,1f);
+        HitParameters result = hitParameters;
+
+        //Case of changing force
+        if (gacha < fumbleChance / 2) {
+            result.Force = hitParameters.Force*0.8f;
+        }
+        //Case of changing direction
+        else if(gacha < fumbleChance)
+        {
+            Vector3 initialDirection = hitParameters.Direction;
+            Vector3 newDirection = new Vector3(initialDirection.x + initialDirection.z * .1f, initialDirection.y, initialDirection.z + initialDirection.x * .1f);
+
+            result.Direction = newDirection.normalized;
+        }
+
+        return result;
     }
 
 }

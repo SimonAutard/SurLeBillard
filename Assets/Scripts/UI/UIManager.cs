@@ -156,7 +156,6 @@ public class UIManager : MonoBehaviour
 
         if (prophecies.Count != 0)
         {
-            Debug.Log("prophecies : " + prophecies);
             UISingleton.Instance.isCollided = true;
 
         }

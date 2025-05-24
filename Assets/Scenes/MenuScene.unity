@@ -3476,8 +3476,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3677688346356530350, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
+      propertyPath: fumbleChance
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 3677688346356530350, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
       propertyPath: treeMaxLevels
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4266224277791752747, guid: ac62c70521e22f24a803c6e2e0d03ac3, type: 3}
       propertyPath: cueMaxForce

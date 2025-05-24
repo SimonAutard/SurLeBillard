@@ -88,7 +88,6 @@ public class BallRoll : MonoBehaviour
 
     private void OnMouseOver()
     {
-        Debug.Log("on mouse over");
         UIManager.Instance.DisplayBallInfo(_ballId, ballName, ballDescription, ballSprite);
     }
     private void OnMouseExit()
