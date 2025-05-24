@@ -497,6 +497,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ballTheme: 
   _ballId: 0
+  ballSprite: {fileID: 0}
+  ballName: Fate Ball
+  ballDescription: Sets Fate in motion. Does not trigger prophecies.
   speed: 0
   forceFactor: 20
 --- !u!1 &71087830
@@ -660,12 +663,24 @@ PrefabInstance:
       value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
+      propertyPath: ballName
+      value: Health Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: ballTheme
       value: Health
       objectReference: {fileID: 0}
     - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
+      propertyPath: ballSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7ad2c323eb1aafa4e933b38f2e5ab147, type: 3}
+    - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: dragAddition
       value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
+      propertyPath: ballDescription
+      value: Prophecies will improve or worsen the health of concerned characters.
       objectReference: {fileID: 0}
     - target: {fileID: 3703250368411230511, guid: f9fd455a777787445a95216799fe190a, type: 3}
       propertyPath: dragMultiplicator
@@ -951,12 +966,24 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballName
+      value: Friendhsip Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Friendship
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 46fd30ddb06c0b24db653c45710995a3, type: 3}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
       value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballDescription
+      value: Prophecies will change Connor's relations with his friends.
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragMultiplicator
@@ -1886,7 +1913,11 @@ PrefabInstance:
     - {fileID: 1129903182028995853, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4731525613536699680, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
+    - {fileID: 719983430917912045, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8799746835767839440, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
+      insertIndex: 11
+      addedObject: {fileID: 1745467612}
     - targetCorrespondingSourceObject: {fileID: 8799746835767839440, guid: b6f5347ccede232408f0efb8751d9fa0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1217353972}
@@ -2678,6 +2709,217 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalVector: {x: 0, y: 0, z: 1}
+--- !u!1 &593234188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 593234189}
+  - component: {fileID: 593234191}
+  - component: {fileID: 593234190}
+  m_Layer: 5
+  m_Name: Panel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &593234189
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593234188}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1745467612}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 138}
+  m_SizeDelta: {x: 407.6813, y: 216.6212}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &593234190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593234188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 0.72156864}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &593234191
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593234188}
+  m_CullTransparentMesh: 1
+--- !u!1 &606723876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 606723877}
+  - component: {fileID: 606723879}
+  - component: {fileID: 606723878}
+  m_Layer: 5
+  m_Name: BallName
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &606723877
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606723876}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1745467612}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 11, y: 156}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &606723878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606723876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 4039c49ee413c9e41ba94e9d9f671796, type: 2}
+  m_sharedMaterial: {fileID: -634094562670328688, guid: 4039c49ee413c9e41ba94e9d9f671796, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &606723879
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606723876}
+  m_CullTransparentMesh: 1
 --- !u!1 &615868533
 GameObject:
   m_ObjectHideFlags: 0
@@ -3061,6 +3303,81 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalVector: {x: 0, y: 0, z: -1}
+--- !u!1 &805246178
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 805246179}
+  - component: {fileID: 805246181}
+  - component: {fileID: 805246180}
+  m_Layer: 5
+  m_Name: BallImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &805246179
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805246178}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1745467612}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: -72, y: 57}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &805246180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805246178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &805246181
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805246178}
+  m_CullTransparentMesh: 1
 --- !u!1 &851040292
 GameObject:
   m_ObjectHideFlags: 0
@@ -4261,7 +4578,7 @@ Camera:
   m_GameObject: {fileID: 1157877307}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -4283,11 +4600,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
+  near clip plane: 0.01
+  far clip plane: 919.42
+  field of view: 70
   orthographic: 1
-  orthographic size: 15.04
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4312,7 +4629,7 @@ Transform:
   m_GameObject: {fileID: 1157877307}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 20.6, z: -0}
+  m_LocalPosition: {x: 0, y: 3.7, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4644,12 +4961,25 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballName
+      value: Nature Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Nature
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b1afa0706c3cabd41b7a816a5d35bd58, type: 3}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
       value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballDescription
+      value: Prophecies will revolve around Connor's relation to the countryside
+        and its wildlife.
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragMultiplicator
@@ -5052,6 +5382,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7355557273515633082, guid: 364cb98225303ad4685f247b2771dc86, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7849269804656382077, guid: 364cb98225303ad4685f247b2771dc86, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -5074,6 +5408,7 @@ PrefabInstance:
       objectReference: {fileID: 71087832}
     m_RemovedComponents:
     - {fileID: 1216924787171374202, guid: 364cb98225303ad4685f247b2771dc86, type: 3}
+    - {fileID: 7355557273515633082, guid: 364cb98225303ad4685f247b2771dc86, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 7287083150728884412, guid: 364cb98225303ad4685f247b2771dc86, type: 3}
@@ -5428,6 +5763,142 @@ Transform:
   - {fileID: 2119647436}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1535247239
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1535247240}
+  - component: {fileID: 1535247242}
+  - component: {fileID: 1535247241}
+  m_Layer: 5
+  m_Name: BallDescription
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1535247240
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1535247239}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1745467612}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 68.5, y: 65.5}
+  m_SizeDelta: {x: 237, y: 131}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1535247241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1535247239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: f03c85def5e7e9e48824ce975078b9aa, type: 2}
+  m_sharedMaterial: {fileID: 2494078228792051301, guid: f03c85def5e7e9e48824ce975078b9aa, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 20
+  m_fontSizeBase: 20
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 8
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 3
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1535247242
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1535247239}
+  m_CullTransparentMesh: 1
 --- !u!1001 &1596931117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5938,6 +6409,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalVector: {x: 1, y: 0, z: 1}
+--- !u!1 &1745467611
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1745467612}
+  m_Layer: 5
+  m_Name: BallInfoUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1745467612
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745467611}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 593234189}
+  - {fileID: 805246179}
+  - {fileID: 606723877}
+  - {fileID: 1535247240}
+  m_Father: {fileID: 424957363}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 50}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1754514635
 GameObject:
   m_ObjectHideFlags: 0
@@ -6081,12 +6591,24 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballName
+      value: Love Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Love
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 2878422e53c0f5145b3865dd019827d6, type: 3}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
       value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballDescription
+      value: Prophecies will set Connor's love or even marital life.
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragMultiplicator
@@ -6518,12 +7040,25 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballName
+      value: Spirituality Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Spirituality
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4f393bf81efd9aa4191d6f8fcb328e4d, type: 3}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
       value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballDescription
+      value: Prophecies will change Connor's religion, philosphy or perspective on
+        life.
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragMultiplicator
@@ -7134,12 +7669,24 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballName
+      value: Career Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Career
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6745dd15fc9ed064cabf4a3b9a6e60e5, type: 3}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
       value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballDescription
+      value: Prophecies will set Connor's jobs evolution
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragMultiplicator
@@ -7632,12 +8179,24 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballName
+      value: Finances Ball
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: ballTheme
       value: Finances
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: c651ac0e04bfbc74f9fcbbc2782a31a9, type: 3}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragAddition
       value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: ballDescription
+      value: Prophecies will improve or worsen the state of Connor's bank account.
       objectReference: {fileID: 0}
     - target: {fileID: 1076302412489482166, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: dragMultiplicator
@@ -7703,6 +8262,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 721a01dd40271cb4c8815dcd3ca8f055, type: 2}
+    - target: {fileID: 8710514447834572326, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8710514447834572326, guid: 2f821df155d8e2c43b701887f5b4a2a2, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -7809,6 +8372,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1157877310}
+  - {fileID: 424957361}
   - {fileID: 158360712}
   - {fileID: 1517945167}
   - {fileID: 549457294}
@@ -7825,11 +8389,10 @@ SceneRoots:
   - {fileID: 8071518001442471527}
   - {fileID: 1059828512}
   - {fileID: 1484232762}
-  - {fileID: 424957361}
-  - {fileID: 1399898476}
   - {fileID: 2084190708}
   - {fileID: 1066104424}
   - {fileID: 2014291206}
   - {fileID: 735640640}
   - {fileID: 935040595}
   - {fileID: 851040293}
+  - {fileID: 1399898476}

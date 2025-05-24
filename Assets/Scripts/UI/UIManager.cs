@@ -1,11 +1,9 @@
- using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static Unity.VisualScripting.Member;
+using UnityEngine.UI;
 
 
 public class UIManager : MonoBehaviour
@@ -18,9 +16,15 @@ public class UIManager : MonoBehaviour
 
     public bool VictoryPanelDisplayed { get; set; }
 
+    //Variables la bulle info de bille survolee
+    private GameObject ballInfoGO;
+    private Image ballInfoImage;
+    private TMP_Text ballInfoName;
+    private TMP_Text ballInfoDescription;
+    private int currentDisplayedInfoBallID = -1;
 
-// Design pattern du singleton
-private static UIManager _instance; // instance statique du ui manager
+    // Design pattern du singleton
+    private static UIManager _instance; // instance statique du ui manager
 
     //[SerializeField] GameObject cue;
     public static UIManager Instance
@@ -87,7 +91,16 @@ private static UIManager _instance; // instance statique du ui manager
         Debug.Log("UIManager : Requesting the start of a new game");
         EventBus.Publish(new EventNewGameRequest());
         EventBus.Publish(new EventMenuClickSignal());
-       
+    }
+
+    private void SetUpBallInfoManagement()
+    {
+        ballInfoGO = GameObject.Find("BallInfoUI");
+        ballInfoDescription = ballInfoGO.transform.Find("BallDescription").GetComponent<TMP_Text>();
+        ballInfoName = ballInfoGO.transform.Find("BallName").GetComponent<TMP_Text>();
+        ballInfoImage = ballInfoGO.transform.Find("BallImage").GetComponent<Image>();
+           
+        ballInfoGO.SetActive(false);
     }
 
     public void AttachDialogManagement(DialogManagement dm)
@@ -119,6 +132,7 @@ private static UIManager _instance; // instance statique du ui manager
         Debug.Log("UIManager: Requesting force application.");
         EventBus.Publish(new EventApplyForceToWhiteRequest(BallCuePos, force));
 
+        SetUpBallInfoManagement();
     }
 
     /// <summary>
@@ -139,13 +153,13 @@ private static UIManager _instance; // instance statique du ui manager
         //Vérifer que la liste des collisions est vide ou pas
         //prophecies = NarrationManager.Instance.LastTurnProphecies();
         prophecies = new List<UIProphecy>(NarrationManager.Instance.LastTurnProphecies());
-        
+
         if (prophecies.Count != 0)
-           {
-                Debug.Log("prophecies : " + prophecies);
-                UISingleton.Instance.isCollided = true;
-  
-           }
+        {
+            Debug.Log("prophecies : " + prophecies);
+            UISingleton.Instance.isCollided = true;
+
+        }
 
         StartCoroutine(WaitPopup());
         //EventBus.Publish(new EventGameloopNextStepRequest());
@@ -210,7 +224,7 @@ private static UIManager _instance; // instance statique du ui manager
 
     IEnumerator WaitPopup()
     {
-       
+
         while (UISingleton.Instance.isCollided == true)
         {
             yield return null;
@@ -225,6 +239,24 @@ private static UIManager _instance; // instance statique du ui manager
     private void HandleNewWhiteBall(EventBallWasCreated requestEvent)
     {
         _dialogManagement.RefreshCue(requestEvent._ball);
+    }
+
+    public void DisplayBallInfo(int ballID, string ballName, string ballDescription, Sprite ballSprite)
+    {
+        if (ballID == currentDisplayedInfoBallID) { return; }
+        currentDisplayedInfoBallID = ballID;
+
+        ballInfoGO.SetActive(true);
+
+        ballInfoName.text = ballName;
+        ballInfoDescription.text = ballDescription;
+        ballInfoImage.sprite = ballSprite;
+    }
+
+    public void CloseBallInfo()
+    {
+        currentDisplayedInfoBallID = -1;
+        ballInfoGO.SetActive(false);
     }
 
 }

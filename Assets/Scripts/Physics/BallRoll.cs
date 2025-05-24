@@ -26,6 +26,11 @@ public class BallRoll : MonoBehaviour
     private GameObject puppetGOPrefab;
     private VisualEffect effect;
 
+    //Variables d'UI
+    [SerializeField] Sprite ballSprite;
+    [SerializeField] string ballName;
+    [SerializeField] string ballDescription;
+
     // Variables de d�placement
     public float speed;//{ get; protected set; } // vitesse de la bille � chaque instant
     public Vector3 direction { get; protected set; } // direction de la bille � chaque instant. Normalis�.
@@ -61,6 +66,7 @@ public class BallRoll : MonoBehaviour
 
         physicsScene = TrajectorySimulationManager.Instance._realPhysicsScene;
         timeStep = PhysicsManager.Instance.generalTimeStep;
+        Physics.queriesHitTriggers = true;
     }
 
     void FixedUpdate()
@@ -78,6 +84,16 @@ public class BallRoll : MonoBehaviour
     {
         // On gère les collisions
         HandleCollisions(physicsScene);
+    }
+
+    private void OnMouseOver()
+    {
+        Debug.Log("on mouse over");
+        UIManager.Instance.DisplayBallInfo(_ballId, ballName, ballDescription, ballSprite);
+    }
+    private void OnMouseExit()
+    {
+        UIManager.Instance.CloseBallInfo();
     }
 
     /// <summary>
