@@ -5,14 +5,14 @@ public class MenuScripts : MonoBehaviour
     [SerializeField] GameObject firstCanvas;
     [SerializeField] GameObject secondCanvas;
 
-    private void GoToSecondCanvas()
+    public void GoToSecondCanvas()
     {
         secondCanvas.SetActive(true);
         firstCanvas.SetActive(false);
     }
 
 
-    private void GoToFirstCanvas()
+    public void GoToFirstCanvas()
     {
         firstCanvas.SetActive(true);
         secondCanvas.SetActive(false);
