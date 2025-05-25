@@ -259,11 +259,13 @@ public class AIManager : MonoBehaviour
 
         //Case of changing force
         if (gacha < fumbleChance / 2) {
+            Debug.Log("*************fumble froce");
             result.Force = hitParameters.Force*0.8f;
         }
         //Case of changing direction
         else if(gacha < fumbleChance)
         {
+            Debug.Log("*************fumble direction");
             Vector3 initialDirection = hitParameters.Direction;
             Vector3 newDirection = new Vector3(initialDirection.x + initialDirection.z * .1f, initialDirection.y, initialDirection.z + initialDirection.x * .1f);
 
@@ -273,5 +275,10 @@ public class AIManager : MonoBehaviour
         return result;
     }
 
+    public void SetAIDifficulty(float difficulty)
+    {
+        fumbleChance = difficulty;
+        Debug.Log("fumble chance ="+fumbleChance);
+    }
 }
 
